@@ -1,0 +1,4 @@
+pubchempy
+quantities
+rickpy
+sympy
