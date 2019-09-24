@@ -16,3 +16,5 @@ docs/chapter*.py
 .coverage
 htmlcov
 .vscode
+.dropbox
+data
