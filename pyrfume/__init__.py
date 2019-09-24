@@ -1,6 +1,7 @@
 import os
 import urllib
 import json
+import pickle
 
 import numpy as np
 import pandas as pd
@@ -11,13 +12,18 @@ from .base import PACKAGE_DIR, DATA_DIR
 
 
 def load_data(rel_path, **kwargs):
-    full_path = os.path.join(DATA_DIR, rel_path)
-    df = pd.read_csv(full_path, **kwargs)
-    return df
+    full_path = DATA_DIR / rel_path
+    is_pickle = any([str(full_path).endswith(x) for x in ('.pkl', '.pickle', '.p')])
+    if is_pickle:
+        with open(full_path, 'rb') as f:
+            data = pickle.load(f)
+    else:
+        data = pd.read_csv(full_path, **kwargs)
+    return data
 
 
 def save_data(df, rel_path, **kwargs):
-    full_path = os.path.join(DATA_DIR, rel_path)
+    full_path = DATA_DIR / rel_path
     df.to_csv(full_path, **kwargs)
 
 

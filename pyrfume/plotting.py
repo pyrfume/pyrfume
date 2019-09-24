@@ -3,6 +3,7 @@ import os
 
 from ipywidgets import HBox, VBox, Image, Layout
 import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
 import plotly.graph_objs as go
 from plotly.offline import iplot
@@ -44,11 +45,11 @@ def smiles_to_image(smiles):
     return a.getvalue()
 
 
-def plotly_embedding(embedding, features=None):
+def plotly_embedding(embedding, features=None, colors=None):
     """
     params:
-        embedding: e.g. a fitted TSNE object
-        features: A dataframe of features, e.g. names, SMILES strings, or physicochemical features
+        embedding: A dataframe wrapped around e.g. a fitted TSNE object, with an index of CIDs
+        features: A dataframe of features, e.g. names, SMILES strings, or physicochemical features, with an index of CIDs
     """
     
     if features is None:
@@ -69,10 +70,12 @@ def plotly_embedding(embedding, features=None):
         text=names,
         mode='markers',
         hoverinfo='text',
-        opacity=0.7,
+        opacity=0.5,
         marker={
             'size': 5,
-            'line': {'width': 0.5, 'color': 'white'}
+            'line': {'width': 0.5, 'color': 'white'},
+            'color': colors if colors is not None else 'black',
+            'colorscale': 'rainbow'
             },
         )
     

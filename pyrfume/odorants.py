@@ -509,14 +509,14 @@ def _parse_other_info(info, records=None):
     return records
 
 
-def smiles_to_image(smiles, png=True, b64=False, crop=True, padding=10):
+def smiles_to_image(smiles, png=True, b64=False, crop=True, padding=10, size=300):
     """
     png: Whether to convert to .png data (or to leave as a PIL image)
     b64: Whether to base64 encode (only possible for .png data)
     """
     buffer = io.BytesIO()
     mol = Chem.MolFromSmiles(smiles)
-    image = Draw.MolToImage(mol, fitImage=True)
+    image = Draw.MolToImage(mol, fitImage=True, size=(size, size))
     if crop:
         image = crop_image(image, padding=padding)
     if png:
@@ -531,7 +531,8 @@ def smiles_to_image(smiles, png=True, b64=False, crop=True, padding=10):
 def crop_image(img, padding=0):
     """Crop white out of a PIL image."""
     as_array = np.array(img)  # N x N x (r,g,b,a)
-    as_array[as_array[:, :, 3] == 0] = [255, 255, 255, 255]
+    if as_array.shape[2] == 4:
+        as_array[as_array[:, :, 3] == 0] = [255, 255, 255, 255]
     has_content = np.sum(as_array, axis=2, dtype=np.uint32) != 255 * 4
     xs, ys = np.nonzero(has_content)
     x_range = max([min(xs) - padding, 0]), min([max(xs) + padding, as_array.shape[0]])

@@ -7,7 +7,7 @@ from deap import base, creator, tools, algorithms
 
 class OdorantSetOptimizer:
     def __init__(self, library, n_desired, weights=None, fitness=None,
-                 n_gen=300, mu=100, lamda=200, p_cx=0.4, p_mut=0.4):
+                 n_gen=300, mu=100, lamda=200, p_cx=0.4, p_mut=0.4, sel='selBest', rescale_weights=False):
         """
         params:
             library: A pandas dataframe containing odorants and their
@@ -15,11 +15,19 @@ class OdorantSetOptimizer:
                      (e.g. CIDs). The column names should be attributes,
                      e.g. molecular weight, price, etc.  They can also be
                      descriptors.
-            n_desired: The site of the set of odorants desired from this
+            n_desired: The size of the set of odorants desired from this
                        library.
             weights: A list of 3-tuples each containing the name of a weight,
                      a method to apply to the library dataframe, and a weight
                      to apply to the function's output.
+            fitness: ...
+            mu: Size of the population (number of odorant sets under consideration
+                in each generation).
+            lambda: ...
+            p_cx: Crossover probability in each generation.
+            p_mut: Mutation probability in each generation.
+            sel: Selection algorithm, e.g. 'selBest' or 'selNSGA2'
+            rescale_weights: Interpret weights as multiples of stdev of a weight function
         """
 
         # Turn all constructor arguments into attributes
@@ -29,23 +37,10 @@ class OdorantSetOptimizer:
         if self.fitness is None:
             self.fitness = BetterFitness
 
-        # weights_dict = OrderedDict([
-#                    ('abs_cost', -7.0),  # Total absolute cost
-#                    ('rel_cost', -1.0),  # Average relative cost/mol
-#                    ('coverage_hd', +8.0),  # Total coverage of Haddad space
-#                    ('coverage_sz', +8.0),  # Total coverage of Snitz space
-#                    ('intensity', +5.0),  # Average odorant intensity
-#                    ('fame', +1.0),  # Average odorant fame
-#                    #('count', -0.01), # Total number of odorants
-        #                   ])
-
         weight_names, weight_functions, weight_values = zip(*self.weights)
 
         # Number of available odorants
         self.library_size = self.library.shape[0]
-
-        # Odorant set cannot cost more than this amount
-        # MAX_COST = 3000
 
         creator.create("Fitness", self.fitness, weights=weight_values)
         creator.create("Individual", set, fitness=creator.Fitness)
@@ -68,18 +63,39 @@ class OdorantSetOptimizer:
         self.toolbox.register("evaluate", self.eval_individual)
         self.toolbox.register("mate", self.crossover)
         self.toolbox.register("mutate", self.mutate)
-        self.toolbox.register("select", tools.selBest)
-
-    def eval_individual(self, individual):
+        selection_algorithm = getattr(tools, sel)
+        self.toolbox.register("select", selection_algorithm)
+        
+        if self.rescale_weights:
+            self.compute_weight_stats()
+            
+    def compute_weight_stats(self):
+        """Compute weight stats for random populations to use for rescaling of fitness"""
+        n_iter = 100
+        weight_names = [x[0] for x in self.weights]
+        
+        fitnesses = pd.DataFrame(index=range(n_iter), columns=weight_names)
+        for i in range(n_iter):
+            ind = np.random.choice(range(self.library_size), self.n_desired, replace=False)
+            fitnesses.loc[i, :] = self.eval_individual(ind, rescale=False)
+        self.stds = fitnesses.std()
+        self.means = fitnesses.mean()
+        
+    def eval_individual(self, individual, rescale=None):
         """Evaluate the fitness of the odorant set"""
         fitness = []
-        for col_name, func_name, value in self.weights:
+        for weight_name, func_name, value in self.weights:
             if isinstance(func_name, str):
                 f = getattr(self, 'eval_%s' % func_name)
-                component = f(individual, col_name)
+                component = f(individual, weight_name)
+            elif isinstance(func_name, (tuple, list, set)):
+                f, *args = func_name
+                component = f(individual, *args)
             else:
                 f = func_name
                 component = f(individual)
+            if self.rescale_weights and (rescale is not False):
+                component = (component - self.means[weight_name])/self.stds[weight_name]
             fitness.append(component)
         return fitness
 
@@ -102,7 +118,7 @@ class OdorantSetOptimizer:
         to_add = random.sample(available, N_MUTATIONS)
         individual ^= set(to_remove)
         individual |= set(to_add)
-        return individual
+        return individual,
 
     def run(self, pop=None, hof=None):
         self.pop = pop if pop else self.toolbox.population(n=self.mu)
