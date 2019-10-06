@@ -2,12 +2,16 @@ import random
 
 import numpy as np
 import pandas as pd
+import multiprocessing
+from scoop import futures
+import dask.bag as db
 from deap import base, creator, tools, algorithms
 
-
+    
 class OdorantSetOptimizer:
     def __init__(self, library, n_desired, weights=None, fitness=None,
-                 n_gen=300, mu=100, lamda=200, p_cx=0.4, p_mut=0.4, sel='selBest', rescale_weights=False):
+                 n_gen=300, mu=100, lamda=200, p_cx=0.4, p_mut=0.4, sel='selBest', 
+                 rescale_weights=False, npartitions=1):
         """
         params:
             library: A pandas dataframe containing odorants and their
@@ -65,10 +69,14 @@ class OdorantSetOptimizer:
         self.toolbox.register("mutate", self.mutate)
         selection_algorithm = getattr(tools, sel)
         self.toolbox.register("select", selection_algorithm)
+        #pool = multiprocessing.Pool()
+        #self.toolbox.register("map", pool.map)
+        if npartitions > 1:
+            self.toolbox.register("map", self.dask_map)
         
         if self.rescale_weights:
             self.compute_weight_stats()
-            
+        
     def compute_weight_stats(self):
         """Compute weight stats for random populations to use for rescaling of fitness"""
         n_iter = 100
@@ -152,6 +160,10 @@ class OdorantSetOptimizer:
 
     def eval_sum(self, individual, column):
         return self.library.iloc[list(individual)][column].sum()
+    
+    def dask_map(self, f, x):
+        x = db.from_sequence(x, npartitions=self.npartitions) 
+        return db.map(f, x).compute()
 
 
 class BetterFitness(base.Fitness):

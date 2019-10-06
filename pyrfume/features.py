@@ -2,8 +2,6 @@ import os
 import pathlib
 import pandas as pd
 from sklearn.preprocessing import StandardScaler, Normalizer, MinMaxScaler
-from fancyimpute import KNN
-
 from .base import DATA_DIR
 
 FEATURES_DIR = DATA_DIR / 'physicochemical'
@@ -52,6 +50,7 @@ def scale_features(cleaned_features, scaler):
 
 def impute_features(scaled_features):
     # Impute missing values
+    from fancyimpute import KNN
     knn = KNN(k=5)
     imputed_values = knn.fit_transform(scaled_features.values)
     imputed_features = pd.DataFrame(imputed_values,

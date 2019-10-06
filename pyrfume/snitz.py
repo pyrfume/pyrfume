@@ -4,25 +4,38 @@ import numpy as np
 import pandas as pd
 from scipy.spatial.distance import pdist, squareform
 
+import pyrfume
+from . import features
 from .base import DATA_DIR
 SNITZ_DIR = DATA_DIR / 'snitz_2013'
+
+
+def get_snitz_dragon(use_original=True, regenerate=False):
+    path = SNITZ_DIR / 'snitz_dragon.csv'
+    if not path.is_file() or regenerate:
+        snitz_feature_names = get_snitz_weights().index
+        # Use minmax scaling as in the Snitz paper
+        minmax_scaled_dragon = features.load_dragon(
+                                suffix='-cleaned-minmaxed-imputed')
+        df = minmax_scaled_dragon[snitz_feature_names]
+        pyrfume.save_data(df, path)
+    else:
+        df = pyrfume.load_data(path)#.set_index('PubChemID')
+    return df
 
 
 def get_snitz_weights(use_original=True):
     """Return a pandas Series of weights for Dragon features in Snitz"""
     if use_original:  # Use the ones from the Snitz paper, with no weights
-        file_name = 'snitz-descriptors-from-paper-dragon-6.pkl'
+        file_name = 'snitz-descriptors-from-paper-dragon-6.csv'
         path = SNITZ_DIR / file_name
-        with open(path, 'rb') as f:
-            snitz_list = pickle.load(f)
-        ones = np.ones(len(snitz_list))
-        snitz_weights = pd.Series(ones, index=snitz_list)
+        snitz_weights = pyrfume.load_data(path, index_col=0)['Weight']
     else:
         # Use the ones that I derived, with weights computed by optimization
         # using Snitz-space projections of each molecule's original unit vector
         file_name = 'snitz_dragon_weights.csv'
         path = SNITZ_DIR / file_name
-        snitz_weights = -1*pd.read_csv(path, index_col=0)['Weight']
+        snitz_weights = -pyrfume.load_data(path, index_col=0)['Weight']
     return snitz_weights
 
 

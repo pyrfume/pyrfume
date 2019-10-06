@@ -18,6 +18,8 @@ def load_data(rel_path, **kwargs):
         with open(full_path, 'rb') as f:
             data = pickle.load(f)
     else:
+        if 'index_col' not in kwargs:
+            kwargs['index_col'] = 0
         data = pd.read_csv(full_path, **kwargs)
     return data
 
