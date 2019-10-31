@@ -26,8 +26,8 @@ WORKDIR /pyrfume
 
 #### Dash stuff ####
 COPY dash ./dash
-RUN pip install -r ./dash/odormap/requirements.txt
-COPY ./dash/odormap/app /app
+RUN pip install -r ./dash/distance/requirements.txt
+COPY ./dash/distance/app /app
 
 #### Install pyrfume (root of the build context) #####
 COPY setup.py ./

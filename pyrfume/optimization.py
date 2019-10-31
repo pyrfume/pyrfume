@@ -1,5 +1,7 @@
+import math
 import random
 
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import multiprocessing
@@ -164,6 +166,19 @@ class OdorantSetOptimizer:
     def dask_map(self, f, x):
         x = db.from_sequence(x, npartitions=self.npartitions) 
         return db.map(f, x).compute()
+    
+    def plot_score_history(self):
+        fig, axes = plt.subplots(2, math.ceil((len(self.weights)+1)/2), figsize=(20,8))
+        scores = [x['best'][0] for x in self.logbook]
+        axes[0, 0].plot(scores)
+        axes[0, 0].set_title('Total')
+        for j, (feature, stat, weight) in enumerate(self.weights):
+            ax = axes.flat[j+1]
+            history = [x['best'][j+1] for x in self.logbook]
+            ax.plot(history)
+            ax.set_title(feature)
+        axes[0, 0].set_xlabel('Generation')
+        plt.tight_layout()
 
 
 class BetterFitness(base.Fitness):

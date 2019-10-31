@@ -27,7 +27,8 @@ file_path = pyrfume.DATA_DIR / 'odorants' / 'all_cids.csv'
 sources = pd.read_csv(file_path, index_col=0)
 
 spaces = OrderedDict({'snitz': 'Snitz Map',
-                      'haddad': 'Haddad Map'})
+                      'haddad': 'Haddad Map',
+                      'company_x': 'Google Map'})
 algorithm = 'umap'
 embeddings = {}
 for space in spaces:
@@ -35,7 +36,8 @@ for space in spaces:
     with open(pyrfume.DATA_DIR / 'odorants' / ('%s.pkl' % key), 'rb') as f:
         embeddings[space] = pickle.load(f)
         # Remove molecules for which there are no details
-        embeddings[space] = embeddings[space].loc[details.index]
+        good_cids = details.index.intersection(embeddings[space].index)
+        embeddings[space] = embeddings[space].loc[good_cids, :]
 
 # Assert that all embeddings have the same number of molecules
 assert len(set([embeddings[space].shape[0] for space in spaces])) == 1
@@ -50,14 +52,10 @@ def make_figure(embedding, title):
                 'marker': {'size': 5,
                            'color': embedding.loc[:, 'cluster'].values,
                            'opacity': 0.5,
-                           'colorscale': 'rainbow'}
-            }),
-            #go.Scattergl(**{
-            #    'mode': 'markers',
-            #    'marker': {'size': 20,
-            #               'color': 'black',
-            #               'opacity': 1}
-            #})
+                           'cmax': 9,
+                           'cmin': 0,
+                           'colorscale': 'Rainbow'}
+                }),
             ],
 
         'layout': {
@@ -80,8 +78,8 @@ def make_figure(embedding, title):
             'hovermode': 'closest',
             'paper_bgcolor': 'rgba(0,0,0,0)',
             'plot_bgcolor': 'rgba(0,0,0,0)',
-            'width': 900,
-            'height': 700,
+            'width': 700,
+            'height': 500,
             'margin': {'t': 50},
             },
         }
@@ -146,22 +144,14 @@ def get_index(*hoverData):
      Output('iupac', 'children'),
      Output('sources', 'children'),
      Output('molecule-2d', 'src'),
-     #Output(snitz_id, 'figure'),
-     #Output(haddad_id, 'figure'),
      ],
     [Input(space, 'hoverData') for space in spaces],
-    #[State(snitz_id, 'figure'),
-    # State(haddad_id, 'figure')]
      )
-def _display_hover(*hoverData):#, snitz_figure, haddad_figure):
+def _display_hover(*hoverData):
     index = get_index(*hoverData)
     if index is not None:
-        print(index)#pass
-        #snitz_figure['data'][1]['x'] = [snitz_embedding[index, 0]]
-        #snitz_figure['data'][1]['y'] = [snitz_embedding[index, 1]]
-        #haddad_figure['data'][1]['x'] = [haddad_embedding[index, 0]]
-        #haddad_figure['data'][1]['y'] = [haddad_embedding[index, 1]]
-    return display_hover(index)# + [snitz_figure, haddad_figure]
+        print(index)
+    return display_hover(index)
 
 
 def display_hover(index):

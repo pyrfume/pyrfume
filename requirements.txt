@@ -2,3 +2,5 @@ pubchempy
 quantities
 rickpy
 sympy
+scikit-learn
+scipy
