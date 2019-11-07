@@ -1,5 +1,8 @@
 import math
 import random
+import contextlib
+import io
+import sys
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -8,10 +11,19 @@ import multiprocessing
 from scoop import futures
 import dask.bag as db
 from deap import base, creator, tools, algorithms
+    
+#sys.stdout = sys.__stdout__
 
+@contextlib.contextmanager
+def suppress_stdout(on):
+    if on:
+        sys.stdout = io.StringIO()
+    yield
+    sys.stdout = sys.__stdout__
+    
     
 class OdorantSetOptimizer:
-    def __init__(self, library, n_desired, weights=None, fitness=None,
+    def __init__(self, library, n_desired, keep_cids=None, weights=None, fitness=None,
                  n_gen=300, mu=100, lamda=200, p_cx=0.4, p_mut=0.4, sel='selBest', 
                  rescale_weights=False, npartitions=1):
         """
@@ -23,13 +35,15 @@ class OdorantSetOptimizer:
                      descriptors.
             n_desired: The size of the set of odorants desired from this
                        library.
+            keep: An iterable of CIDs that must exist in every candidate set.
+                  Obviously this must be less than `n_desired`.
             weights: A list of 3-tuples each containing the name of a weight,
                      a method to apply to the library dataframe, and a weight
                      to apply to the function's output.
             fitness: ...
             mu: Size of the population (number of odorant sets under consideration
                 in each generation).
-            lambda: ...
+            lamda: ...
             p_cx: Crossover probability in each generation.
             p_mut: Mutation probability in each generation.
             sel: Selection algorithm, e.g. 'selBest' or 'selNSGA2'
@@ -44,9 +58,15 @@ class OdorantSetOptimizer:
             self.fitness = BetterFitness
 
         weight_names, weight_functions, weight_values = zip(*self.weights)
+        assert(len(weight_names) == len(set(weight_names))), "Weight names must all be unique."
 
         # Number of available odorants
         self.library_size = self.library.shape[0]
+        
+        if self.keep_cids:
+            # Get library integer indices of the CIDs to keep
+            self.keep = set(np.flatnonzero(self.library.index.isin(self.keep_cids)))
+            self.n_needed = self.n_desired - len(self.keep)
 
         creator.create("Fitness", self.fitness, weights=weight_values)
         creator.create("Individual", set, fitness=creator.Fitness)
@@ -118,19 +138,42 @@ class OdorantSetOptimizer:
         ind1.update(x1)
         ind2.clear()
         ind2.update(x2)
+        assert len(ind1) == self.n_desired, "Individual smaller than desired size."
+        assert len(ind2) == self.n_desired, "Individual smaller than desired size."
+        if self.keep_cids is not None:
+            ind1 = self.force_keep(ind1)
+            ind2 = self.force_keep(ind2)
         return ind1, ind2
 
     def mutate(self, individual):
-        """Mutation that pops or add some elements."""
+        """Mutation that pops or adds some elements."""
         N_MUTATIONS = 1
         available = list(set(range(self.library_size)).difference(individual))
         to_remove = random.sample(list(individual), N_MUTATIONS)
         to_add = random.sample(available, N_MUTATIONS)
+        # Removes elements found in `to_remove`
+        # XOR works here to remove `to_remove` because it can
+        # only contain current members of the individial
         individual ^= set(to_remove)
+        # Adds elements found in `to_add`
         individual |= set(to_add)
+        assert len(individual) == self.n_desired, "Individual smaller than desired size."
+        if self.keep_cids is not None:
+            individual = self.force_keep(individual)
         return individual,
-
-    def run(self, pop=None, hof=None):
+    
+    def force_keep(self, ind):
+        """Ensure that the CIDs in `self.keep` get included"""
+        # Consider only molecules for this individual which are not in the keep set
+        candidates = ind.difference(self.keep)
+        # Keep only enough of those that there are room for
+        to_add = set(random.sample(candidates, self.n_needed))
+        # Set this individual to contain this subset of the candidates plus the keep set
+        ind.clear()
+        ind.update(to_add | self.keep)
+        return ind
+        
+    def run(self, pop=None, hof=None, quiet=False):
         self.pop = pop if pop else self.toolbox.population(n=self.mu)
         if hof is None:
             self.hof = tools.HallOfFame(self.n_gen)
@@ -151,9 +194,10 @@ class OdorantSetOptimizer:
         self.stats.register("best", best)
 
         f = algorithms.eaMuPlusLambda
-        self.pop, self.logbook = f(self.pop, self.toolbox, self.mu,
-                                   self.lamda, self.p_cx, self.p_mut,
-                                   self.n_gen, self.stats, halloffame=self.hof)
+        with suppress_stdout(quiet):
+            self.pop, self.logbook = f(self.pop, self.toolbox, self.mu,
+                                       self.lamda, self.p_cx, self.p_mut,
+                                       self.n_gen, self.stats, halloffame=self.hof)
 
         return self.pop, self.stats, self.hof, self.logbook
 
