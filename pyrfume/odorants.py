@@ -437,6 +437,41 @@ def from_cids(cids, property_list=None):
     return result
 
 
+def cids_to_cas(cids):
+    result = {}
+    chunk_size = 100
+    p = ProgressBar(len(cids))
+    for start in range(0, len(cids), chunk_size):
+        stop = min(start + chunk_size, len(cids))
+        msg = "Retrieving %d through %d" % (start, stop-1)
+        p.animate(start, status=msg)
+        cid_subset = [str(x) for x in cids[start:stop]]
+        cid_subset = ','.join(cid_subset)
+        synonyms_template = ("https://pubchem.ncbi.nlm.nih.gov/"
+                             "rest/pug/compound/cid/%s/synonyms/JSON")
+        url = synonyms_template % (cid_subset)
+        json_data = url_to_json(url)
+        information = json_data['InformationList']['Information']
+        for i, info in enumerate(information):
+            cid = info['CID']
+            try:
+                synonyms = info['Synonym']
+            except KeyError:
+                result[cid] = []
+            else:
+                result[cid] = cas_from_synonyms(synonyms)
+        result
+    return result
+
+
+def cas_from_synonyms(synonyms):
+    result = []
+    for s in synonyms:
+        if re.match('^[0-9]+\-[0-9]+\-[0-9]+$', s):
+            result.append(s)
+    return result
+
+            
 def cactus(identifier, output='cas'):
     url_template = "https://cactus.nci.nih.gov/chemical/structure/%s/%s"
     url = url_template % (identifier, output)
