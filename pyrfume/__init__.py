@@ -14,9 +14,12 @@ from .base import PACKAGE_DIR, DATA_DIR
 def load_data(rel_path, **kwargs):
     full_path = DATA_DIR / rel_path
     is_pickle = any([str(full_path).endswith(x) for x in ('.pkl', '.pickle', '.p')])
+    is_excel = any([str(full_path).endswith(x) for x in ('.xls', '.xlsx')])
     if is_pickle:
         with open(full_path, 'rb') as f:
             data = pickle.load(f)
+    elif is_excel:
+        data = pd.read_excel(full_path, **kwargs)
     else:
         if 'index_col' not in kwargs:
             kwargs['index_col'] = 0
