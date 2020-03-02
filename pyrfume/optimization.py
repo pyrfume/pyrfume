@@ -8,11 +8,9 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import multiprocessing
-from scoop import futures
 import dask.bag as db
 from deap import base, creator, tools, algorithms
-    
-#sys.stdout = sys.__stdout__
+
 
 @contextlib.contextmanager
 def suppress_stdout(on):

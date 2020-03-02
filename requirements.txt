@@ -1,5 +1,7 @@
+ipython
 matplotlib
 missingpy
+mordred
 numpy
 pandas
 pubchempy
