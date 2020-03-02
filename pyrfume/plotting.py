@@ -8,8 +8,12 @@ import pandas as pd
 import plotly.graph_objs as go
 from plotly.offline import iplot
 import pyrfume
-from rdkit import Chem
-from rdkit.Chem import Draw
+try:
+    from rdkit import Chem
+    from rdkit.Chem import Draw
+except ImportError:
+    warning.warn("Parts of rdkit could not be imported; try installing rdkit via conda",
+                 "ImportWarning")
 
 
 def mpl_embedding(xy, colors=None, alpha=0.25, figsize=(6, 6),

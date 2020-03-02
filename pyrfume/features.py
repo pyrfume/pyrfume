@@ -5,12 +5,18 @@ from mordred import Calculator, descriptors as all_descriptors
 import numpy as np
 import pandas as pd
 from rickpy import ProgressBar
-from rdkit import Chem
-from rdkit.Chem.Descriptors import MolWt
-from rdkit.Chem import inchi,AllChem,SaltRemover
-from rdkit import DataStructs
-from rdkit.ML.Descriptors import MoleculeDescriptors
+import warnings
 from sklearn.preprocessing import StandardScaler, Normalizer, MinMaxScaler
+
+try:
+    from rdkit import Chem
+    from rdkit.Chem.Descriptors import MolWt
+    from rdkit.Chem import inchi,AllChem,SaltRemover
+    from rdkit import DataStructs
+    from rdkit.ML.Descriptors import MoleculeDescriptors
+except ImportError:
+    warning.warn("Parts of rdkit could not be imported; try installing rdkit via conda",
+                 "ImportWarning")
 
 from .base import DATA_DIR
 

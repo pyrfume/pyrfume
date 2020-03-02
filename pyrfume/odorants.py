@@ -15,9 +15,15 @@ import pubchempy as pcp
 from PIL import Image
 import quantities as pq
 from quantities.constants.statisticalmechanics import R
-from rdkit import Chem
-from rdkit.Chem import Draw
+import warnings
 
+try:
+    from rdkit import Chem
+    from rdkit.Chem import Draw
+except ImportError:
+    warning.warn("Parts of rdkit could not be imported; try installing rdkit via conda",
+                 "ImportWarning")
+    
 from pyrfume import ProgressBar
 from pyrfume import load_data
 from pyrfume.physics import mackay

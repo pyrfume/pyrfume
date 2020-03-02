@@ -4,7 +4,6 @@ numpy
 pandas
 pubchempy
 quantities
-rdkit
 rickpy
 scipy
 sympy
