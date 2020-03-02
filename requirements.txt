@@ -1,4 +1,6 @@
+dask
 ipython
+ipywidgets
 matplotlib
 missingpy
 mordred

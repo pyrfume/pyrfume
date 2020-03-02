@@ -44,6 +44,7 @@ setup(
     license='MIT',
     description='A valdiation library for human olfactory psychophysics research.',
     install_requires=read_requirements(),
+    extras_require={'features': ['rdkit']}
 )
 
 
