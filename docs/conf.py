@@ -13,5 +13,6 @@ apidoc_module_dir = '../../pyrfume'
 apidoc_output_dir = '../build'
 apidoc_excluded_paths = ['*unit_test*']
 apidoc_separate_modules = True
+master_doc = 'index'
 exclude_patterns = ['*unit_test*']
 html_theme = 'alabaster'
