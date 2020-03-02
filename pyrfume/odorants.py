@@ -19,11 +19,14 @@ from rdkit import Chem
 from rdkit.Chem import Draw
 
 from pyrfume import ProgressBar
+from pyrfume import load_data
 from pyrfume.physics import mackay
 
 ROOM_TEMP = (22 + 273.15) * pq.Kelvin
 ROOM_PRESSURE = 1 * pq.atm
 GAS_MOLAR_DENSITY = ROOM_PRESSURE / (R * ROOM_TEMP)
+
+ODORANTS_BASIC_INFO_PATH = 'odorants/all-cids-properties.csv'
 
 
 class Solution:
@@ -293,6 +296,12 @@ class Molecule:
             return self.cid == other.cid
         else:
             return self.name == self.name
+        
+    def __lt__(self, other):
+        if self.cid:
+            return self.cid < other.cid
+        else:
+            return self.name < self.name
 
     def __hash__(self):
         return id(self)
@@ -412,7 +421,7 @@ def from_cids(cids, property_list=None):
         stop = min(start + chunk_size, len(cids))
         msg = "Retrieving %d through %d" % (start, stop-1)
         p.animate(start, status=msg)
-        cid_subset = [str(x) for x in cids[start:stop]]
+        cid_subset = [str(x) for x in [cid for cid in cids[start:stop] if int(cid)>0 and cid is not None]]
         cid_subset = ','.join(cid_subset)
         properties_template = ("https://pubchem.ncbi.nlm.nih.gov/"
                                "rest/pug/compound/cid/%s/property/"
@@ -430,10 +439,15 @@ def from_cids(cids, property_list=None):
             try:
                 synonyms = information[i]['Synonym']
             except KeyError:
-                d['name'] = d['IUPACName']
+                try:
+                    d['name'] = d['IUPACName']
+                except KeyError:
+                    d['name'] = ''
             else:
                 d['name'] = synonyms[0].lower()
         result += data
+        msg = "Retrieved %d through %d" % (start, stop-1)
+        p.animate(stop, status=msg)
     return result
 
 
@@ -576,6 +590,26 @@ def crop_image(img, padding=0):
         x_range[0]:x_range[1], y_range[0]:y_range[1], 0:3]
     img = Image.fromarray(as_array_cropped, mode='RGB')
     return img
+
+
+def all_odorants():
+    """All CIDs, SMILES, Names, and Molecular Weights found in the
+    file at ODORANTS_BASIC_INFO_PATH"""
+    df = load_data(ODORANTS_BASIC_INFO_PATH)
+    df = df.sort_index()
+    return df
+
+
+def all_cids():
+    """All CIDs found in the file at ODORANTS_BASIC_INFO_PATH"""
+    df = all_odorants()
+    return list(df.index)
+
+
+def all_smiles():
+    """All SMILES found in the file at ODORANTS_BASIC_INFO_PATH"""
+    df = all_odorants()
+    return list(df['SMILES'])
 
 
 if __name__ == '__main__':
