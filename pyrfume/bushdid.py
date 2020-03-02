@@ -1,6 +1,7 @@
 import csv
 import os
 import pandas as pd
+import pathlib
 import pyrfume
 from pyrfume import Component, Mixture, TriangleTest, Result
 
@@ -13,12 +14,12 @@ OVERLAPS = {10: [9, 6, 3, 0],
 N_TESTS = 20
 N_SUBJECTS = 26
 C = 128
-BUSHDID_PATH = os.path.join(pyrfume.DATA, 'bushdid')
+BUSHDID_PATH = pathlib.Path('bushdid_2014')
 
 
 def load_data():
-    path = os.path.join(BUSHDID_PATH, 'Bushdid-tableS1.csv')
-    df = pd.read_csv(path, encoding='latin1')
+    path = BUSHDID_PATH / 'Bushdid-tableS1.csv'
+    df = pyrfume.load_data(BUSHDID_PATH, encoding='latin1')
     df = df.iloc[:, :4]
     df.columns = ['Name', 'CAS', 'Dilution', 'Solvent']
     df = df.set_index('CAS')
@@ -36,7 +37,7 @@ def load_odorants_tests_results(all_components):
     odorants = {}
     tests = {}
     results = []
-    path = os.path.join(BUSHDID_PATH, 'Bushdid-tableS2.csv')
+    path = pyrfume.DATA_DIR / BUSHDID_PATH / 'Bushdid-tableS2.csv'
     f = open(path, 'r', encoding='latin1')
     reader = csv.reader(f)
     next(reader)

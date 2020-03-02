@@ -7,7 +7,7 @@ import os
 import platform
 import pyrfume
 
-CATALOG_PATH = os.path.join(pyrfume.DATA, 'sigma', 'sigma_ff_catalog.txt')
+CATALOG_PATH = pyrfume.DATA_DIR / 'sigma' / 'sigma_ff_catalog.txt'
 
 
 def get_data():

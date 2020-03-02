@@ -1,7 +1,7 @@
+from missingpy import KNNImputer
 import os
 import pandas as pd
 from sklearn.preprocessing import StandardScaler
-from fancyimpute import KNN
 
 from .base import DATA_DIR
 
@@ -19,7 +19,7 @@ def clean_dragon(save=False):
     df = pd.DataFrame(scaled, index=df.index, columns=df.columns)
 
     # Impute missing values
-    knn = KNN(k=5)
+    knn = KNNImputer(k=5)
     imputed = knn.fit_transform(df.values)
     df = pd.DataFrame(imputed, index=df.index, columns=df.columns)
 

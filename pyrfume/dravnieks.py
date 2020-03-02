@@ -6,7 +6,7 @@ dravieks.txt produced by copying and pasting from the supplemental material of
 import os
 import pyrfume
 
-DRAV_PATH = os.path.join(pyrfume.DATA, 'dravnieks')
+DRAV_PATH = os.path.join(pyrfume.DATA_DIR, 'dravnieks')
 
 
 def get_data():
