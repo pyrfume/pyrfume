@@ -6,9 +6,12 @@ import os
 try:
     from pip.req import parse_requirements
     from pip.download import PipSession
-except:
+except ImportError:
     from pip._internal.req import parse_requirements
-    from pip._internal.download import PipSession
+    try:
+        from pip._internal.download import PipSession
+    except ImportError:
+        from pip._internal.network.session import PipSession
 
 from setuptools import setup, find_packages
 
