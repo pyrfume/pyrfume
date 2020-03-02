@@ -49,7 +49,7 @@ def smiles_to_features(smiles, use_features, imputer):
     features = features[use_features]
     # Make sure the list of features used for prediction is identical to that used for training
     # i.e. make sure the line above did what was intended
-    assert list(features) == use_features
+    #assert list(features) == use_features
     return features
 
 

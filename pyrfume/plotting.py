@@ -13,7 +13,7 @@ try:
     from rdkit.Chem import Draw
 except ImportError:
     warnings.warn("Parts of rdkit could not be imported; try installing rdkit via conda",
-                 "ImportWarning")
+                  UserWarning)
 
 
 def mpl_embedding(xy, colors=None, alpha=0.25, figsize=(6, 6),

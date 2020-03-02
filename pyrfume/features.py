@@ -16,7 +16,7 @@ try:
     from rdkit.ML.Descriptors import MoleculeDescriptors
 except ImportError:
     warnings.warn("Parts of rdkit could not be imported; try installing rdkit via conda",
-                 "ImportWarning")
+                  UserWarning)
 
 from .base import DATA_DIR
 
