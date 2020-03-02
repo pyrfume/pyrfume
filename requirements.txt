@@ -1,6 +1,13 @@
+matplotlib
+missingpy
+numpy
+pandas
 pubchempy
 quantities
+rdkit
 rickpy
+scipy
 sympy
 scikit-learn
 scipy
+scoop
