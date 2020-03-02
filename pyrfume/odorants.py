@@ -21,7 +21,7 @@ try:
     from rdkit import Chem
     from rdkit.Chem import Draw
 except ImportError:
-    warning.warn("Parts of rdkit could not be imported; try installing rdkit via conda",
+    warnings.warn("Parts of rdkit could not be imported; try installing rdkit via conda",
                  "ImportWarning")
     
 from pyrfume import ProgressBar

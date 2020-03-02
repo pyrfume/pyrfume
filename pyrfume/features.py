@@ -15,7 +15,7 @@ try:
     from rdkit import DataStructs
     from rdkit.ML.Descriptors import MoleculeDescriptors
 except ImportError:
-    warning.warn("Parts of rdkit could not be imported; try installing rdkit via conda",
+    warnings.warn("Parts of rdkit could not be imported; try installing rdkit via conda",
                  "ImportWarning")
 
 from .base import DATA_DIR
