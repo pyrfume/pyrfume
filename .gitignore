@@ -18,3 +18,6 @@ htmlcov
 .vscode
 .dropbox
 data
+docs/Makefile
+docs/_build/
+docs/make.bat
