@@ -37,6 +37,7 @@ def smiles_to_features(smiles, use_features, imputer):
     # Compute Mordred features for the new molecules
     mordred = smiles_to_mordred(smiles)
     # Impute any missing values based on the missing data imputer
+    print(mordred.shape)
     mordred[:] = imputer.transform(mordred)
     # Compute Morgan features for the new molecules
     sim_smiles = list(set(all_smiles()))
