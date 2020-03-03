@@ -613,7 +613,8 @@ def all_cids():
 
 
 def all_smiles():
-    """All SMILES found in the file at ODORANTS_BASIC_INFO_PATH"""
+    """All SMILES found in the file at ODORANTS_BASIC_INFO_PATH.
+    May contain duplicates (if two CIDs give the same SMILES)"""
     df = all_odorants()
     return list(df['SMILES'])
 

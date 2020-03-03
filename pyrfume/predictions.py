@@ -39,7 +39,7 @@ def smiles_to_features(smiles, use_features, imputer):
     # Impute any missing values based on the missing data imputer
     mordred[:] = imputer.transform(mordred)
     # Compute Morgan features for the new molecules
-    sim_smiles = all_smiles()
+    sim_smiles = list(set(all_smiles()))
     morgan_sim = smiles_to_morgan_sim(smiles, sim_smiles)
     # Combine Mordred (after imputation) and Morgan features into one dataframe
     features = mordred.join(morgan_sim)
@@ -49,13 +49,13 @@ def smiles_to_features(smiles, use_features, imputer):
     features = features[use_features]
     # Make sure the list of features used for prediction is identical to that used for training
     # i.e. make sure the line above did what was intended
-    #assert list(features) == use_features
+    assert list(features) == use_features
     return features
 
 
 def predict(model, features, descriptors):
     # Predict perceptual descriptors for the new molecules based on their physicochemical features
-    predictions = model.predict(features)
+    predictions = model.predict(features).round(2)
     # Make a dataframe for these predictions
     predictions = pd.DataFrame(index=features.index, columns=descriptors, data=predictions)
     return predictions
