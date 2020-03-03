@@ -1,0 +1,21 @@
+name: pyrfume
+channels:
+  - defaults
+dependencies:
+  - dask
+  - ipython
+  - ipywidgets
+  - matplotlib
+  - numpy
+  - pandas
+  - python>=3.4
+  - conda-forge::rdkit
+  - scikit-learn
+  - scipy
+  - sympy
+  - pip:
+    - missingpy
+    - mordred
+    - pubchempy
+    - quantities
+    - rickpy
