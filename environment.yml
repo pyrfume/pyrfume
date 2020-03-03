@@ -8,6 +8,7 @@ dependencies:
   - matplotlib
   - numpy
   - pandas
+  - plotly
   - python>=3.4
   - conda-forge::rdkit
   - scikit-learn

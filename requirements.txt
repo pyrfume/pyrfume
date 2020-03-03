@@ -1,4 +1,4 @@
-dask
+dask[bag]
 ipython
 ipywidgets
 matplotlib
@@ -6,6 +6,7 @@ missingpy
 mordred
 numpy
 pandas
+plotly
 pubchempy
 quantities
 rickpy
