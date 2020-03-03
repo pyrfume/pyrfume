@@ -1,4 +1,5 @@
 dask[bag]
+deap
 ipython
 ipywidgets
 matplotlib

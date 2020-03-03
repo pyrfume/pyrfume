@@ -8,6 +8,7 @@ import pandas as pd
 import plotly.graph_objs as go
 from plotly.offline import iplot
 import pyrfume
+import warnings
 try:
     from rdkit import Chem
     from rdkit.Chem import Draw
