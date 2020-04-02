@@ -1,6 +1,7 @@
 """Classes for odorants, mixtures, chemical orders, etc."""
 
 import base64
+from collections import OrderedDict
 import io
 import json
 from datetime import datetime
@@ -33,6 +34,7 @@ ROOM_PRESSURE = 1 * pq.atm
 GAS_MOLAR_DENSITY = ROOM_PRESSURE / (R * ROOM_TEMP)
 
 ODORANTS_BASIC_INFO_PATH = 'odorants/all-cids-properties.csv'
+ODORANT_SOURCES_PATH = 'odorants/all-cids.csv'
 
 
 class Solution:
@@ -302,7 +304,7 @@ class Molecule:
             return self.cid == other.cid
         else:
             return self.name == self.name
-        
+ 
     def __lt__(self, other):
         if self.cid:
             return self.cid < other.cid
@@ -457,8 +459,15 @@ def from_cids(cids, property_list=None):
     return result
 
 
+def cids_to_smiles(cids):
+    """Returns an ordered dictionary of SMILES strings with CIDs as keys"""
+    info = from_cids(cids, property_list=['IsomericSMILES'])
+    smiles = {item['CID']: item['IsomericSMILES'] for item in info}
+    return smiles
+
+
 def cids_to_cas(cids):
-    result = {}
+    result = OrderedDict
     chunk_size = 100
     p = ProgressBar(len(cids))
     for start in range(0, len(cids), chunk_size):
@@ -602,6 +611,13 @@ def all_odorants():
     """All CIDs, SMILES, Names, and Molecular Weights found in the
     file at ODORANTS_BASIC_INFO_PATH"""
     df = load_data(ODORANTS_BASIC_INFO_PATH)
+    df = df.sort_index()
+    return df
+
+
+def all_sources():
+    """Whether or not each odorant (by CID) is in each of the data sources"""
+    df = load_data(ODORANT_SOURCES_PATH)
     df = df.sort_index()
     return df
 
