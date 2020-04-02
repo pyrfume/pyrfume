@@ -9,7 +9,7 @@ import numpy as np
 import pandas as pd
 import pickle
 import pyrfume
-from pyrfume.odorants import smiles_to_image
+from pyrfume.odorants import smiles_to_image, all_odorants, all_sources
 
 
 ##### Initialize app #####
@@ -21,10 +21,8 @@ dapp = dash.Dash(__name__,
                  external_stylesheets=external_stylesheets)
 
 ##### Load data #####
-file_path = pyrfume.DATA_DIR / 'odorants' / 'all_cids_properties.csv'
-details = pd.read_csv(file_path, usecols=range(5), index_col=0)
-file_path = pyrfume.DATA_DIR / 'odorants' / 'all_cids.csv'
-sources = pd.read_csv(file_path, index_col=0)
+details = all_odorants()
+sources = all_sources()
 
 spaces = OrderedDict({'snitz': 'Snitz Map',
                       'haddad': 'Haddad Map',
