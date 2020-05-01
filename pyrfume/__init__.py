@@ -1,3 +1,4 @@
+import logging
 import os
 import urllib
 import json
@@ -5,10 +6,10 @@ import pickle
 
 import numpy as np
 import pandas as pd
-
-from rickpy import ProgressBar
+from tqdm.auto import tqdm, trange
 
 from .base import PACKAGE_DIR, DATA_DIR
+logger = logging.getLogger('pyrfume')
 
 
 def load_data(rel_path, **kwargs):
@@ -29,7 +30,11 @@ def load_data(rel_path, **kwargs):
 
 def save_data(df, rel_path, **kwargs):
     full_path = DATA_DIR / rel_path
-    df.to_csv(full_path, **kwargs)
+    is_pickle = any([str(full_path).endswith(x) for x in ('.pkl', '.pickle', '.p')])
+    is_excel = any([str(full_path).endswith(x) for x in ('.xls', '.xlsx')])
+    is_csv = any([str(full_path).endswith(x) for x in ('.csv')])
+    if is_pickle:
+        df.to_csv(full_path, **kwargs)
 
 
 class Mixture(object):

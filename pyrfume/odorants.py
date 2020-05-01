@@ -9,6 +9,7 @@ from urllib.request import urlopen
 from urllib.error import HTTPError
 from urllib.parse import quote
 import re
+import time
 
 from IPython.display import display, Image
 import numpy as np
@@ -24,9 +25,8 @@ try:
 except ImportError:
     warnings.warn("Parts of rdkit could not be imported; try installing rdkit via conda",
                   UserWarning)
-    
-from pyrfume import ProgressBar
-from pyrfume import load_data
+
+from pyrfume import load_data, logger, tqdm, trange
 from pyrfume.physics import mackay
 
 ROOM_TEMP = (22 + 273.15) * pq.Kelvin
@@ -38,7 +38,7 @@ ODORANT_SOURCES_PATH = 'odorants/all-cids.csv'
 
 
 class Solution:
-    def __init__(self, components, date_created=None):
+    def __init__(self, components: dict, date_created: datetime.timestamp = None):
         self.total_volume = 0 * pq.mL
         assert isinstance(components, dict), "Components must be a dict"
         for component, volume in components.items():
@@ -56,7 +56,7 @@ class Solution:
     def compounds(self):
         return self._compounds()
 
-    def _compounds(self, result=None):
+    def _compounds(self, result: dict = None):
         if result is None:
             result = {}
         for component, volume in self.components.items():
@@ -190,15 +190,15 @@ class ChemicalOrder:
         self.known_impurities = known_impurities
 
     # Molecule
-    molecule = None
+    molecule : 'Molecule' = None
     # Vendor, e.g. Sigma-Aldrich
-    vendor = None
+    vendor : 'Vendor' = None
     # ID number of compound at vendor
-    part_id = ''
+    part_id : str = ''
     # Reported purity as a fraction
-    purity = 1
+    purity : float = 1
     # List of known impurities (Molecules)
-    known_impurities = None
+    known_impurities : list = None
 
 
 class Vendor:
@@ -206,8 +206,8 @@ class Vendor:
         self.name = name
         self.url = url
 
-    name = ''
-    url = ''
+    name : str = ''
+    url : str = ''
 
 
 class Molecule:
@@ -219,21 +219,21 @@ class Molecule:
             self.name = name
 
     # Integer Chemical ID number (CID) from PubChem
-    cid = 0
+    cid : int = 0
     # Chemical Abstract Service (CAS) number
-    cas = ''
+    cas : str = ''
     # Principal name
-    name = ''
+    name : str = ''
     # Synonyms
-    synonyms = ''
+    synonyms : str = ''
     # IUPAC name (long, unique name)
-    iupac = ''
+    iupac : str = ''
     # Density (pq.g / pq.ml)
-    density = None
+    density : float = None
     # Vapor pressure (pq.Pa)
-    vapor_pressure = None
+    vapor_pressure : float = None
     # Molecular weight (pq.g / pq.mol)
-    molecular_weight = None
+    molecular_weight : float = None
 
     @property
     def molarity(self):
@@ -326,7 +326,7 @@ class Molecule:
         return result
 
 
-def url_to_json(url, verbose=True):
+def url_to_json(url, verbose=True) -> str:
     json_data = None
     msgs = []
     try:
@@ -341,7 +341,7 @@ def url_to_json(url, verbose=True):
     return json_data
 
 
-def canonical_smiles(smiles, kekulize=False):
+def canonical_smiles(smiles: str, kekulize: bool = False) -> str:
     """Use rdkit to convert the `smiles` string to canonical form"""
     mol = Chem.MolFromSmiles(smiles)
     if mol: # If a mol object was successfully create (i.e. not `None`)
@@ -353,37 +353,41 @@ def canonical_smiles(smiles, kekulize=False):
     return smiles
 
 
-def get_cids(identifiers, kind='name', verbose=True):
+def get_cids(identifiers: list, kind: str ='name', verbose: bool =True,
+             wait: float = 0, results: dict = None) -> dict:
     """Return CIDs for molecule based on any synonym,
     including a chemical name or a CAS"""
     kind = kind.lower()
-    results = {}
-    p = ProgressBar(len(identifiers))
-    for i, identifier in enumerate(identifiers):
-        p.animate(i, status=identifier)
+    if results is None:
+        results = {}
+    p = tqdm(identifiers)
+    for identifier in p:
+        p.set_description(identifier)
         cid = get_cid(identifier, kind=kind, verbose=verbose)
         if not cid:
-            p.log("Could not find %s" % identifier)
+            logger.warning("Could not find %s" % identifier)
         results[identifier] = cid
-    p.report()
+        if wait:
+            time.sleep(wait)
     return results
 
 
-def get_cid(identifier, kind='name', verbose=True, fix_smiles_on_error=True):
+def get_cid(identifier: str, kind: str = 'name', verbose: bool = True,
+            fix_smiles_on_error: bool = True) -> int:
     """Return data about a molecule from any synonym,
     including a chemical name or a CAS"""
     kind=kind.lower()
     try:
         result = pcp.get_cids(identifier, namespace=kind)
     except pcp.BadRequestError:
-        print('Request Error for "%s"' % identifier)
+        logger.warning('Request Error for "%s"' % identifier)
         result = []
     if not len(result):
         cid = 0
     else:
         if (len(result) > 1) and verbose:
-            print("Multiple CIDs for %s: %s" %
-                  (identifier, result))
+            logger.warning("Multiple CIDs for %s: %s" %
+                       (identifier, result))
         cid = result[0]
     if not cid and kind == 'smiles' and fix_smiles_on_error:
         # Retry with canonical SMILES
@@ -392,43 +396,15 @@ def get_cid(identifier, kind='name', verbose=True, fix_smiles_on_error=True):
             cid = get_cid(identifier, kind=kind, verbose=verbose, fix_smiles_on_error=False)
     return cid
 
-    """
-    # DEPRECATED
-    # Try as a compound
-    url_template = ("https://pubchem.ncbi.nlm.nih.gov/"
-                    "rest/pug/compound/%s/%s/property/"
-                    "isomericsmiles,iupacname,molecularweight,/JSON")
-    url = url_template % (kind, identifier)
-    json_data = url_to_json(url, verbose=verbose)
-    result = {}
-    if json_data:
-        result = json_data['PropertyTable']['Properties'][0]
-    else:  # Try again as a substance
-        url_template = ("https://pubchem.ncbi.nlm.nih.gov/"
-                        "rest/pug/substance/%s/%s/cids/json?"
-                        "list_return=flat")
-        url = url_template % (kind, identifier)
-        json_data = url_to_json(url, verbose=verbose)
-        if json_data:
-            cids = json_data['IdentifierList']['CID']
-            if cids and verbose:
-                print("Substance %s has CIDs: " % identifier, cids)
-            cid_results = from_cids(cids)
-            result = cid_results[0]
-    """
-    return result
 
-
-def from_cids(cids, property_list=None):
+def from_cids(cids: list, property_list: bool = None) -> list:
     if property_list is None:
         property_list = ['MolecularWeight', 'IsomericSMILES', 'IUPACName']
     result = []
     chunk_size = 100
-    p = ProgressBar(len(cids))
-    for start in range(0, len(cids), chunk_size):
+    for start in trange(0, len(cids), chunk_size):
         stop = min(start + chunk_size, len(cids))
         msg = "Retrieving %d through %d" % (start, stop-1)
-        p.animate(start, status=msg)
         cid_subset = [str(x) for x in [cid for cid in cids[start:stop] if int(cid)>0 and cid is not None]]
         cid_subset = ','.join(cid_subset)
         properties_template = ("https://pubchem.ncbi.nlm.nih.gov/"
@@ -454,26 +430,22 @@ def from_cids(cids, property_list=None):
             else:
                 d['name'] = synonyms[0].lower()
         result += data
-        msg = "Retrieved %d through %d" % (start, stop-1)
-        p.animate(stop, status=msg)
     return result
 
 
-def cids_to_smiles(cids):
+def cids_to_smiles(cids: list) -> dict:
     """Returns an ordered dictionary of SMILES strings with CIDs as keys"""
     info = from_cids(cids, property_list=['IsomericSMILES'])
     smiles = {item['CID']: item['IsomericSMILES'] for item in info}
     return smiles
 
 
-def cids_to_cas(cids):
-    result = OrderedDict
+def cids_to_cas(cids: list) -> OrderedDict:
+    result = OrderedDict()
     chunk_size = 100
-    p = ProgressBar(len(cids))
-    for start in range(0, len(cids), chunk_size):
+    for start in trange(0, len(cids), chunk_size):
         stop = min(start + chunk_size, len(cids))
-        msg = "Retrieving %d through %d" % (start, stop-1)
-        p.animate(start, status=msg)
+        #msg = "Retrieving %d through %d" % (start, stop-1)
         cid_subset = [str(x) for x in cids[start:stop]]
         cid_subset = ','.join(cid_subset)
         synonyms_template = ("https://pubchem.ncbi.nlm.nih.gov/"
@@ -493,7 +465,7 @@ def cids_to_cas(cids):
     return result
 
 
-def cas_from_synonyms(synonyms):
+def cas_from_synonyms(synonyms: list) -> list:
     result = []
     for s in synonyms:
         if re.match('^[0-9]+\-[0-9]+\-[0-9]+$', s):
@@ -501,7 +473,7 @@ def cas_from_synonyms(synonyms):
     return result
 
             
-def cactus(identifier, output='cas'):
+def cactus(identifier: str, output: str = 'cas') -> str:
     url_template = "https://cactus.nci.nih.gov/chemical/structure/%s/%s"
     url = url_template % (identifier, output)
     page = urlopen(url)
@@ -509,7 +481,7 @@ def cactus(identifier, output='cas'):
     return result
 
 
-def cactus_image(smiles):
+def cactus_image(smiles: str) -> None:
     url_template = "https://cactus.nci.nih.gov/chemical/structure/%s/image"
     url = url_template % smiles
     image_data = urlopen(url).read()
@@ -517,7 +489,7 @@ def cactus_image(smiles):
     display(image)
 
 
-def get_compound_summary(cid, heading):
+def get_compound_summary(cid: int, heading: str):
     """Get summary info about `heading` from PubChem for the compound
     given by `cid`.  Example heading: 'Physical Description'"""
     url_template = ("https://pubchem.ncbi.nlm.nih.gov/"
