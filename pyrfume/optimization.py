@@ -21,31 +21,32 @@ def suppress_stdout(on):
     
     
 class OdorantSetOptimizer:
-    def __init__(self, library, n_desired, keep_cids=None, weights=None, fitness=None,
-                 n_gen=300, mu=100, lamda=200, p_cx=0.4, p_mut=0.4, sel='selBest', 
-                 rescale_weights=False, npartitions=1):
+    def __init__(self, library: pd.DataFrame, n_desired: int, weights: list,
+                 keep_cids: bool = None, fitness = None,
+                 n_gen:int = 300, mu: int = 100, lamda:int = 200, p_cx: float=0.4, p_mut: float=0.4, sel='selBest', 
+                 standardize_weights=False, npartitions=1):
         """
         params:
-            library: A pandas dataframe containing odorants and their
-                     attributes. The index should contain chemical identifiers
-                     (e.g. CIDs). The column names should be attributes,
-                     e.g. molecular weight, price, etc.  They can also be
-                     descriptors.
-            n_desired: The size of the set of odorants desired from this
+            library (pd.DataFrame): A pandas dataframe containing odorants and their
+                                    attributes. The index should contain chemical identifiers
+                                    (e.g. CIDs). The column names should be attributes,
+                                     e.g. molecular weight, price, etc.  They can also be
+                                      descriptors.
+            n_desired (int): The size of the set of odorants desired from this
                        library.
-            keep: An iterable of CIDs that must exist in every candidate set.
+            keep_cids (list): An iterable of CIDs that must exist in every candidate set.
                   Obviously this must be less than `n_desired`.
-            weights: A list of 3-tuples each containing the name of a weight,
+            weights (list): A list of 3-tuples each containing the name of a weight,
                      a method to apply to the library dataframe, and a weight
                      to apply to the function's output.
-            fitness: ...
-            mu: Size of the population (number of odorant sets under consideration
+            fitness: A fitness class from DEAP
+            mu (int): Size of the population (number of odorant sets under consideration
                 in each generation).
-            lamda: ...
-            p_cx: Crossover probability in each generation.
-            p_mut: Mutation probability in each generation.
+            lamda (int): ...
+            p_cx (float): Crossover probability in each generation.
+            p_mut (float): Mutation probability in each generation.
             sel: Selection algorithm, e.g. 'selBest' or 'selNSGA2'
-            rescale_weights: Interpret weights as multiples of stdev of a weight function
+            standardize_weights (bool): Interpret weights as multiples of stdev of a weight function
         """
 
         # Turn all constructor arguments into attributes
@@ -94,22 +95,22 @@ class OdorantSetOptimizer:
         if npartitions > 1:
             self.toolbox.register("map", self.dask_map)
         
-        if self.rescale_weights:
+        if self.standardize_weights:
             self.compute_weight_stats()
         
     def compute_weight_stats(self):
-        """Compute weight stats for random populations to use for rescaling of fitness"""
+        """Compute weight stats for random populations to use for standardizing of fitness"""
         n_iter = 100
         weight_names = [x[0] for x in self.weights]
         
         fitnesses = pd.DataFrame(index=range(n_iter), columns=weight_names)
         for i in range(n_iter):
             ind = np.random.choice(range(self.library_size), self.n_desired, replace=False)
-            fitnesses.loc[i, :] = self.eval_individual(ind, rescale=False)
+            fitnesses.loc[i, :] = self.eval_individual(ind, standardize=False)
         self.stds = fitnesses.std()
         self.means = fitnesses.mean()
         
-    def eval_individual(self, individual, rescale=None):
+    def eval_individual(self, individual, standardize=None):
         """Evaluate the fitness of the odorant set"""
         fitness = []
         for weight_name, func_name, value in self.weights:
@@ -122,7 +123,7 @@ class OdorantSetOptimizer:
             else:
                 f = func_name
                 component = f(individual)
-            if self.rescale_weights and (rescale is not False):
+            if self.standardize_weights and (standardize is not False):
                 component = (component - self.means[weight_name])/self.stds[weight_name]
             fitness.append(component)
         return fitness
@@ -229,6 +230,40 @@ class BetterFitness(base.Fitness):
 
     def __lt__(self, other):
         return sum(self.wvalues) < sum(other.wvalues)
+
+    
+def get_coverage(odorant_indices, space, sigma=2):
+    """This function will be used to compute coverage of odorant space during optimization.
+    We want non-selected odorants to be 'covered' as much as possible by selected ones"""  
+    ind = list(odorant_indices)
+    return covered[space].iloc[ind].max(axis=0).mean()
+    
+def get_entropy(odorant_indices, space, bins_per_dim=10):
+    from scipy.stats import entropy
+    """These function will be used to determine entropy of the selected odorants in the low-d manifold.
+    We want the selected odorants to smoothly cover the available odorant space"""
+    ind = list(odorant_indices)
+    # Determine optimal bins in each dimension
+    bins = {dim: np.histogram_bin_edges(embedded_coords[space][dim], bins=bins_per_dim) for dim in ('X', 'Y')}
+    # Get the XY coordinates of the selected odorants in the embedding
+    XY = embedded_coords_available[space].iloc[ind].values
+    # Compute a 2D histogram of selected odorant counts in each bin
+    histXY = np.histogram2d(*np.array(XY).T, bins=(bins['X'], bins['Y']))[0]
+    # Compute the entropy of this histogram
+    # Higher is flatter (less clustered)
+    h = entropy(histXY.ravel())
+    return h
+
+def get_spacing(odorant_indices, space, n=5):
+    """These function will be used to determine the spacing between the selected odorants in the low-d manifold.
+    We don't want to select odorants which are right next to each other in odorant space"""
+    ind = list(odorant_indices)
+    # Pairwise distances between selected odorants
+    x = embedded_distances_available2[space].iloc[ind, ind].values
+    # Unraveled (ignoring diagonal)
+    x = x[np.triu_indices(len(ind), 1)]
+    # Penalize the closest n odorant pairs
+    return np.sort(x)[:n].mean()
 
 
 if __name__ == '__main__':

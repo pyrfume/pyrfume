@@ -7,9 +7,7 @@ import pyrfume
 
 def get_mainland(raw=False, vendors=None):
     """Return a dataframe containing odorants in Joel Mainland's cabinet"""
-    file_name = 'Mainland Odor Cabinet with CIDs.csv'
-    path = pyrfume.DATA_DIR / 'cabinets' / file_name
-    df = pd.read_csv(path).set_index('OdorKey')
+    df = pyrfume.load_data('cabinets/mainland.csv').set_index('CID')
     if not raw:
         if vendors:  # e.g. ['sigma']
             # Keep only odorants obtained from certain vendors
