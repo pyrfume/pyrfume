@@ -26,7 +26,7 @@ sources = all_sources()
 
 spaces = OrderedDict({'snitz': 'Snitz Map',
                       'haddad': 'Haddad Map',
-                      'company_x': 'Company X Map'})
+                      'westeros': 'Westeros Map'})
 algorithm = 'umap'
 embeddings = {}
 for space in spaces:

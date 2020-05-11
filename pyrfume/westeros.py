@@ -1,4 +1,4 @@
-"""Module for interacting with unpublished data from company X"""
+"""Module for interacting with unpublished data from Westeros"""
 
 import os
 import pandas as pd
@@ -8,11 +8,10 @@ from sklearn.preprocessing import StandardScaler
 import pyrfume
 from . import features
 from .base import DATA_DIR
-X_DIR = DATA_DIR / 'company_X_2019'
 
 
 def get_x_embeddings():
-    emb_raw = pyrfume.load_data(X_DIR / 'embeddings.csv')
+    emb_raw = pyrfume.load_data('westeros/embeddings.csv')
     emb = emb_raw[[x for x in list(emb_raw) if 'emb_' in x]]
     emb = emb.dropna()
     return emb
