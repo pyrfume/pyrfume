@@ -30,13 +30,13 @@ def read_requirements():
 
 def get_version():
     version = {}
-    with open("sciunit/version.py") as f:
+    with open("pyrfume/version.py") as f:
         exec(f.read(), version)
     return version['__version__']
 
 setup(
     name='pyrfume',
-    version='0.01',
+    version=get_version(),
     author='Rick Gerkin',
     author_email='rgerkin@asu.edu',
     packages=find_packages(),

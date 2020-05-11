@@ -28,13 +28,17 @@ def load_data(rel_path, **kwargs):
     return data
 
 
-def save_data(df, rel_path, **kwargs):
+def save_data(data, rel_path, **kwargs):
     full_path = DATA_DIR / rel_path
     is_pickle = any([str(full_path).endswith(x) for x in ('.pkl', '.pickle', '.p')])
-    is_excel = any([str(full_path).endswith(x) for x in ('.xls', '.xlsx')])
     is_csv = any([str(full_path).endswith(x) for x in ('.csv')])
     if is_pickle:
+        with open(full_path, 'wb') as f:
+            pickle.dump(data, f)
+    elif is_csv:
         df.to_csv(full_path, **kwargs)
+    else:
+        raise Exception("Unsupported extension in file name %s" % full_path.name)
 
 
 class Mixture(object):
