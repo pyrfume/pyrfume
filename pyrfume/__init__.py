@@ -1,19 +1,62 @@
-import logging
-import os
-import urllib
+import configparser
 import json
-import pickle
-
+import logging
 import numpy as np
 import pandas as pd
+from pathlib import Path
+import pickle
 from tqdm.auto import tqdm, trange
+import urllib
 
-from .base import PACKAGE_DIR, DATA_DIR
+from .base import PACKAGE_DIR, CONFIG_PATH, DEFAULT_DATA_PATH
 logger = logging.getLogger('pyrfume')
 
 
+def init_config(overwrite=False):
+    if overwrite or not CONFIG_PATH.exists():
+        config = configparser.ConfigParser()
+        config['PATHS'] = {'pyrfume-data': str(DEFAULT_DATA_PATH)}
+        with open(CONFIG_PATH, 'w') as f:
+            config.write(f)
+
+
+def reset_config():
+    init_config(overwrite=True)
+
+
+def read_config(header, key):
+    config = configparser.ConfigParser()
+    init_config()
+    config.read(CONFIG_PATH)
+    return config[header][key]
+
+
+def write_config(header, key, value):
+    config = configparser.ConfigParser()
+    init_config()
+    config.read(CONFIG_PATH)
+    config[header][key] = value
+    with open(CONFIG_PATH, 'w') as f:
+        config.write(f)
+
+
+def set_data_path(path):
+    path = Path(path).resolve()
+    if not path.exists():
+        raise Exception('Could not find path %s' % path)
+    write_config('PATHS', 'pyrfume-data', str(path))
+
+
+def get_data_path():
+    path = read_config('PATHS', 'pyrfume-data')
+    path = Path(path).resolve()
+    if not path.exists():
+        raise Exception('Could not find data path %s' % path)
+    return path
+
+
 def load_data(rel_path, **kwargs):
-    full_path = DATA_DIR / rel_path
+    full_path = get_data_path() / rel_path
     is_pickle = any([str(full_path).endswith(x) for x in ('.pkl', '.pickle', '.p')])
     is_excel = any([str(full_path).endswith(x) for x in ('.xls', '.xlsx')])
     if is_pickle:
@@ -29,7 +72,7 @@ def load_data(rel_path, **kwargs):
 
 
 def save_data(data, rel_path, **kwargs):
-    full_path = DATA_DIR / rel_path
+    full_path = get_data_path() / rel_path
     is_pickle = any([str(full_path).endswith(x) for x in ('.pkl', '.pickle', '.p')])
     is_csv = any([str(full_path).endswith(x) for x in ('.csv')])
     if is_pickle:
