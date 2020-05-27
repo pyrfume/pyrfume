@@ -9,6 +9,7 @@ from tqdm.auto import tqdm, trange
 import urllib
 
 from .base import PACKAGE_DIR, CONFIG_PATH, DEFAULT_DATA_PATH
+from .version import __version__
 logger = logging.getLogger('pyrfume')
 
 
