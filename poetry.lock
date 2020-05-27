@@ -1056,14 +1056,6 @@ version = "0.8.0"
 
 [[package]]
 category = "main"
-description = "Python Build Reasonableness"
-name = "pbr"
-optional = false
-python-versions = "*"
-version = "5.4.5"
-
-[[package]]
-category = "main"
 description = "Pexpect allows easy control of interactive console applications."
 marker = "python_version >= \"3.3\" and sys_platform != \"win32\" or sys_platform != \"win32\""
 name = "pexpect"
@@ -1231,18 +1223,6 @@ version = "0.16.0"
 
 [package.dependencies]
 six = "*"
-
-[[package]]
-category = "main"
-description = "A lightweight SMILES reader and writer"
-name = "pysmiles"
-optional = false
-python-versions = "*"
-version = "1.0.0"
-
-[package.dependencies]
-networkx = ">=2.0,<3.0"
-pbr = "*"
 
 [[package]]
 category = "main"
@@ -1706,7 +1686,7 @@ docs = ["sphinx", "jaraco.packaging (>=3.2)", "rst.linker (>=1.9)"]
 testing = ["jaraco.itertools", "func-timeout"]
 
 [metadata]
-content-hash = "4d3b76f25fba25ab46c37f3731c3d419b7beab9a9effc972131b3be0d19792dd"
+content-hash = "6be8e1a83d06a8565835e4932fb4cf63739a682c83cdc667787527251699bf24"
 python-versions = "^3.6.1"
 
 [metadata.files]
@@ -2243,10 +2223,6 @@ pathspec = [
     {file = "pathspec-0.8.0-py2.py3-none-any.whl", hash = "sha256:7d91249d21749788d07a2d0f94147accd8f845507400749ea19c1ec9054a12b0"},
     {file = "pathspec-0.8.0.tar.gz", hash = "sha256:da45173eb3a6f2a5a487efba21f050af2b41948be6ab52b6a1e3ff22bb8b7061"},
 ]
-pbr = [
-    {file = "pbr-5.4.5-py2.py3-none-any.whl", hash = "sha256:579170e23f8e0c2f24b0de612f71f648eccb79fb1322c814ae6b3c07b5ba23e8"},
-    {file = "pbr-5.4.5.tar.gz", hash = "sha256:07f558fece33b05caf857474a366dfcc00562bca13dd8b47b2b3e22d9f9bf55c"},
-]
 pexpect = [
     {file = "pexpect-4.8.0-py2.py3-none-any.whl", hash = "sha256:0b48a55dcb3c05f3329815901ea4fc1537514d6ba867a152b581d69ae3710937"},
     {file = "pexpect-4.8.0.tar.gz", hash = "sha256:fc65a43959d153d0114afe13997d439c22823a27cefceb5ff35c2178c6784c0c"},
@@ -2348,9 +2324,6 @@ pyparsing = [
 ]
 pyrsistent = [
     {file = "pyrsistent-0.16.0.tar.gz", hash = "sha256:28669905fe725965daa16184933676547c5bb40a5153055a8dee2a4bd7933ad3"},
-]
-pysmiles = [
-    {file = "pysmiles-1.0.0.tar.gz", hash = "sha256:a11bd3024ad98c9d3f63857ec577f34ebc2c211aab8999bcb3fa4a3529b04316"},
 ]
 python-dateutil = [
     {file = "python-dateutil-2.8.1.tar.gz", hash = "sha256:73ebfe9dbf22e832286dafa60473e4cd239f8592f699aa5adaf10050e6e1823c"},
