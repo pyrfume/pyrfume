@@ -1,23 +1,23 @@
 import configparser
 import json
 import logging
+import pickle
+import urllib
+from pathlib import Path
+
 import numpy as np
 import pandas as pd
-from pathlib import Path
-import pickle
-from tqdm.auto import tqdm, trange
-import urllib
 
-from .base import PACKAGE_DIR, CONFIG_PATH, DEFAULT_DATA_PATH
-from .version import __version__
-logger = logging.getLogger('pyrfume')
+from .base import CONFIG_PATH, DEFAULT_DATA_PATH
+
+logger = logging.getLogger("pyrfume")
 
 
 def init_config(overwrite=False):
     if overwrite or not CONFIG_PATH.exists():
         config = configparser.ConfigParser()
-        config['PATHS'] = {'pyrfume-data': str(DEFAULT_DATA_PATH)}
-        with open(CONFIG_PATH, 'w') as f:
+        config["PATHS"] = {"pyrfume-data": str(DEFAULT_DATA_PATH)}
+        with open(CONFIG_PATH, "w") as f:
             config.write(f)
 
 
@@ -37,50 +37,50 @@ def write_config(header, key, value):
     init_config()
     config.read(CONFIG_PATH)
     config[header][key] = value
-    with open(CONFIG_PATH, 'w') as f:
+    with open(CONFIG_PATH, "w") as f:
         config.write(f)
 
 
 def set_data_path(path):
     path = Path(path).resolve()
     if not path.exists():
-        raise Exception('Could not find path %s' % path)
-    write_config('PATHS', 'pyrfume-data', str(path))
+        raise Exception("Could not find path %s" % path)
+    write_config("PATHS", "pyrfume-data", str(path))
 
 
 def get_data_path():
-    path = read_config('PATHS', 'pyrfume-data')
+    path = read_config("PATHS", "pyrfume-data")
     path = Path(path).resolve()
     if not path.exists():
-        raise Exception('Could not find data path %s' % path)
+        raise Exception("Could not find data path %s" % path)
     return path
 
 
 def load_data(rel_path, **kwargs):
     full_path = get_data_path() / rel_path
-    is_pickle = any([str(full_path).endswith(x) for x in ('.pkl', '.pickle', '.p')])
-    is_excel = any([str(full_path).endswith(x) for x in ('.xls', '.xlsx')])
+    is_pickle = any([str(full_path).endswith(x) for x in (".pkl", ".pickle", ".p")])
+    is_excel = any([str(full_path).endswith(x) for x in (".xls", ".xlsx")])
     if is_pickle:
-        with open(full_path, 'rb') as f:
+        with open(full_path, "rb") as f:
             data = pickle.load(f)
     elif is_excel:
         data = pd.read_excel(full_path, **kwargs)
     else:
-        if 'index_col' not in kwargs:
-            kwargs['index_col'] = 0
+        if "index_col" not in kwargs:
+            kwargs["index_col"] = 0
         data = pd.read_csv(full_path, **kwargs)
     return data
 
 
 def save_data(data, rel_path, **kwargs):
     full_path = get_data_path() / rel_path
-    is_pickle = any([str(full_path).endswith(x) for x in ('.pkl', '.pickle', '.p')])
-    is_csv = any([str(full_path).endswith(x) for x in ('.csv')])
+    is_pickle = any(str(full_path).endswith(x) for x in (".pkl", ".pickle", ".p"))
+    is_csv = any(str(full_path).endswith(x) for x in (".csv"))
     if is_pickle:
-        with open(full_path, 'wb') as f:
+        with open(full_path, "wb") as f:
             pickle.dump(data, f)
     elif is_csv:
-        df.to_csv(full_path, **kwargs)
+        data.to_csv(full_path, **kwargs)
     else:
         raise Exception("Unsupported extension in file name %s" % full_path.name)
 
@@ -107,7 +107,7 @@ class Mixture(object):
         for component in self.components:
             vector[all_components.index(component)] = 1
         if normalize:
-            denom = (np.abs(vector)**normalize).sum()
+            denom = (np.abs(vector) ** normalize).sum()
             vector /= denom
         return vector
 
@@ -125,7 +125,7 @@ class Mixture(object):
         """
 
         if len(self.components) == len(other.components):
-            return self.hamming(other)/2
+            return self.hamming(other) / 2
         else:
             return None
 
@@ -137,7 +137,7 @@ class Mixture(object):
 
         overlap = self.N - self.r(other)
         if percent:
-            overlap = overlap*100.0/self.N
+            overlap = overlap * 100.0 / self.N
         return overlap
 
     def hamming(self, other):
@@ -149,7 +149,7 @@ class Mixture(object):
 
         x = set(self.components)
         y = set(other.components)
-        diff = len(x)+len(y)-2*len(x.intersection(y))
+        diff = len(x) + len(y) - 2 * len(x.intersection(y))
         return diff
 
     def add_component(self, component):
@@ -178,8 +178,7 @@ class Mixture(object):
                 if type(desc) == list:
                     descriptors += desc
                 if type(desc) == dict:
-                    descriptors += [key for key, value in list(desc.items())
-                                    if value > 0.0]
+                    descriptors += [key for key, value in list(desc.items()) if value > 0.0]
         return list(set(descriptors))  # Remove duplicates.
 
     def descriptor_vector(self, source, all_descriptors):
@@ -198,8 +197,7 @@ class Mixture(object):
                         assert index >= 0
                         vector[index] += 1
                 if type(desc) == dict:
-                    this_vector = np.array([value for key, value in
-                                            sorted(desc.items())])
+                    this_vector = np.array([value for key, value in sorted(desc.items())])
                     vector += this_vector
         return vector
 
@@ -209,21 +207,20 @@ class Mixture(object):
         data sources.
         """
 
-        n_descriptors_dravnieks = len(all_descriptors['dravnieks'])
-        n_descriptors_sigma_ff = len(all_descriptors['sigma_ff'])
-        vector = np.zeros(n_descriptors_dravnieks+n_descriptors_sigma_ff)
+        n_descriptors_dravnieks = len(all_descriptors["dravnieks"])
+        n_descriptors_sigma_ff = len(all_descriptors["sigma_ff"])
+        vector = np.zeros(n_descriptors_dravnieks + n_descriptors_sigma_ff)
         for component in self.components:
-            if 'dravnieks' in component.descriptors:
-                desc = component.descriptors['dravnieks']
-                this_vector = np.array([value for key, value in
-                                        sorted(desc.items())])
+            if "dravnieks" in component.descriptors:
+                desc = component.descriptors["dravnieks"]
+                this_vector = np.array([value for key, value in sorted(desc.items())])
                 vector[0:n_descriptors_dravnieks] += this_vector
-            elif 'sigma_ff' in component.descriptors:
-                desc = component.descriptors['sigma_ff']
+            elif "sigma_ff" in component.descriptors:
+                desc = component.descriptors["sigma_ff"]
                 for descriptor in desc:
-                    index = all_descriptors['sigma_ff'].index(descriptor)
+                    index = all_descriptors["sigma_ff"].index(descriptor)
                     assert index >= 0
-                    vector[n_descriptors_dravnieks+index] += 1
+                    vector[n_descriptors_dravnieks + index] += 1
         return vector
 
     def described_components(self, source):
@@ -232,8 +229,7 @@ class Mixture(object):
         described by that source, i.e. those that have descriptors.
         """
 
-        return [component for component in self.components
-                if source in component.descriptors]
+        return [component for component in self.components if source in component.descriptors]
 
     def n_described_components(self, source):
         """
@@ -252,18 +248,23 @@ class Mixture(object):
         return self.n_described_components(source) / self.N
 
     def matrix(self, features, weights=None):
-        matrix = np.vstack([component.vector(features, weights=weights)
-                            for component in self.components
-                            if component.cid in features])
+        matrix = np.vstack(
+            [
+                component.vector(features, weights=weights)
+                for component in self.components
+                if component.cid in features
+            ]
+        )
         if 0:  # matrix.shape[0] != self.N:
-            print(('Mixture has %d components but only '
-                   '%d vectors were computed') %
-                  (self.N, matrix.shape[0]))
+            print(
+                ("Mixture has %d components but only " "%d vectors were computed")
+                % (self.N, matrix.shape[0])
+            )
         return matrix
 
-    def vector(self, features, weights=None, method='sum'):
+    def vector(self, features, weights=None, method="sum"):
         matrix = self.matrix(features, weights=weights)
-        if method == 'sum':
+        if method == "sum":
             vector = matrix.sum(axis=0)
         else:
             vector = None
@@ -274,7 +275,7 @@ class Mixture(object):
         String representation of the odorant.
         """
 
-        return ','.join([str(x) for x in self.components])
+        return ",".join([str(x) for x in self.components])
 
 
 class Component(object):
@@ -302,15 +303,14 @@ class Component(object):
         if self.cid_:
             cid = self.cid_
         else:
-            url_template = ("https://pubchem.ncbi.nlm.nih.gov/"
-                            "rest/pug/compound/name/%s/cids/JSON")
+            url_template = "https://pubchem.ncbi.nlm.nih.gov/" "rest/pug/compound/name/%s/cids/JSON"
             for query in self.cas, self.name:
                 try:
                     url = url_template % query
                     page = urllib.request.urlopen(url)
-                    string = page.read().decode('utf-8')
+                    string = page.read().decode("utf-8")
                     json_data = json.loads(string)
-                    cid = json_data['IdentifierList']['CID'][0]
+                    cid = json_data["IdentifierList"]["CID"][0]
                 except urllib.error.HTTPError:
                     print(query)
                 else:
@@ -498,7 +498,7 @@ class TriangleTest(object):
 
         sv = self.single.descriptor_vector(source, all_descriptors)
         dv = self.double.descriptor_vector(source, all_descriptors)
-        return np.abs(sv-dv)
+        return np.abs(sv - dv)
 
     def n_undescribed(self, source):
         """
@@ -508,7 +508,7 @@ class TriangleTest(object):
 
         d = self.double.n_described_components(source)
         s = self.single.n_described_components(source)
-        return (self.N-d, self.N-s)
+        return (self.N - d, self.N - s)
 
     @classmethod
     def length(cls, v):
@@ -522,12 +522,12 @@ class TriangleTest(object):
     def circmean(cls, angles):
         return np.arctan2(np.mean(np.sin(angles)), np.mean(np.cos(angles)))
 
-    def angle(self, features, weights=None, method='sum', method_param=1.0):
-        if method == 'sum':
+    def angle(self, features, weights=None, method="sum", method_param=1.0):
+        if method == "sum":
             v1 = self.single.vector(features, weights=weights, method=method)
             v2 = self.double.vector(features, weights=weights, method=method)
             angle = self.find_angle(v1, v2)
-        elif method == 'nn':  # Nearest-Neighbor.
+        elif method == "nn":  # Nearest-Neighbor.
             m1 = self.single.matrix(features, weights=weights)
             m2 = self.double.matrix(features, weights=weights)
             angles = []
@@ -540,22 +540,23 @@ class TriangleTest(object):
                     angles_i.append(one_angle)
                 angles_i = np.array(sorted(angles_i))
                 from scipy.stats import geom
-                weights_i = geom.pmf(range(1, len(angles_i)+1), method_param)
+
+                weights_i = geom.pmf(range(1, len(angles_i) + 1), method_param)
                 angles.append(np.dot(angles_i, weights_i))
             angle = np.abs(angles).mean()  # circmean(angles)
         return angle
 
-    def norm(self, features, order=1, weights=None, method='sum'):
+    def norm(self, features, order=1, weights=None, method="sum"):
         v1 = self.single.vector(features, weights=weights, method=method)
         v2 = self.double.vector(features, weights=weights, method=method)
-        dv = v1-v2
-        dv = np.abs(dv)**order
+        dv = v1 - v2
+        dv = np.abs(dv) ** order
         return np.sum(dv)
 
-    def distance(self, features, weights=None, method='sum'):
+    def distance(self, features, weights=None, method="sum"):
         v1 = self.single.vector(features, weights=weights, method=method)
         v2 = self.double.vector(features, weights=weights, method=method)
-        return np.sqrt(((v1-v2)**2).sum())
+        return np.sqrt(((v1 - v2) ** 2).sum())
 
     def fraction_correct(self, results):
         num, denom = 0.0, 0.0
@@ -563,7 +564,7 @@ class TriangleTest(object):
             if result.test.id == self.id:
                 num += result.correct
                 denom += 1
-        return num/denom
+        return num / denom
 
 
 class Result(object):
@@ -650,8 +651,11 @@ def correct_matrix(results, N, overlap):
     corresponding to the correctness of that subject's response on that test.
     """
 
-    results = [r for r in results if (N is None or r.test.N == N) and
-               (overlap is None or r.test.overlap() == overlap)]
+    results = [
+        r
+        for r in results
+        if (N is None or r.test.N == N) and (overlap is None or r.test.overlap() == overlap)
+    ]
     subjects = [r.subject_id for r in results]
     subjects = list(set(subjects))
     tests = [r.test for r in results]
