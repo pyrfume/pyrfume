@@ -33,6 +33,7 @@ setup(
     packages=find_packages(),
     url='http://pyrfume.scidash.org',
     license='MIT',
+    long_description_content_type='text/markdown',
     long_description=long_description,
     description='A validation library for human olfactory psychophysics research.',
     install_requires=read_requirements(),
