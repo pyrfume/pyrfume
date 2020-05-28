@@ -36,5 +36,5 @@ def rdkit_to_networkx(mol: Mol) -> nx.Graph:
     bond: Bond
     for bond in mol.GetBonds():
         label = bond.GetBondType()
-        graph.add_edge(bond.GetBeginAtomIdx() - 1, bond.GetEndAtomIdx() - 1, label=label)
+        graph.add_edge(bond.GetBeginAtomIdx(), bond.GetEndAtomIdx(), label=label)
     return graph

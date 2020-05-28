@@ -1,8 +1,12 @@
 [tool.poetry]
 name = "pyrfume"
 version = "0.13.0"
-description = ""
-authors = ["Your Name <you@example.com>"]
+description = "A validation library for human olfactory psychophysics research."
+authors = ["Rick Gerkin <rgerkin@asu.edu>"]
+license = "MIT"
+homepage = "http://pyrfume.scidash.org"
+documentation = "https://pyrfume.readthedocs.io"
+readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.6.1"
