@@ -1,5 +1,5 @@
-import os
 import pandas as pd
+
 import pyrfume
 from pyrfume.features import smiles_to_mordred, smiles_to_morgan_sim
 from pyrfume.odorants import all_smiles
@@ -7,22 +7,22 @@ from pyrfume.odorants import all_smiles
 
 def get_predicted_intensities():
     """Return the DREAM model predicted intensities using Mordred (not Dragon) features"""
-    path = 'physicochemical/cids-names-smiles-mordredpredintensities.csv'
+    path = "physicochemical/cids-names-smiles-mordredpredintensities.csv"
     df = pyrfume.load_data(path)
-    return df['Intensity']
+    return df["Intensity"]
 
 
 def get_predicted_odorless():
     """Return a pandas Series that is True for molecules predicted to have an odor
     and False for those predicted to be odorless"""
-    path = 'odorants/predicted_odorless.csv'
+    path = "odorants/predicted_odorless.csv"
     df = pyrfume.load_data(path)
-    return df['PredictedOdorless']
+    return df["PredictedOdorless"]
 
 
 def load_dream_model():
     """Load the open source DREAM model created in `open-source-dream.ipynb`"""
-    path = 'keller_2017/open-source-dream.pkl'
+    path = "keller_2017/open-source-dream.pkl"
     model, use_features, descriptors, imputer = pyrfume.load_data(path)
     # model: The model to use for prediction
     # features: The features used for each column
@@ -45,7 +45,7 @@ def smiles_to_features(smiles, use_features, imputer):
     # Combine Mordred (after imputation) and Morgan features into one dataframe
     features = mordred.join(morgan_sim)
     # Add the `Dilution` column
-    features['Dilution'] = -3
+    features["Dilution"] = -3
     # Restrict to only those features used in the model, and in the same order
     features = features[use_features]
     # Make sure the list of features used for prediction is identical to that used for training

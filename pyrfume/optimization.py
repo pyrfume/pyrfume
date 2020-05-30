@@ -1,14 +1,15 @@
-import math
-import random
 import contextlib
 import io
+import math
+import random
 import sys
 
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+
 import dask.bag as db
-from deap import base, creator, tools, algorithms
+from deap import algorithms, base, creator, tools
 
 
 @contextlib.contextmanager
@@ -20,11 +21,22 @@ def suppress_stdout(on):
 
 
 class OdorantSetOptimizer:
-    def __init__(self, library: pd.DataFrame, n_desired: int, weights: list,
-                 keep_cids: bool = None, fitness=None, n_gen: int = 300,
-                 mu: int = 100, lamda: int = 200, p_cx: float = 0.4,
-                 p_mut: float = 0.4, sel='selBest',
-                 standardize_weights=False, npartitions=1):
+    def __init__(
+        self,
+        library: pd.DataFrame,
+        n_desired: int,
+        weights: list,
+        keep_cids: bool = None,
+        fitness=None,
+        n_gen: int = 300,
+        mu: int = 100,
+        lamda: int = 200,
+        p_cx: float = 0.4,
+        p_mut: float = 0.4,
+        sel="selBest",
+        standardize_weights=False,
+        npartitions=1,
+    ):
         """
         Args:
             library (pd.DataFrame): A pandas dataframe containing odorants and
@@ -57,8 +69,7 @@ class OdorantSetOptimizer:
             self.fitness = BetterFitness
 
         weight_names, weight_functions, weight_values = zip(*self.weights)
-        assert(len(weight_names) == len(set(weight_names))),\
-            "Weight names must all be unique."
+        assert len(weight_names) == len(set(weight_names)), "Weight names must all be unique."
 
         # Number of available odorants
         self.library_size = self.library.shape[0]
@@ -75,16 +86,15 @@ class OdorantSetOptimizer:
         self.toolbox = base.Toolbox()
 
         # Describe the process for selecting a random set of items
-        self.toolbox.register("random_set", random.sample,
-                              range(self.library_size), self.n_desired)
+        self.toolbox.register("random_set", random.sample, range(self.library_size), self.n_desired)
 
         # Describe the process for creating a single set
-        self.toolbox.register("individual", tools.initIterate,
-                              creator.Individual, self.toolbox.random_set)
+        self.toolbox.register(
+            "individual", tools.initIterate, creator.Individual, self.toolbox.random_set
+        )
 
         # Says that the population is just a list of individuals
-        self.toolbox.register("population", tools.initRepeat, list,
-                              self.toolbox.individual)
+        self.toolbox.register("population", tools.initRepeat, list, self.toolbox.individual)
         self.toolbox.register("evaluate", self.eval_individual)
         self.toolbox.register("mate", self.crossover)
         self.toolbox.register("mutate", self.mutate)
@@ -107,8 +117,7 @@ class OdorantSetOptimizer:
         weight_names = [x[0] for x in self.weights]
         fitnesses = pd.DataFrame(index=range(n_iter), columns=weight_names)
         for i in range(n_iter):
-            ind = np.random.choice(range(self.library_size), self.n_desired,
-                                   replace=False)
+            ind = np.random.choice(range(self.library_size), self.n_desired, replace=False)
             fitnesses.loc[i, :] = self.eval_individual(ind, standardize=False)
         self.stds = fitnesses.std()
         self.means = fitnesses.mean()
@@ -127,7 +136,7 @@ class OdorantSetOptimizer:
         fitness = []
         for weight_name, func_name, value in self.weights:
             if isinstance(func_name, str):
-                f = getattr(self, 'eval_%s' % func_name)
+                f = getattr(self, "eval_%s" % func_name)
                 component = f(individual, weight_name)
             elif isinstance(func_name, (tuple, list, set)):
                 f, *args = func_name
@@ -138,7 +147,7 @@ class OdorantSetOptimizer:
             if self.standardize_weights and (standardize is not False):
                 m = self.means[weight_name]
                 s = self.stds[weight_name]
-                component = (component - m)/s
+                component = (component - m) / s
             fitness.append(component)
         return fitness
 
@@ -159,10 +168,8 @@ class OdorantSetOptimizer:
         ind1.update(x1)
         ind2.clear()
         ind2.update(x2)
-        assert len(ind1) == self.n_desired,\
-            "Individual smaller than desired size."
-        assert len(ind2) == self.n_desired,\
-            "Individual smaller than desired size."
+        assert len(ind1) == self.n_desired, "Individual smaller than desired size."
+        assert len(ind2) == self.n_desired, "Individual smaller than desired size."
         if self.keep_cids is not None:
             ind1 = self.force_keep(ind1)
             ind2 = self.force_keep(ind2)
@@ -187,11 +194,10 @@ class OdorantSetOptimizer:
         individual ^= set(to_remove)
         # Adds elements found in `to_add`
         individual |= set(to_add)
-        assert len(individual) == self.n_desired,\
-            "Individual smaller than desired size."
+        assert len(individual) == self.n_desired, "Individual smaller than desired size."
         if self.keep_cids is not None:
             individual = self.force_keep(individual)
-        return individual,
+        return (individual,)
 
     def force_keep(self, ind):
         """Ensure that the CIDs in `self.keep` get included
@@ -233,8 +239,7 @@ class OdorantSetOptimizer:
 
         def best(x):
             weight_names, weight_functions, weight_values = zip(*self.weights)
-            scores = [np.dot(self.hof.keys[i].values, weight_values)
-                      for i in range(len(self.hof))]
+            scores = [np.dot(self.hof.keys[i].values, weight_values) for i in range(len(self.hof))]
             i = np.argmax(scores)
             return np.array([scores[i]] + list(self.hof.keys[i].values))
 
@@ -242,10 +247,17 @@ class OdorantSetOptimizer:
 
         f = algorithms.eaMuPlusLambda
         with suppress_stdout(quiet):
-            self.pop, self.logbook = f(self.pop, self.toolbox, self.mu,
-                                       self.lamda, self.p_cx, self.p_mut,
-                                       self.n_gen, self.stats,
-                                       halloffame=self.hof)
+            self.pop, self.logbook = f(
+                self.pop,
+                self.toolbox,
+                self.mu,
+                self.lamda,
+                self.p_cx,
+                self.p_mut,
+                self.n_gen,
+                self.stats,
+                halloffame=self.hof,
+            )
 
         return self.pop, self.stats, self.hof, self.logbook
 
@@ -292,17 +304,17 @@ class OdorantSetOptimizer:
     def plot_score_history(self):
         """Plot the history of each of the scores over generations."""
         rows = 2
-        cols = math.ceil((len(self.weights)+1)/2)
+        cols = math.ceil((len(self.weights) + 1) / 2)
         fig, axes = plt.subplots(rows, cols, figsize=(20, 8))
-        scores = [x['best'][0] for x in self.logbook]
+        scores = [x["best"][0] for x in self.logbook]
         axes[0, 0].plot(scores)
-        axes[0, 0].set_title('Total')
+        axes[0, 0].set_title("Total")
         for j, (feature, stat, weight) in enumerate(self.weights):
-            ax = axes.flat[j+1]
-            history = [x['best'][j+1] for x in self.logbook]
+            ax = axes.flat[j + 1]
+            history = [x["best"][j + 1] for x in self.logbook]
             ax.plot(history)
             ax.set_title(feature)
-        axes[0, 0].set_xlabel('Generation')
+        axes[0, 0].set_xlabel("Generation")
         plt.tight_layout()
 
 
@@ -324,17 +336,17 @@ def get_coverage(odorant_indices, space, sigma=2):
 
 def get_entropy(odorant_indices, space, bins_per_dim=10):
     from scipy.stats import entropy
+
     """These function will be used to determine entropy of the selected
     odorants in the low-d manifold. We want the selected odorants to smoothly
     cover the available odorant space"""
     ind = list(odorant_indices)
     # Determine optimal bins in each dimension
-    bins = {dim: np.histogram_bin_edges(space[dim], bins=bins_per_dim)
-            for dim in ('X', 'Y')}
+    bins = {dim: np.histogram_bin_edges(space[dim], bins=bins_per_dim) for dim in ("X", "Y")}
     # Get the XY coordinates of the selected odorants in the embedding
     XY = space.iloc[ind].values
     # Compute a 2D histogram of selected odorant counts in each bin
-    histXY = np.histogram2d(*np.array(XY).T, bins=(bins['X'], bins['Y']))[0]
+    histXY = np.histogram2d(*np.array(XY).T, bins=(bins["X"], bins["Y"]))[0]
     # Compute the entropy of this histogram
     # Higher is flatter (less clustered)
     h = entropy(histXY.ravel())
