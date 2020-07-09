@@ -7,6 +7,7 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
+from tqdm.auto import tqdm, trange
 
 from .base import CONFIG_PATH, DEFAULT_DATA_PATH
 
