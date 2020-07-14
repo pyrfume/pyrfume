@@ -1,0 +1,17 @@
+#### Quick miniconda with numpy, scipy, etc. from ####
+# https://conda.io/docs/travis.html               ####
+language: python
+python:
+  # We don't actually use the Travis Python, but this keeps it organized.
+  - "3.5"
+  - "3.6"
+  - "3.7"
+  - "3.8"
+install:
+  - sudo apt update
+  - pip install .
+######################################################
+script: 
+  - sh test.sh
+after_success:
+  - coveralls
