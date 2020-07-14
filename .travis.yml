@@ -9,6 +9,7 @@ python:
   - "3.8"
 install:
   - sudo apt update
+  - pip install pip --upgrade
   - pip install .
 ######################################################
 script: 
