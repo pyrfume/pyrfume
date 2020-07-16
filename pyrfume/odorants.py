@@ -158,7 +158,7 @@ class Solution:
 
 class Compound:
     def __init__(
-        self, chemical_order, stock="", date_arrived=None, date_opened=None, is_solvent=False
+        self, chemical_order: "ChemicalOrder", stock: str="", date_arrived: datetime=None, date_opened: datetime=None, is_solvent: bool=False
     ):
         self.chemical_order = chemical_order
         self.date_arrived = date_arrived if date_arrived else datetime.now
@@ -186,7 +186,7 @@ class Compound:
 
 
 class ChemicalOrder:
-    def __init__(self, molecule, vendor, part_id, purity=1, known_impurities=None):
+    def __init__(self, molecule: "Molecule", vendor: "Vendor", part_id: str, purity: float=1, known_impurities: list=None):
         self.molecule = molecule
         self.vendor = vendor
         self.part_id = part_id
@@ -206,7 +206,7 @@ class ChemicalOrder:
 
 
 class Vendor:
-    def __init__(self, name, url):
+    def __init__(self, name: str, url: str):
         self.name = name
         self.url = url
 
@@ -215,7 +215,7 @@ class Vendor:
 
 
 class Molecule:
-    def __init__(self, cid, name=None, fill=False):
+    def __init__(self, cid: str, name: str=None, fill: bool=False):
         self.cid = cid
         if fill:
             self.fill_details()
