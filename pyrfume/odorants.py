@@ -216,7 +216,7 @@ class Vendor:
 
 
 class Molecule:
-    def __init__(self, cid: str, name: str=None, fill: bool=False):
+    def __init__(self, cid: int, name: str=None, fill: bool=False):
         self.cid = cid
         if fill:
             self.fill_details()
