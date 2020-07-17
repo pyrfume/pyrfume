@@ -242,7 +242,7 @@ class Molecule:
 
     @property
     def molarity(self):
-        if not self.molecular_weight:
+        if not (self.molecular_weight and self.density):
             result = None
         else:
             result = self.density / self.molecular_weight
