@@ -161,6 +161,7 @@ class Compound:
         self, chemical_order: "ChemicalOrder", stock: str="", date_arrived: datetime=None, date_opened: datetime=None, is_solvent: bool=False
     ):
         self.chemical_order = chemical_order
+        self.stock = stock
         self.date_arrived = date_arrived if date_arrived else datetime.now
         self.date_opened = date_opened
         self.is_solvent = is_solvent
