@@ -29,8 +29,8 @@ class MixtureTestCase(unittest.TestCase):
         self.assertIsInstance(getattr(compound, "vendor"), Vendor)
         self.assertIsInstance(getattr(compound, "cid"), int)
 
-        component = Component(cid, "test_name", cas, 0.5, compound)
-        component1 = Component(cid, "test_name", cas, 0.8, compound)
+        component = Component(cid, "I am a name", cas, 0.5, compound)
+        component1 = Component(cid, "I am a name 1", cas, 0.8, compound)
         mixture = Mixture(1, [component])
 
         components_vector = mixture.components_vector(mixture.components, 1)
@@ -46,16 +46,56 @@ class MixtureTestCase(unittest.TestCase):
         mixture.remove_component(component)
         self.assertEqual(len(mixture.components), 0)
 
-        cas_descriptor = {cas : ["test description"]}
-        cas_descriptor1 = {cas : {"test description key" : 1}}
-        component.set_descriptors("unittest", cas_descriptor)
-        component1.set_descriptors("unittest", cas_descriptor1)
+        cas_descriptor = {
+            cas : ["cas descriptor"],
+            "dravnieks" : ["dravnieks descriptor"],
+            "sigma_ff" : ["sigma_ff descriptor"]
+        }
+        cas_descriptor1 = {
+            cas : {"cas descriptor 1" : 1},
+            "dravnieks" : {"dravnieks cas description 1" : 2},
+            "sigma_ff" : {"sigma_ff descriptor 1"}
+        }
+        component.set_descriptors("unittest source", cas_descriptor)
+        component1.set_descriptors("unittest source", cas_descriptor1)
         mixture.add_component(component)
         mixture.add_component(component1)
 
-        descriptors_list = mixture.descriptor_list("unittest")
-        self.assertTrue('test description key' in descriptors_list)
-        self.assertTrue('test description' in descriptors_list)
+        descriptors_list = mixture.descriptor_list("unittest source")
+        self.assertTrue('cas descriptor 1' in descriptors_list)
+        self.assertTrue('cas descriptor' in descriptors_list)
+
+        all_descriptors = {
+            'unittest source' : 'cas descriptor 1', 
+            'unittest source' : 'cas descriptor'
+        }
+        self.assertEqual(mixture.descriptor_vector("unittest source", all_descriptors).size, 14)
+        
+        all_descriptors = {
+            'dravnieks' : "dravnieks cas description 1", 
+            'sigma_ff' : "sigma_ff descriptor 1"
+        }
+
+        self.assertEqual(mixture.descriptor_vector2(all_descriptors).size, 48)
+
+        described_components = mixture.described_components("unittest source")
+        self.assertTrue(component in described_components)
+        self.assertTrue(component1 in described_components)
+
+        n = mixture.n_described_components("unittest source")
+        self.assertEqual(n, 2)
+
+        self.assertEqual(mixture.fraction_components_described("unittest source"), 1)
+
+        test_feature = {cid : {"a" : 1}}
+        self.assertEqual(mixture.matrix(test_feature).shape, (2, 1))
+        self.assertEqual(mixture.vector(test_feature)[0], 2.0)
+        self.assertIsInstance(str(mixture), str)
+        self.assertIsInstance(str(mixture1), str)
+
+        self.assertEqual(component.cid, 21946271)
+        self.assertIsInstance(str(component), str)
+        self.assertIsInstance(str(component1), str)
 
 if __name__ == '__main__':
     unittest.main()
