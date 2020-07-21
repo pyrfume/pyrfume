@@ -104,7 +104,8 @@ class Mixture(object):
 
     C = None  # Number of components from which to choose.
 
-    def components_vector(self, all_components, normalize=0):
+    def components_vector(self, all_components: list=None, normalize: float=0):
+
         vector = np.zeros(self.C)
         for component in self.components:
             vector[all_components.index(component)] = 1
@@ -302,6 +303,7 @@ class Component(object):
 
     @property
     def cid(self):
+        cid = None
         if self.cid_:
             cid = self.cid_
         else:
@@ -371,6 +373,13 @@ class TriangleTest(object):
         """
 
         self.odorants.append(odorant)
+
+    def add_odorants(self, odorants: list):
+        """
+        Adds more than one odorants to this test.
+        """
+
+        self.odorants.extend(odorants)
 
     @property
     def double(self):
@@ -525,6 +534,7 @@ class TriangleTest(object):
         return np.arctan2(np.mean(np.sin(angles)), np.mean(np.cos(angles)))
 
     def angle(self, features, weights=None, method="sum", method_param=1.0):
+        angle = None
         if method == "sum":
             v1 = self.single.vector(features, weights=weights, method=method)
             v2 = self.double.vector(features, weights=weights, method=method)
