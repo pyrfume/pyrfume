@@ -3,6 +3,7 @@ import quantities as pq
 from datetime import datetime
 from pyrfume import Mixture, Component
 from pyrfume.odorants import Compound, ChemicalOrder, Vendor, Molecule
+
 class MixtureTestCase(unittest.TestCase):
     def test_constructor(self):
         mixture1 = Mixture(0)

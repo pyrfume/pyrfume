@@ -4,6 +4,7 @@ import unittest
 from .test_config_data import *
 from .test_make_solutions import *
 from .test_mixture import *
+from .test_test import *
 
 def main():
     buffer = 'buffer' in sys.argv
