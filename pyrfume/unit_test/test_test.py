@@ -114,6 +114,9 @@ class TriangleTestTestCase(unittest.TestCase):
         )
 
         test.descriptors_correlation2(all_descriptors)
+        diff_list = list(test.descriptors_difference('unittest source', all_descriptors))
+        self.assertEqual(diff_list.count(1.0), 2)
+        self.assertEqual(diff_list.count(0), 1)
 
         self.assertEqual(len(test.common_components), 0)
         mixture_NaCl_HCl = mixture_NaCl
