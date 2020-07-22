@@ -570,7 +570,7 @@ class TriangleTest(object):
         v2 = self.double.vector(features, weights=weights, method=method)
         return np.sqrt(((v1 - v2) ** 2).sum())
 
-    def fraction_correct(self, results):
+    def fraction_correct(self, results: list):
         num, denom = 0.0, 0.0
         for result in results:
             if result.test.id == self.id:

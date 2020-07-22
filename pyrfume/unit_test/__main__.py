@@ -5,6 +5,7 @@ from .test_config_data import *
 from .test_make_solutions import *
 from .test_mixture import *
 from .test_test import *
+from .test_others_in__init__ import *
 
 def main():
     buffer = 'buffer' in sys.argv
