@@ -4,7 +4,7 @@ from pyrfume.odorants import Compound, ChemicalOrder, Vendor, Molecule
 from pyrfume import TriangleTest, Component, Mixture
 from datetime import datetime
 
-from unittest_utils import get_substances
+from .unittest_utils import get_substances
 
 class TriangleTestTestCase(unittest.TestCase):
 
