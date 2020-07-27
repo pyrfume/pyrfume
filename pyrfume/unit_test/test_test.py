@@ -4,7 +4,7 @@ from pyrfume.odorants import Compound, ChemicalOrder, Vendor, Molecule
 from pyrfume import TriangleTest, Component, Mixture
 from datetime import datetime
 
-from .unittest_utils import get_substances
+from unittest_utils import get_substances
 
 class TriangleTestTestCase(unittest.TestCase):
 
@@ -80,9 +80,11 @@ class TriangleTestTestCase(unittest.TestCase):
         mixture_NaCl_HCl.add_component(component_HCl)
         mixture_CaCl2_HCl = mixture_CaCl2
         mixture_CaCl2_HCl.add_component(component_HCl)
+        unique_components = test.unique_components
+        unique_components = [str(x) for x in unique_components]
         self.assertTrue(component_HCl in test.common_components)
-        self.assertTrue(component_NaCl in test.unique_components)
-        self.assertTrue(component_CaCl2 in test.unique_components)
+        self.assertTrue(str(component_NaCl) in unique_components)
+        self.assertTrue(str(component_CaCl2) in unique_components)
         self.assertEqual(test.n_undescribed('unittest source'), (0, 0))
 
         from pyrfume import Result
