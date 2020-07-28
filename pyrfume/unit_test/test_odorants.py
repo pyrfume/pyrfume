@@ -5,11 +5,11 @@ from unittest_utils import get_substances
 
 class OdotantsTestCase(unittest.TestCase):
     def setUp(self):
-        compound_CaCl2, compound_HCl, compound_NaCl = get_substances("compounds")
+        compound_C4H8O2, compound_HCl, compound_C2H6O = get_substances("compounds")
         self.components = {
-            compound_CaCl2 : 100 * pq.mL,
+            compound_C4H8O2 : 100 * pq.mL,
             compound_HCl : 100 * pq.mL,
-            compound_NaCl : 100 * pq.mL
+            compound_C2H6O : 100 * pq.mL
         }
 
     def test_solution(self):

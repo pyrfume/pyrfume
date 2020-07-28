@@ -10,30 +10,30 @@ class TriangleTestTestCase(unittest.TestCase):
 
     def test_test(self):
 
-        mixture_CaCl2, mixture_HCl, mixture_NaCl = get_substances("mixtures")
-        component_CaCl2, component_HCl, component_NaCl = get_substances("components")
+        mixture_C4H8O2, mixture_HCl, mixture_C2H6O = get_substances("mixtures")
+        component_C4H8O2, component_HCl, component_C2H6O = get_substances("components")
 
-        odorants = [mixture_CaCl2]
-
-        test = TriangleTest(0, odorants, 1.0, True)
-        test.add_odorant(mixture_NaCl)
-        test.add_odorant(mixture_NaCl)
-
-        self.assertEqual(mixture_NaCl, test.double)
-        self.assertEqual(mixture_CaCl2, test.single)
-        self.assertEqual(mixture_NaCl, test.pair[0])
-        self.assertEqual(mixture_CaCl2, test.pair[1])
-        
-
-        odorants = [mixture_CaCl2]
+        odorants = [mixture_C4H8O2]
 
         test = TriangleTest(0, odorants, 1.0, True)
-        test.add_odorants([mixture_NaCl, mixture_NaCl])
+        test.add_odorant(mixture_C2H6O)
+        test.add_odorant(mixture_C2H6O)
+
+        self.assertEqual(mixture_C2H6O, test.double)
+        self.assertEqual(mixture_C4H8O2, test.single)
+        self.assertEqual(mixture_C2H6O, test.pair[0])
+        self.assertEqual(mixture_C4H8O2, test.pair[1])
         
-        self.assertEqual(mixture_NaCl, test.double)
-        self.assertEqual(mixture_CaCl2, test.single)
-        self.assertEqual(mixture_NaCl, test.pair[0])
-        self.assertEqual(mixture_CaCl2, test.pair[1])
+
+        odorants = [mixture_C4H8O2]
+
+        test = TriangleTest(0, odorants, 1.0, True)
+        test.add_odorants([mixture_C2H6O, mixture_C2H6O])
+        
+        self.assertEqual(mixture_C2H6O, test.double)
+        self.assertEqual(mixture_C4H8O2, test.single)
+        self.assertEqual(mixture_C2H6O, test.pair[0])
+        self.assertEqual(mixture_C4H8O2, test.pair[1])
 
         self.assertEqual(1, test.N)
         self.assertEqual(1, test.r)
@@ -41,24 +41,24 @@ class TriangleTestTestCase(unittest.TestCase):
         self.assertEqual(0, test.overlap(True))        
 
         self.assertTrue("common descriptor" in test.common_descriptors('unittest source'))
-        self.assertTrue("NaCl unique descriptor" in test.unique_descriptors('unittest source'))
-        self.assertTrue("CaCl2 unique descriptor" in test.unique_descriptors('unittest source'))
+        self.assertTrue("C2H6O unique descriptor" in test.unique_descriptors('unittest source'))
+        self.assertTrue("C4H8O2 unique descriptor" in test.unique_descriptors('unittest source'))
         all_descriptors = {
             'unittest source' : [
-                'NaCl unique descriptor', 
-                'CaCl2 unique descriptor',
+                'C2H6O unique descriptor', 
+                'C4H8O2 unique descriptor',
                 "common descriptor"
             ],
             "dravnieks" : [
-                "NaCl dravnieks descriptor",
+                "C2H6O dravnieks descriptor",
                 "HCl dravnieks descriptor",
-                "CaCl2 dravnieks descriptor", 
+                "C4H8O2 dravnieks descriptor", 
                 "common dravnieks descriptor"
             ],
             "sigma_ff" : [
-                "NaCl sigma_ff descriptor",
+                "C2H6O sigma_ff descriptor",
                 "HCl sigma_ff descriptor",
-                "CaCl2 sigma_ff descriptor", 
+                "C4H8O2 sigma_ff descriptor", 
                 "common sigma_ff descriptor"
             ]
         }
@@ -76,15 +76,15 @@ class TriangleTestTestCase(unittest.TestCase):
         self.assertEqual(diff_list.count(0), 1)
 
         self.assertEqual(len(test.common_components), 0)
-        mixture_NaCl_HCl = mixture_NaCl
-        mixture_NaCl_HCl.add_component(component_HCl)
-        mixture_CaCl2_HCl = mixture_CaCl2
-        mixture_CaCl2_HCl.add_component(component_HCl)
+        mixture_C2H6O_HCl = mixture_C2H6O
+        mixture_C2H6O_HCl.add_component(component_HCl)
+        mixture_C4H8O2_HCl = mixture_C4H8O2
+        mixture_C4H8O2_HCl.add_component(component_HCl)
         unique_components = test.unique_components
         unique_components = [str(x) for x in unique_components]
         self.assertTrue(component_HCl in test.common_components)
-        self.assertTrue(str(component_NaCl) in unique_components)
-        self.assertTrue(str(component_CaCl2) in unique_components)
+        self.assertTrue(str(component_C2H6O) in unique_components)
+        self.assertTrue(str(component_C4H8O2) in unique_components)
         self.assertEqual(test.n_undescribed('unittest source'), (0, 0))
 
         from pyrfume import Result

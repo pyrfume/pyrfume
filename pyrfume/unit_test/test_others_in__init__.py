@@ -8,20 +8,20 @@ from .unittest_utils import get_substances
 class OthersTestCase(unittest.TestCase):
     def setUp(self):
         self.mixtures = get_substances("mixtures")
-        self.mixture_CaCl2, self.mixture_HCl, self.mixture_NaCl = self.mixtures
+        self.mixture_C4H8O2, self.mixture_HCl, self.mixture_C2H6O = self.mixtures
         self.components = get_substances("components")
-        self.component_CaCl2, self.component_HCl, self.component_NaCl = self.components
+        self.component_C4H8O2, self.component_HCl, self.component_C2H6O = self.components
 
     def test_Distance(self):
-        distance = Distance(self.mixture_CaCl2, self.mixture_NaCl, 1.0)
+        distance = Distance(self.mixture_C4H8O2, self.mixture_C2H6O, 1.0)
 
     def test_odorant_distances_ROC_correct_matrix(self):
         test1 = TriangleTest(0, list(self.mixtures), 0.5, True)
-        new_odorants = [self.mixture_CaCl2, self.mixture_NaCl, self.mixture_NaCl]
+        new_odorants = [self.mixture_C4H8O2, self.mixture_C2H6O, self.mixture_C2H6O]
         test1.add_odorants(new_odorants)
         
         test2 = TriangleTest(1, list(self.mixtures), 0.5, False)
-        new_odorants = [self.mixture_CaCl2, self.mixture_HCl, self.mixture_HCl]
+        new_odorants = [self.mixture_C4H8O2, self.mixture_HCl, self.mixture_HCl]
         test2.add_odorants(new_odorants)
 
         result1 = Result(test1, 0, True)
