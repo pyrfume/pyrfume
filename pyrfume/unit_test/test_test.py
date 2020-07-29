@@ -10,8 +10,8 @@ class TriangleTestTestCase(unittest.TestCase):
 
     def test_test(self):
 
-        mixture_C4H8O2, mixture_HCl, mixture_C2H6O = get_substances("mixtures")
-        component_C4H8O2, component_HCl, component_C2H6O = get_substances("components")
+        mixture_C4H8O2, mixture_C4H8S, mixture_C2H6O = get_substances("mixtures")
+        component_C4H8O2, component_C4H8S, component_C2H6O = get_substances("components")
 
         odorants = [mixture_C4H8O2]
 
@@ -51,13 +51,13 @@ class TriangleTestTestCase(unittest.TestCase):
             ],
             "dravnieks" : [
                 "C2H6O dravnieks descriptor",
-                "HCl dravnieks descriptor",
+                "C4H8S dravnieks descriptor",
                 "C4H8O2 dravnieks descriptor", 
                 "common dravnieks descriptor"
             ],
             "sigma_ff" : [
                 "C2H6O sigma_ff descriptor",
-                "HCl sigma_ff descriptor",
+                "C4H8S sigma_ff descriptor",
                 "C4H8O2 sigma_ff descriptor", 
                 "common sigma_ff descriptor"
             ]
@@ -76,13 +76,13 @@ class TriangleTestTestCase(unittest.TestCase):
         self.assertEqual(diff_list.count(0), 1)
 
         self.assertEqual(len(test.common_components), 0)
-        mixture_C2H6O_HCl = mixture_C2H6O
-        mixture_C2H6O_HCl.add_component(component_HCl)
-        mixture_C4H8O2_HCl = mixture_C4H8O2
-        mixture_C4H8O2_HCl.add_component(component_HCl)
+        mixture_C2H6O_C4H8S = mixture_C2H6O
+        mixture_C2H6O_C4H8S.add_component(component_C4H8S)
+        mixture_C4H8O2_C4H8S = mixture_C4H8O2
+        mixture_C4H8O2_C4H8S.add_component(component_C4H8S)
         unique_components = test.unique_components
         unique_components = [str(x) for x in unique_components]
-        self.assertTrue(component_HCl in test.common_components)
+        self.assertTrue(component_C4H8S in test.common_components)
         self.assertTrue(str(component_C2H6O) in unique_components)
         self.assertTrue(str(component_C4H8O2) in unique_components)
         self.assertEqual(test.n_undescribed('unittest source'), (0, 0))
