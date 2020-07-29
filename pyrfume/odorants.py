@@ -156,6 +156,9 @@ class Solution:
         }
         return result
 
+    def molar_evaporation_rate(self, molecule):
+        return self.molar_evaporation_rates[molecule]
+
 
 class Compound:
     def __init__(
