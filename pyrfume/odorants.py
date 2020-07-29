@@ -128,8 +128,9 @@ class Solution:
     @property
     def total_pressure(self):
         """Computes total pressure of the vapor using Dalton's law"""
-        partial_pressures = self.partial_pressures.values()
-        return sum(partial_pressures)
+        preferred_units = pq.Pa
+        partial_pressures = [pressure.rescale(preferred_units) for pressure in self.partial_pressures.values()]
+        return preferred_units * np.sum(partial_pressures)
 
     @property
     def vapor_concentrations(self):
