@@ -491,6 +491,7 @@ def cas_from_synonyms(synonyms: list) -> list:
 
 def cactus(identifier: str, output: str = "cas") -> str:
     url_template = "https://cactus.nci.nih.gov/chemical/structure/%s/%s"
+    identifier = identifier.replace(' ', '%20')
     url = url_template % (identifier, output)
     page = urlopen(url)
     result = page.read().decode("utf-8")
@@ -499,6 +500,7 @@ def cactus(identifier: str, output: str = "cas") -> str:
 
 def cactus_image(smiles: str) -> None:
     url_template = "https://cactus.nci.nih.gov/chemical/structure/%s/image"
+    smiles = smiles.replace(' ', '%20')
     url = url_template % smiles
     image_data = urlopen(url).read()
     image = Image(image_data)
