@@ -3,7 +3,7 @@ import unittest
 import quantities as pq
 from quantities.units.velocity import speed_of_light
 from pyrfume.odorants import url_to_json, Solution, get_cid, get_cids, from_cids, cids_to_cas, cids_to_smiles
-from unittest_utils import get_substances
+from .unittest_utils import get_substances
 
 class OdotantsTestCase(unittest.TestCase):
     def setUp(self):
