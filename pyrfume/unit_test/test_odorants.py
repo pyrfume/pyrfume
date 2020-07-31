@@ -2,7 +2,12 @@ import json
 import unittest
 import quantities as pq
 from quantities.units.velocity import speed_of_light
-from pyrfume.odorants import url_to_json, Solution, get_cid, get_cids, from_cids, cids_to_cas, cids_to_smiles
+from pyrfume.odorants import url_to_json, Solution, get_cid, \
+                            get_cids, from_cids, cids_to_cas, \
+                            cids_to_smiles, cactus, cactus_image, \
+                            get_compound_summary, get_compound_odor, \
+                            _parse_other_info
+
 from .unittest_utils import get_substances
 
 class OdotantsTestCase(unittest.TestCase):
@@ -106,6 +111,48 @@ class OdotantsTestCase(unittest.TestCase):
         self.assertEqual(results[702][0], '64-17-5')
         self.assertEqual(results[8857][0], '141-78-6')
         self.assertEqual(results[1127][0], '110-01-0')
+
+    def test_cactus(self):
+        results = cactus("Ethyl acetate", "cas").split("\n")
+        self.assertTrue("141-78-6" in results)
+
+        results = cactus("Ethanol", "cas").split('\n')
+        self.assertTrue("64-17-5" in results)
+
+        results = cactus("Tetrahydrothiophene", "cas").split('\n')
+        self.assertTrue("110-01-0" in results)
+
+    def test_get_compound_summary(self):
+        self.assertIsInstance(get_compound_summary(702, 'Physical Description'), dict)
+        self.assertIsInstance(get_compound_summary(8857, 'Physical Description'), dict)
+        self.assertIsInstance(get_compound_summary(1127, 'Physical Description'), dict)
+
+    def test_get_compound_odor(self):
+        self.assertIsInstance(get_compound_odor(702, False), list)
+        self.assertIsInstance(get_compound_odor(8857, False), list)
+        self.assertIsInstance(get_compound_odor(1127, False), list)
+        self.assertIsInstance(get_compound_odor(702, True), list)
+        self.assertIsInstance(get_compound_odor(8857, True), list)
+        self.assertIsInstance(get_compound_odor(1127, True), list)
+
+    def test__parse_other_info(self):
+        self.assertTrue(len(_parse_other_info(None)) == 0)
+
+        test_info_dict = {
+            "String" : "value of String",
+            "Value" : "Number 0",
+            "Dict" : {"String" : "value of String in the sub-dict"}
+        }
+        result = _parse_other_info(test_info_dict)
+        self.assertTrue('value of String' in result)
+        self.assertTrue('Number 0' in result)
+        self.assertTrue('value of String in the sub-dict' in result)
+
+        test_info_list = [test_info_dict]
+        result = _parse_other_info(test_info_list)
+        self.assertTrue('value of String' in result)
+        self.assertTrue('Number 0' in result)
+        self.assertTrue('value of String in the sub-dict' in result)
 
 if __name__ == '__main__':
     unittest.main()
