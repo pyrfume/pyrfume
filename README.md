@@ -5,7 +5,7 @@
 #### `pyrfume` is a python library for olfactory psychophysics research. See "notebooks" for examples of use.
 
 ### Examples:
-#### Note: these require the Pyrfume data library, provided separately.
+#### Note: these require the Pyrfume data library, *provided separately*.
 ```
 # Get raw data from the Sigma Fragrance & Flavor Catalog
 from pyrfume import sigma_ff
