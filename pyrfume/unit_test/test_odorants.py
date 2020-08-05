@@ -2,11 +2,14 @@ import json
 import unittest
 import quantities as pq
 from quantities.units.velocity import speed_of_light
+from pyrfume import save_data, set_data_path, get_data_path
 from pyrfume.odorants import url_to_json, Solution, get_cid, \
                             get_cids, from_cids, cids_to_cas, \
                             cids_to_smiles, cactus, cactus_image, \
                             get_compound_summary, get_compound_odor, \
-                            _parse_other_info
+                            _parse_other_info, smiles_to_image, crop_image, \
+                            all_odorants, all_sources, all_cids, all_smiles
+                            
 
 from .unittest_utils import get_substances
 
@@ -153,6 +156,19 @@ class OdotantsTestCase(unittest.TestCase):
         self.assertTrue('value of String' in result)
         self.assertTrue('Number 0' in result)
         self.assertTrue('value of String in the sub-dict' in result)
+
+    @unittest.skip("Failure expected. A fix is needed.")
+    def test_cactus_image(self):
+        cactus_image("CCC")
+
+    @unittest.skip("Failure expected. The data is needed for this test case.")
+    def test_all_items(self):
+        from pandas import DataFrame
+        #set_data_path('C:/icon/pyrfume')
+        self.assertIsInstance(all_odorants(), DataFrame)
+        self.assertIsInstance(all_sources(), DataFrame)
+        self.assertIsInstance(all_cids(), list)
+        self.assertIsInstance(all_smiles(), list)
 
 if __name__ == '__main__':
     unittest.main()
