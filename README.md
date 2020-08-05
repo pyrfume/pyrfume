@@ -17,4 +17,6 @@ sigma = pyrfume.load_data('sigma/sigma.csv')
 ```
 ### [Website](http://pyrfume.org)
 
+### [Data Curation Status](http://status.pyrfume.org)
+
 ### [Docs](https://pyrfume.readthedocs.io/)
