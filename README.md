@@ -3,6 +3,7 @@
 ![Pyrfume logo](https://avatars3.githubusercontent.com/u/34174393?s=200&v=4)
 
 #### `pyrfume` is a python library for olfactory psychophysics research. See "notebooks" for examples of use.
+[![Travis](https://travis-ci.org/pyrfume/pyrfume.svg?branch=master)](https://travis-ci.org/pyrfume/pyrfume) 
 
 ### Examples:
 #### Note: these require the Pyrfume data library, *provided separately*.
