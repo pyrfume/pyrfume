@@ -10,6 +10,7 @@ import pandas as pd
 from tqdm.auto import tqdm, trange
 
 from .base import CONFIG_PATH, DEFAULT_DATA_PATH
+from typing import Any, List
 
 logger = logging.getLogger("pyrfume")
 
@@ -92,7 +93,7 @@ class Mixture(object):
     candidate molecules in the mixture.
     """
 
-    def __init__(self, C, components=None):
+    def __init__(self, C: int, components: list=None):
         """
         Builds odorant from a list of components.
         """
@@ -103,7 +104,8 @@ class Mixture(object):
 
     C = None  # Number of components from which to choose.
 
-    def components_vector(self, all_components, normalize=0):
+    def components_vector(self, all_components: list=None, normalize: float=0):
+
         vector = np.zeros(self.C)
         for component in self.components:
             vector[all_components.index(component)] = 1
@@ -284,7 +286,7 @@ class Component(object):
     A single molecule, which may or may not be present in an odorant.
     """
 
-    def __init__(self, component_id, name, cas, percent, solvent):
+    def __init__(self, component_id: int, name: str, cas: str, percent: float, solvent: "Compound"):
         """
         Components are defined by a component_id from the Bushdid et al
         supplemental material, a name, a CAS number, a percent dilution,
@@ -301,6 +303,7 @@ class Component(object):
 
     @property
     def cid(self):
+        cid = None
         if self.cid_:
             cid = self.cid_
         else:
@@ -319,7 +322,7 @@ class Component(object):
             self.cid_ = cid
         return cid
 
-    def set_descriptors(self, source, cas_descriptors):
+    def set_descriptors(self, source: str, cas_descriptors) -> None:
         """
         Given a data source, sets descriptors for this odorant using
         a dictionary where CAS numbers are keys, and descriptors are values.
@@ -352,7 +355,7 @@ class TriangleTest(object):
     odorants, and is defined by those odorants.
     """
 
-    def __init__(self, test_uid, odorants, dilution, correct):
+    def __init__(self, test_uid: int, odorants: list, dilution: float, correct: bool):
         """
         Tests are defined by their universal identifier (UID), the 3
         odorants used (2 should be identical), the dilution, and the
@@ -370,6 +373,13 @@ class TriangleTest(object):
         """
 
         self.odorants.append(odorant)
+
+    def add_odorants(self, odorants: list):
+        """
+        Adds more than one odorants to this test.
+        """
+
+        self.odorants.extend(odorants)
 
     @property
     def double(self):
@@ -524,6 +534,7 @@ class TriangleTest(object):
         return np.arctan2(np.mean(np.sin(angles)), np.mean(np.cos(angles)))
 
     def angle(self, features, weights=None, method="sum", method_param=1.0):
+        angle = None
         if method == "sum":
             v1 = self.single.vector(features, weights=weights, method=method)
             v2 = self.double.vector(features, weights=weights, method=method)
@@ -559,7 +570,7 @@ class TriangleTest(object):
         v2 = self.double.vector(features, weights=weights, method=method)
         return np.sqrt(((v1 - v2) ** 2).sum())
 
-    def fraction_correct(self, results):
+    def fraction_correct(self, results: list):
         num, denom = 0.0, 0.0
         for result in results:
             if result.test.id == self.id:
@@ -573,7 +584,7 @@ class Result(object):
     A test result, corresponding to one test given to one subject.
     """
 
-    def __init__(self, test, subject_id, correct):
+    def __init__(self, test: TriangleTest, subject_id: int, correct: bool):
         """
         Results are defined by the test to which they correspond,
         the id of the subject taking that test, and whether the subject
@@ -591,7 +602,7 @@ class Distance(object):
     No particular implementation for computing distance is mandated.
     """
 
-    def __init__(self, odorant_i, odorant_j, distance):
+    def __init__(self, odorant_i: Any, odorant_j: Any, distance: float):
         self.odorant_i = odorant_i
         self.odorant_j = odorant_j
         self.distance = distance

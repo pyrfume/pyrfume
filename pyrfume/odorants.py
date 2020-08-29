@@ -128,8 +128,9 @@ class Solution:
     @property
     def total_pressure(self):
         """Computes total pressure of the vapor using Dalton's law"""
-        partial_pressures = self.partial_pressures.values()
-        return sum(partial_pressures)
+        preferred_units = pq.Pa
+        partial_pressures = [pressure.rescale(preferred_units) for pressure in self.partial_pressures.values()]
+        return preferred_units * np.sum(partial_pressures)
 
     @property
     def vapor_concentrations(self):
@@ -155,12 +156,16 @@ class Solution:
         }
         return result
 
+    def molar_evaporation_rate(self, molecule):
+        return self.molar_evaporation_rates[molecule]
+
 
 class Compound:
     def __init__(
-        self, chemical_order, stock="", date_arrived=None, date_opened=None, is_solvent=False
+        self, chemical_order: "ChemicalOrder", stock: str="", date_arrived: datetime=None, date_opened: datetime=None, is_solvent: bool=False
     ):
         self.chemical_order = chemical_order
+        self.stock = stock
         self.date_arrived = date_arrived if date_arrived else datetime.now
         self.date_opened = date_opened
         self.is_solvent = is_solvent
@@ -186,7 +191,7 @@ class Compound:
 
 
 class ChemicalOrder:
-    def __init__(self, molecule, vendor, part_id, purity=1, known_impurities=None):
+    def __init__(self, molecule: "Molecule", vendor: "Vendor", part_id: str, purity: float=1, known_impurities: list=None):
         self.molecule = molecule
         self.vendor = vendor
         self.part_id = part_id
@@ -206,7 +211,7 @@ class ChemicalOrder:
 
 
 class Vendor:
-    def __init__(self, name, url):
+    def __init__(self, name: str, url: str):
         self.name = name
         self.url = url
 
@@ -215,7 +220,7 @@ class Vendor:
 
 
 class Molecule:
-    def __init__(self, cid, name=None, fill=False):
+    def __init__(self, cid: int, name: str=None, fill: bool=False):
         self.cid = cid
         if fill:
             self.fill_details()
@@ -241,7 +246,7 @@ class Molecule:
 
     @property
     def molarity(self):
-        if not self.molecular_weight:
+        if not (self.molecular_weight and self.density):
             result = None
         else:
             result = self.density / self.molecular_weight
@@ -486,6 +491,7 @@ def cas_from_synonyms(synonyms: list) -> list:
 
 def cactus(identifier: str, output: str = "cas") -> str:
     url_template = "https://cactus.nci.nih.gov/chemical/structure/%s/%s"
+    identifier = identifier.replace(' ', '%20')
     url = url_template % (identifier, output)
     page = urlopen(url)
     result = page.read().decode("utf-8")
@@ -494,6 +500,7 @@ def cactus(identifier: str, output: str = "cas") -> str:
 
 def cactus_image(smiles: str) -> None:
     url_template = "https://cactus.nci.nih.gov/chemical/structure/%s/image"
+    smiles = smiles.replace(' ', '%20')
     url = url_template % smiles
     image_data = urlopen(url).read()
     image = Image(image_data)
