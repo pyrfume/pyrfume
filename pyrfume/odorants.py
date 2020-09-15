@@ -40,6 +40,8 @@ ODORANT_SOURCES_PATH = "odorants/all-cids.csv"
 
 
 class Solution:
+    components: dict = {}
+    
     def __init__(self, components: dict, date_created: datetime.timestamp = None):
         self.total_volume = 0 * pq.mL
         assert isinstance(components, dict), "Components must be a dict"
@@ -160,65 +162,6 @@ class Solution:
         return self.molar_evaporation_rates[molecule]
 
 
-class Compound:
-    def __init__(
-        self, chemical_order: "ChemicalOrder", stock: str="", date_arrived: datetime=None, date_opened: datetime=None, is_solvent: bool=False
-    ):
-        self.chemical_order = chemical_order
-        self.stock = stock
-        self.date_arrived = date_arrived if date_arrived else datetime.now
-        self.date_opened = date_opened
-        self.is_solvent = is_solvent
-
-    # ChemicalOrder
-    chemical_order = None
-    # Stock number (supplied by vendor, usually on bottle)
-    stock = ""
-    # Date arrived at the lab/clinic
-    date_arrived = None
-    # Date opened
-    date_opened = None
-    # Is it a solvent?
-    is_solvent = False
-
-    def __getattr__(self, attr):
-        """If no attribute is found, try looking up on the
-        ChemicalOrder or the Molecule"""
-        try:
-            return getattr(self.chemical_order, attr)
-        except AttributeError:
-            return getattr(self.chemical_order.molecule, attr)
-
-
-class ChemicalOrder:
-    def __init__(self, molecule: "Molecule", vendor: "Vendor", part_id: str, purity: float=1, known_impurities: list=None):
-        self.molecule = molecule
-        self.vendor = vendor
-        self.part_id = part_id
-        self.purity = purity
-        self.known_impurities = known_impurities
-
-    # Molecule
-    molecule: "Molecule" = None
-    # Vendor, e.g. Sigma-Aldrich
-    vendor: "Vendor" = None
-    # ID number of compound at vendor
-    part_id: str = ""
-    # Reported purity as a fraction
-    purity: float = 1
-    # List of known impurities (Molecules)
-    known_impurities: list = None
-
-
-class Vendor:
-    def __init__(self, name: str, url: str):
-        self.name = name
-        self.url = url
-
-    name: str = ""
-    url: str = ""
-
-
 class Molecule:
     def __init__(self, cid: int, name: str=None, fill: bool=False):
         self.cid = cid
@@ -329,6 +272,64 @@ class Molecule:
         else:
             result = "Unknown"
         return result
+
+
+class Vendor:
+    def __init__(self, name: str, url: str):
+        self.name = name
+        self.url = url
+
+    name: str = ""
+    url: str = ""
+
+
+class ChemicalOrder:
+    def __init__(self, molecule: "Molecule", vendor: "Vendor", part_id: str, purity: float=1, known_impurities: list=None):
+        self.molecule = molecule
+        self.vendor = vendor
+        self.part_id = part_id
+        self.purity = purity
+        self.known_impurities = known_impurities
+
+    # Molecule
+    molecule: Molecule = None
+    # Vendor, e.g. Sigma-Aldrich
+    vendor: Vendor = None
+    # ID number of compound at vendor
+    part_id: str = ""
+    # Reported purity as a fraction
+    purity: float = 1
+    # List of known impurities (Molecules)
+    known_impurities: list = None
+
+class Compound:
+    def __init__(
+        self, chemical_order: ChemicalOrder, stock: str="", date_arrived: datetime=None, date_opened: datetime=None, is_solvent: bool=False
+    ):
+        self.chemical_order = chemical_order
+        self.stock = stock
+        self.date_arrived = date_arrived if date_arrived else datetime.now
+        self.date_opened = date_opened
+        self.is_solvent = is_solvent
+
+    # ChemicalOrder
+    chemical_order: ChemicalOrder = None
+    # Stock number (supplied by vendor, usually on bottle)
+    stock: str = ""
+    # Date arrived at the lab/clinic
+    date_arrived: datetime = None
+    # Date opened
+    date_opened: datetime = None
+    # Is it a solvent?
+    is_solvent: bool = False
+
+    def __getattr__(self, attr):
+        """If no attribute is found, try looking up on the
+        ChemicalOrder or the Molecule"""
+        try:
+            return getattr(self.chemical_order, attr)
+        except AttributeError:
+            return getattr(self.chemical_order.molecule, attr)
 
 
 def url_to_json(url, verbose=True) -> str:
