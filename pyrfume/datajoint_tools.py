@@ -31,7 +31,7 @@ def set_dj_definition(cls, type_map: dict = None) -> None:
         type_map: Optional additional type mappings
     """
     # A mapping between python types and DataJoint types
-    _type_map = {"int": "int", "str": "varchar(256)", "float": "float"}
+    _type_map = {"int": "int", "str": "varchar(256)", "float": "float", "datetime": "datetime", "bool": "tinyint"}
     # A list of python types which have no DataJoint
     # equivalent and so are unsupported
     unsupported = [list, dict]
@@ -45,6 +45,8 @@ def set_dj_definition(cls, type_map: dict = None) -> None:
         default = getattr(cls, attr)
         if isinstance(default, str):
             default = '"%s"' % default
+        elif isinstance(default, bool):
+            default = int(default)
         elif default is None:
             default = "NULL"
         if name in _type_map:
