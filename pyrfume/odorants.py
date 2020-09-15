@@ -40,6 +40,8 @@ ODORANT_SOURCES_PATH = "odorants/all-cids.csv"
 
 
 class Solution:
+    components: dict = {}
+    
     def __init__(self, components: dict, date_created: datetime.timestamp = None):
         self.total_volume = 0 * pq.mL
         assert isinstance(components, dict), "Components must be a dict"
