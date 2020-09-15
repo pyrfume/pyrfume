@@ -98,7 +98,6 @@ if __name__ == "__main__":
     # Set DataJoint definitions in each class based on inspection
     # of class attributes.
     set_dj_definition(Stuff)
-    print(Stuff.definition)
 
     # Schematize each of these classes (will include foreign keys)
     from pyrfume.odorants import Molecule, Vendor, ChemicalOrder
