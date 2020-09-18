@@ -51,6 +51,7 @@ def set_dj_definition(cls, type_map: dict = None) -> None:
             key_cls_name = type_hint.__args__[0].__forward_arg__
             setattr(cls, part_cls_name, part_cls)
             getattr(cls, part_cls_name).definition = """
+            -> master
             -> %s
             """ % key_cls_name
             continue
