@@ -5,6 +5,7 @@ from importlib import import_module
 from inspect import isclass
 
 import datajoint as dj
+dj.errors._switch_adapted_types(True)
 
 
 def schematize(cls, schema: dj.schema):
@@ -34,7 +35,7 @@ def set_dj_definition(cls, type_map: dict = None) -> None:
     _type_map = {"int": "int", "str": "varchar(256)", "float": "float", "datetime": "datetime", "bool": "tinyint"}
     # A list of python types which have no DataJoint
     # equivalent and so are unsupported
-    unsupported = [list, dict]
+    unsupported = [list]
     if type_map:
         _type_map.update(type_map)
     dj_def = "id: int auto_increment\n---\n"
@@ -43,7 +44,17 @@ def set_dj_definition(cls, type_map: dict = None) -> None:
             continue
         name = getattr(type_hint, "__name__", type_hint)
         default = getattr(cls, attr)
-        if isinstance(default, str):
+        if isinstance(default, dict):
+            # Assume objects in keys have corresponding tables in the database
+            part_cls_name = attr[0].upper() + attr[1:]
+            part_cls = type(part_cls_name, (dj.Part, object), {})
+            key_cls_name = type_hint.__args__[0].__forward_arg__
+            setattr(cls, part_cls_name, part_cls)
+            getattr(cls, part_cls_name).definition = """
+            -> %s
+            """ % key_cls_name
+            continue
+        elif isinstance(default, str):
             default = '"%s"' % default
         elif isinstance(default, bool):
             default = int(default)

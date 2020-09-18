@@ -21,7 +21,7 @@ import quantities as pq
 from pyrfume import load_data, logger, tqdm, trange
 from pyrfume.physics import mackay
 from quantities.constants.statisticalmechanics import R
-
+from typing import Dict
 try:
     from rdkit import Chem
     from rdkit.Chem import Draw
@@ -40,7 +40,7 @@ ODORANT_SOURCES_PATH = "odorants/all-cids.csv"
 
 
 class Solution:
-    components: dict = {}
+    components: Dict["Compound", pq.quantity.Quantity] = {}
     
     def __init__(self, components: dict, date_created: datetime.timestamp = None):
         self.total_volume = 0 * pq.mL
