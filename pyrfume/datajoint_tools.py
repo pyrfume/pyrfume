@@ -19,7 +19,7 @@ def schematize(cls, schema: dj.schema):
         cls: The schematized class (now for use with DataJoint)
     """
     cls = type(cls.__name__, (dj.Manual, cls, object), {})
-    set_dj_definition(cls)
+    cls = set_dj_definition(cls)
     cls = schema(cls)
     return cls
 
@@ -39,21 +39,35 @@ def set_dj_definition(cls, type_map: dict = None) -> None:
     if type_map:
         _type_map.update(type_map)
     dj_def = "id: int auto_increment\n---\n"
-    for attr, type_hint in cls.__annotations__.items():
+    cls_items = cls.__annotations__.items()
+    for attr, type_hint in cls_items:
         if type_hint in unsupported:
             continue
         name = getattr(type_hint, "__name__", type_hint)
         default = getattr(cls, attr)
         if isinstance(default, dict):
             # Assume objects in keys have corresponding tables in the database
+
+            # For example, components: Dict[ClassA, int] = {a: 1, b: 2}
+            # key_cls_name would be ClassA
+            # part_cls_name would be Components
+            # 
             part_cls_name = attr[0].upper() + attr[1:]
-            part_cls = type(part_cls_name, (dj.Part, object), {})
-            key_cls_name = type_hint.__args__[0].__forward_arg__
-            setattr(cls, part_cls_name, part_cls)
-            getattr(cls, part_cls_name).definition = """
-            -> master
-            -> %s
-            """ % key_cls_name
+            key_cls_name = type_hint.__args__[0].__forward_arg__ 
+            
+            part_cls = type(
+                part_cls_name, 
+                (dj.Part, object), 
+                {
+                    "definition": """
+                    -> master
+                    -> %s
+                    """ % key_cls_name
+                }
+            )
+            cls_dict = dict(vars(cls))
+            cls_dict[part_cls_name] = part_cls
+            cls = type(cls.__name__, (dj.Manual, cls.__bases__[1], object), {part_cls_name: part_cls})
             continue
         elif isinstance(default, str):
             default = '"%s"' % default
@@ -66,6 +80,7 @@ def set_dj_definition(cls, type_map: dict = None) -> None:
         else:
             dj_def += "-> %s\n" % name
     cls.definition = dj_def
+    return cls
 
 
 def import_classes(module_name: str, match: str = None) -> dict:
