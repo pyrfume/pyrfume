@@ -32,13 +32,20 @@ def set_dj_definition(cls, type_map: dict = None) -> None:
         type_map: Optional additional type mappings
     """
     # A mapping between python types and DataJoint types
-    _type_map = {"int": "int", "str": "varchar(256)", "float": "float", "datetime": "datetime", "bool": "tinyint"}
+    _type_map = {
+        "int": "int", 
+        "str": "varchar(256)", 
+        "float": "float", 
+        "datetime": "datetime", 
+        "datetime.datetime": "datetime", 
+        "bool": "tinyint"
+    }
     # A list of python types which have no DataJoint
     # equivalent and so are unsupported
     unsupported = [list]
     if type_map:
         _type_map.update(type_map)
-    dj_def = "id: int auto_increment\n---\n"
+    dj_def = "%s_id: int auto_increment\n---\n" % cls.__name__.lower()
     cls_items = cls.__annotations__.items()
     for attr, type_hint in cls_items:
         if type_hint in unsupported:
@@ -60,14 +67,14 @@ def set_dj_definition(cls, type_map: dict = None) -> None:
                 (dj.Part, object), 
                 {
                     "definition": """
-                    -> master
                     -> %s
-                    """ % key_cls_name
+                    -> %s
+                    """ % (cls.__name__, key_cls_name)
                 }
             )
             cls_dict = dict(vars(cls))
             cls_dict[part_cls_name] = part_cls
-            cls = type(cls.__name__, (dj.Manual, cls.__bases__[1], object), {part_cls_name: part_cls})
+            cls = type(cls.__name__, tuple(cls.__bases__), {part_cls_name: part_cls})
             continue
         elif isinstance(default, str):
             default = '"%s"' % default
