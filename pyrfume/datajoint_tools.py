@@ -53,13 +53,15 @@ def set_dj_definition(cls, type_map: dict = None) -> None:
         name = getattr(type_hint, "__name__", type_hint)
         default = getattr(cls, attr)
         if isinstance(default, dict):
-            # Assume objects in keys have corresponding tables in the database
+            # Assume the class of objects in some_dict.keys() have corresponding tables in the database
 
             # For example, components: Dict[ClassA, int] = {a: 1, b: 2}
-            # key_cls_name would be ClassA
-            # part_cls_name would be Components
+            # key_cls_name would be "ClassA"
+            # part_cls_name would be "Component", 
+            # note that the "s" at the end of the dict name will be removed.
             # 
             part_cls_name = attr[0].upper() + attr[1:]
+            part_cls_name = part_cls_name[:-1] if part_cls_name[-1] == 's' else part_cls_name
             key_cls_name = type_hint.__args__[0].__forward_arg__ 
             
             part_cls = type(
