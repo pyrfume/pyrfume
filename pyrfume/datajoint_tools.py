@@ -64,7 +64,7 @@ def set_dj_definition(cls, type_map: dict = None) -> None:
             # 
 
             # skip if type_hint doesn't suggest the type of keys and values in the dict.
-            if type_hint.__name__ == 'dict':
+            if hasattr(type_hint, __name__) and type_hint.__name__ == 'dict':
                 continue
             
             part_cls_name = attr[0].upper() + attr[1:]
