@@ -7,6 +7,7 @@ from inspect import isclass
 import datajoint as dj
 dj.errors._switch_adapted_types(True)
 
+QUANTITY_ADAPTER = None
 
 def schematize(cls, schema: dj.schema):
     """Take a Python class and build a Datajoint table from it.
@@ -20,9 +21,28 @@ def schematize(cls, schema: dj.schema):
     """
     cls = type(cls.__name__, (dj.Manual, cls, object), {})
     cls = set_dj_definition(cls)
+    global QUANTITY_ADAPTER
+    if QUANTITY_ADAPTER:
+        schema.context.update({'QUANTITY_ADAPTER': QUANTITY_ADAPTER})
+        QUANTITY_ADAPTER = None
     cls = schema(cls)
     return cls
 
+def create_quantity_adapter():
+    import quantities as pq
+    class QuantityAdapter(dj.AttributeAdapter):
+        attribute_type = 'float'
+    
+        def put(self, obj: pq.Quantity):
+            assert isinstance(obj, pq.Quantity)
+            obj = obj.rescale(pq.mL)
+            return obj.item()
+
+        def get(self, value: float):
+            return value * pq.mL
+
+    global QUANTITY_ADAPTER
+    QUANTITY_ADAPTER = QuantityAdapter()
 
 def set_dj_definition(cls, type_map: dict = None) -> None:
     """Set the definition property of a class by inspecting its attributes.
@@ -77,8 +97,15 @@ def set_dj_definition(cls, type_map: dict = None) -> None:
             key_cls_name = key_type.__forward_arg__ if isinstance(key_type, ForwardRef) else key_type.__name__
             value_type = value_type.__forward_arg__ if isinstance(value_type, ForwardRef) else value_type.__name__
 
-            assert value_type in _type_map
-            value_type = _type_map[value_type]
+            #assert value_type in _type_map
+            #value_type = _type_map[value_type]
+            if value_type == 'Quantity':
+                if QUANTITY_ADAPTER == None:
+                    create_quantity_adapter()
+                value_type = '<QUANTITY_ADAPTER>'
+            else:
+                assert value_type in _type_map
+                value_type = _type_map[value_type]
 
             part_cls = type(
                 part_cls_name, 
