@@ -31,4 +31,4 @@ If (-Not (Test-Path -Path mysql-docker/docker-compose.yml) ) {
     $client.DownloadFile($url, $output);
 }
 
-docker-compose up -d
+docker-compose -f ./mysql-docker/docker-compose.yml up -d
