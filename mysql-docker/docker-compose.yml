@@ -1,0 +1,12 @@
+version: '2.4'
+services:
+  db:
+    # image: datajoint/mysql:5.6
+    # image: datajoint/mysql:5.7
+    image: datajoint/mysql:8.0
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=simple
+    volumes:
+      - ./data:/var/lib/mysql
