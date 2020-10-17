@@ -40,7 +40,7 @@ ODORANT_SOURCES_PATH = "odorants/all-cids.csv"
 
 
 class Solution:
-    components: Dict["Compound", pq.quantity.Quantity] = {}
+    components: Dict["Compound", pq.quantity.Quantity] = None
     date_created: datetime = None
 
     def __init__(self, components: dict, date_created: datetime = str(datetime.now())[:-7]):

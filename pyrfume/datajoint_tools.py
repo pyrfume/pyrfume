@@ -24,7 +24,6 @@ def schematize(cls, schema: dj.schema):
     global QUANTITY_ADAPTER
     if QUANTITY_ADAPTER:
         schema.context.update({'QUANTITY_ADAPTER': QUANTITY_ADAPTER})
-        QUANTITY_ADAPTER = None
     cls = schema(cls)
     return cls
 
@@ -63,7 +62,7 @@ def set_dj_definition(cls, type_map: dict = None) -> None:
     }
     # A list of python types which have no DataJoint
     # equivalent and so are unsupported
-    unsupported = [list]
+    unsupported = [list, dict]
     if type_map:
         _type_map.update(type_map)
     dj_def = "%s_id: int auto_increment\n---\n" % cls.__name__.lower()
@@ -72,21 +71,29 @@ def set_dj_definition(cls, type_map: dict = None) -> None:
         if type_hint in unsupported:
             continue
         name = getattr(type_hint, "__name__", type_hint)
-        default = getattr(cls, attr)
-        if isinstance(default, dict):
+        default = getattr(cls, attr)            
+        
+        if isinstance(default, str):
+            default = '"%s"' % default
+        elif isinstance(default, bool):
+            default = int(default)
+        else:
+            default = "NULL"
+
+        if getattr(type_hint, '_name', "") == 'List':
+            # TODO
+            pass
+        if getattr(type_hint, '_name', "") == 'Dict':
             # Assume the class of objects in some_dict.keys() have corresponding tables in the database
             # Assume values of the dict are primitive type which is in the _type_map
 
             # For example, components: Dict[ClassA, int] = {a: 1, b: 2}
-            # key_cls_name would be "ClassA"
-            # part_cls_name would be "Component", 
+            # key_cls_name will be "ClassA"
+            # part_cls_name will be "Component", 
             # note that the "s" at the end of the dict name will be removed.
             # 
 
             # skip if type_hint doesn't suggest the type of keys and values in the dict.
-            if hasattr(type_hint, __name__) and type_hint.__name__ == 'dict':
-                continue
-            
             part_cls_name = attr[0].upper() + attr[1:]
             part_cls_name = part_cls_name[:-1] if part_cls_name[-1] == 's' else part_cls_name
 
@@ -97,10 +104,8 @@ def set_dj_definition(cls, type_map: dict = None) -> None:
             key_cls_name = key_type.__forward_arg__ if isinstance(key_type, ForwardRef) else key_type.__name__
             value_type = value_type.__forward_arg__ if isinstance(value_type, ForwardRef) else value_type.__name__
 
-            #assert value_type in _type_map
-            #value_type = _type_map[value_type]
             if value_type == 'Quantity':
-                if QUANTITY_ADAPTER == None:
+                if not QUANTITY_ADAPTER:
                     create_quantity_adapter()
                 value_type = '<QUANTITY_ADAPTER>'
             else:
@@ -123,13 +128,7 @@ def set_dj_definition(cls, type_map: dict = None) -> None:
             cls_dict[part_cls_name] = part_cls
             cls = type(cls.__name__, tuple(cls.__bases__), {part_cls_name: part_cls})
             continue
-        elif isinstance(default, str):
-            default = '"%s"' % default
-        elif isinstance(default, bool):
-            default = int(default)
-        elif default is None:
-            default = "NULL"
-        if name in _type_map:
+        elif name in _type_map:
             dj_def += "%s = %s : %s\n" % (attr, default, _type_map[name])
         else:
             dj_def += "-> %s\n" % name

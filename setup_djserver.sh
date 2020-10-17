@@ -11,9 +11,9 @@ fi
 
 if ! [ -x "$(command -v docker-compose)" ]; then
   echo 'Installing docker and docker compose...\n' >&2
-  sudo apt-get remove docker docker-engine docker.io containerd runc
-  sudo apt-get update
-  sudo apt-get install \
+  sudo apt remove docker docker-engine docker.io containerd runc
+  sudo apt update
+  sudo apt install \
     apt-transport-https \
     ca-certificates \
     curl \
@@ -25,8 +25,8 @@ if ! [ -x "$(command -v docker-compose)" ]; then
     "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
     $(lsb_release -cs) \
     stable"
-  sudo apt-get update
-  sudo apt-get install docker-ce docker-ce-cli containerd.io -y
+  sudo apt update
+  sudo apt install docker-ce docker-ce-cli containerd.io -y
   sudo apt install libffi-dev libc-dev make python3-pip python3-dev -y
   sudo curl -L "https://github.com/docker/compose/releases/download/1.27.4/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
   sudo chmod +x /usr/local/bin/docker-compose
