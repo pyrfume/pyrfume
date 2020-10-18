@@ -5,6 +5,7 @@ class Publication:
     title: str = ""
     year: int = 0
     description: str = ""
+    license: str = ""
     author: List[str] = []
 
     def __init__(self, title: str, year: int, author: List[str], description: str=""):
