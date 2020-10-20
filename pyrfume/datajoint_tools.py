@@ -61,6 +61,7 @@ def handle_dict(cls, _type_map: dict, attr: Any, type_hint: Any):
     # key_cls_name will be "ClassA"
     # part_cls_name will be "Component", 
     # note that the "s" at the end of the dict name will be removed.
+
     part_cls_name = attr[0].upper() + attr[1:]
     part_cls_name = part_cls_name[:-1] if part_cls_name[-1] == 's' else part_cls_name
 
@@ -80,15 +81,11 @@ def handle_dict(cls, _type_map: dict, attr: Any, type_hint: Any):
         value_type = _type_map[value_type]
 
     part_cls = type(
-        part_cls_name, 
-        (dj.Part, object), 
+        part_cls_name,
+        (dj.Part, object),
         {
-            "definition": """
-            -> %s
-            -> %s
-            ---
-            value = NULL : %s
-            """ % (cls.__name__, key_cls_name, value_type)
+            "definition": "\n-> %s\n-> %s\n---\nvalue = NULL : %s"
+            % (cls.__name__, key_cls_name, value_type)
         }
     )
     cls_dict = dict(vars(cls))
@@ -111,11 +108,12 @@ def set_dj_definition(cls, type_map: dict = None) -> None:
         "Quantity": "float",
         "datetime": "datetime", 
         "datetime.datetime": "datetime", 
-        "bool": "tinyint"
+        "bool": "tinyint",
+        "list": "longblob",
     }
     # A list of python types which have no DataJoint
     # equivalent and so are unsupported
-    unsupported = [list, dict]
+    unsupported = [dict]
     if type_map:
         _type_map.update(type_map)
     dj_def = "%s_id: int auto_increment\n---\n" % cls.__name__.lower()
@@ -133,9 +131,6 @@ def set_dj_definition(cls, type_map: dict = None) -> None:
         else:
             default = "NULL"
 
-        if getattr(type_hint, '_name', "") == 'List':
-            # TODO
-            pass
         if getattr(type_hint, '_name', "") == 'Dict':
             cls = handle_dict(cls, _type_map, attr, type_hint)
             continue

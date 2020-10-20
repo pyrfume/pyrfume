@@ -6,7 +6,7 @@ class Publication:
     year: int = 0
     description: str = ""
     license: str = ""
-    author: List[str] = []
+    author: list = []
 
     def __init__(self, title: str, year: int, author: List[str], description: str=""):
         self.title: str = title

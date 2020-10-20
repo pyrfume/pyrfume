@@ -20,6 +20,7 @@ from PIL import Image
 import quantities as pq
 from pyrfume import load_data, logger, tqdm, trange
 from pyrfume.physics import mackay
+from pyrfume.publication import Publication
 from quantities.constants.statisticalmechanics import R
 from typing import Dict
 try:
@@ -40,10 +41,11 @@ ODORANT_SOURCES_PATH = "odorants/all-cids.csv"
 
 
 class Solution:
+    pub_info: Publication = None
     components: Dict["Compound", pq.quantity.Quantity] = None
     date_created: datetime = None
 
-    def __init__(self, components: dict, date_created: datetime = str(datetime.now())[:-7]):
+    def __init__(self, components: dict, date_created: datetime=None, pub_info: Publication=None):
         self.total_volume = 0 * pq.mL
         assert isinstance(components, dict), "Components must be a dict"
         for component, volume in components.items():
@@ -56,7 +58,10 @@ class Solution:
                 raise ValueError("Components must be provided with volumes")
             self.total_volume += volume  # Assume that volume is conserved
         self.components = components
+        if not date_created:
+            date_created = str(datetime.now())[:-7]
         self.date_created = date_created if date_created else datetime.now()
+        self.pub_info = pub_info
 
     @property
     def compounds(self):
@@ -164,13 +169,17 @@ class Solution:
 
 
 class Molecule:
-    def __init__(self, cid: int, name: str=None, fill: bool=False):
+    def __init__(self, cid: int, name: str=None, fill: bool=False, pub_info: Publication=None):
         self.cid = cid
+        self.pub_info = pub_info
+
         if fill:
             self.fill_details()
         if name:
             self.name = name
 
+    # Publication information (where this molecule's data comes from).
+    pub_info: Publication = None
     # Integer Chemical ID number (CID) from PubChem
     cid: int = 0
     # Chemical Abstract Service (CAS) number
@@ -305,14 +314,19 @@ class ChemicalOrder:
 
 class Compound:
     def __init__(
-        self, chemical_order: ChemicalOrder, stock: str="", date_arrived: datetime=None, date_opened: datetime=None, is_solvent: bool=False
+        self, chemical_order: ChemicalOrder, stock: str="", date_arrived: datetime=None, 
+        date_opened: datetime=None, is_solvent: bool=False, pub_info: Publication=None
     ):
+
         self.chemical_order = chemical_order
         self.stock = stock
         self.date_arrived = date_arrived if date_arrived else datetime.now
         self.date_opened = date_opened
         self.is_solvent = is_solvent
+        self.pub_info = pub_info
 
+    # Publication information
+    pub_info: Publication = None
     # ChemicalOrder
     chemical_order: ChemicalOrder = None
     # Stock number (supplied by vendor, usually on bottle)
