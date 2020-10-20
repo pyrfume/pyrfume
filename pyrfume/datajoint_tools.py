@@ -3,7 +3,7 @@
 import re
 from importlib import import_module
 from inspect import isclass
-
+from typing import Any
 import datajoint as dj
 dj.errors._switch_adapted_types(True)
 
@@ -42,6 +42,59 @@ def create_quantity_adapter():
 
     global QUANTITY_ADAPTER
     QUANTITY_ADAPTER = QuantityAdapter()
+
+
+def handle_dict(cls, _type_map: dict, attr: Any, type_hint: Any):
+    """ Using master-part relation to store a dict. It is assumed that 
+        the type of keys have corresponding tables in the database.
+
+        It is assumed that values of the dict are:
+        primitive type which is in the _type_map
+        OR
+        quantities.Quantity instance.
+
+    Returns:
+        type: `cls` that contains a part class for the keys of the dict.
+    """
+
+    # For example, components: Dict[ClassA, int] = {a: 1, b: 2}
+    # key_cls_name will be "ClassA"
+    # part_cls_name will be "Component", 
+    # note that the "s" at the end of the dict name will be removed.
+    part_cls_name = attr[0].upper() + attr[1:]
+    part_cls_name = part_cls_name[:-1] if part_cls_name[-1] == 's' else part_cls_name
+
+    key_type = type_hint.__args__[0]
+    value_type = type_hint.__args__[1]
+
+    from typing import ForwardRef
+    key_cls_name = key_type.__forward_arg__ if isinstance(key_type, ForwardRef) else key_type.__name__
+    value_type = value_type.__forward_arg__ if isinstance(value_type, ForwardRef) else value_type.__name__
+
+    if value_type == 'Quantity':
+        if not QUANTITY_ADAPTER:
+            create_quantity_adapter()
+        value_type = '<QUANTITY_ADAPTER>'
+    else:
+        assert value_type in _type_map
+        value_type = _type_map[value_type]
+
+    part_cls = type(
+        part_cls_name, 
+        (dj.Part, object), 
+        {
+            "definition": """
+            -> %s
+            -> %s
+            ---
+            value = NULL : %s
+            """ % (cls.__name__, key_cls_name, value_type)
+        }
+    )
+    cls_dict = dict(vars(cls))
+    cls_dict[part_cls_name] = part_cls
+    cls = type(cls.__name__, tuple(cls.__bases__), {part_cls_name: part_cls})
+    return cls
 
 def set_dj_definition(cls, type_map: dict = None) -> None:
     """Set the definition property of a class by inspecting its attributes.
@@ -84,49 +137,7 @@ def set_dj_definition(cls, type_map: dict = None) -> None:
             # TODO
             pass
         if getattr(type_hint, '_name', "") == 'Dict':
-            # Assume the class of objects in some_dict.keys() have corresponding tables in the database
-            # Assume values of the dict are primitive type which is in the _type_map
-
-            # For example, components: Dict[ClassA, int] = {a: 1, b: 2}
-            # key_cls_name will be "ClassA"
-            # part_cls_name will be "Component", 
-            # note that the "s" at the end of the dict name will be removed.
-            # 
-
-            # skip if type_hint doesn't suggest the type of keys and values in the dict.
-            part_cls_name = attr[0].upper() + attr[1:]
-            part_cls_name = part_cls_name[:-1] if part_cls_name[-1] == 's' else part_cls_name
-
-            key_type = type_hint.__args__[0]
-            value_type = type_hint.__args__[1]
-
-            from typing import ForwardRef
-            key_cls_name = key_type.__forward_arg__ if isinstance(key_type, ForwardRef) else key_type.__name__
-            value_type = value_type.__forward_arg__ if isinstance(value_type, ForwardRef) else value_type.__name__
-
-            if value_type == 'Quantity':
-                if not QUANTITY_ADAPTER:
-                    create_quantity_adapter()
-                value_type = '<QUANTITY_ADAPTER>'
-            else:
-                assert value_type in _type_map
-                value_type = _type_map[value_type]
-
-            part_cls = type(
-                part_cls_name, 
-                (dj.Part, object), 
-                {
-                    "definition": """
-                    -> %s
-                    -> %s
-                    ---
-                    value = NULL : %s
-                    """ % (cls.__name__, key_cls_name, value_type)
-                }
-            )
-            cls_dict = dict(vars(cls))
-            cls_dict[part_cls_name] = part_cls
-            cls = type(cls.__name__, tuple(cls.__bases__), {part_cls_name: part_cls})
+            cls = handle_dict(cls, _type_map, attr, type_hint)
             continue
         elif name in _type_map:
             dj_def += "%s = %s : %s\n" % (attr, default, _type_map[name])
