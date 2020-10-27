@@ -7,14 +7,14 @@ from sklearn.preprocessing import MinMaxScaler, Normalizer, StandardScaler
 from eden.graph import Vectorizer
 from pyrfume import load_data, save_data, logger, odorants
 from pyrfume.mol2networx import smiles_to_eden
-from tqdm.auto import tqdm
+from tqdm.auto import tqdm, trange
 
 try:
     from mordred import Calculator, descriptors as all_descriptors
     from rdkit import Chem
     from rdkit.Chem import AllChem, SaltRemover
     from rdkit import DataStructs
-except ImportError:
+except (ImportError, ModuleNotFoundError):
     warnings.warn(
         "Parts of mordred and/or rdkit could not be imported; try installing rdkit via conda",
         UserWarning,
@@ -176,33 +176,47 @@ def smiles_to_morgan(smiles, radius=5, features=None):
     return morgan
 
 
-def mol_to_morgan(mols, radius=5, features=None)
-    fps = [AllChem.GetMorganFingerprint(mol, radius) for mol in mols]
-    fp_ids = []
-    for fp in fps:
-        fp_ids += list(fp.GetNonzeroElements().keys())
-    fp_ids = list(set(fp_ids))
-    morgan = np.empty((len(fps), len(fp_ids)))
-    for i, fp in enumerate(fps):
-        for j, fp_id in enumerate(fp_ids):
-            morgan[i, j] = fp[fp_id]
-    morgan = pd.DataFrame(morgan, index=smiles, columns=fp_ids)
+def mol_to_morgan(mols, radius=5, features=None):
+    fps = []
+    for index, mol in tqdm(mols.items(), desc='Computing Morgan Fingerprints'):
+        fp = AllChem.GetMorganFingerprint(mol, radius)
+        fp = pd.Series(fp.GetNonzeroElements(), name=index)
+        fps.append(fp)
+    
+    batch_size = 100
+    if len(mols) < batch_size:
+        morgan = pd.DataFrame().join(fps, how='outer')
+    else:
+        morgans = []
+        for start in trange(0, len(mols), batch_size, desc='Joining DataFrames'):
+            morgan = pd.DataFrame().join(fps[start:start+batch_size], how='outer')
+            morgans.append(morgan)
+        morgan = pd.DataFrame().join(morgans, how='outer')
+    morgan = morgan.fillna(0).T
     if features is not None:
         morgan = morgan[features]  # Retain only the specified features
     return morgan
 
 
 def smiles_to_morgan_sim(smiles, ref_smiles, radius=5, features=None):
-    mols = [Chem.MolFromSmiles(smi) for smi in smiles]
-    fps = [AllChem.GetMorganFingerprint(mol, radius) for mol in mols]
-    morgan = np.empty((len(smiles), len(ref_smiles)))
-    for i, ref_smile in enumerate(ref_smiles):
-        ref = Chem.MolFromSmiles(ref_smile)
-        fp_ref = AllChem.GetMorganFingerprint(ref, radius)
-        morgan[:, i] = np.array([DataStructs.DiceSimilarity(fp, fp_ref) for fp in fps])
-    morgan = pd.DataFrame(morgan, index=smiles, columns=ref_smiles)
-    print("%d similarity features for %d molecules" % morgan.shape[::-1])
-    return morgan
+    mols = odorants.smiles_to_mol(smiles)
+    ref_mols = odorants.smiles_to_mol(ref_smiles)
+    morgan_sim = mol_to_morgan_sim(mols, ref_mols, radius=radius, features=features)
+    return morgan_sim
+
+
+def mol_to_morgan_sim(mols, ref_mols, radius=5, features=None):
+    all_mols = pd.concat([pd.Series(mols), pd.Series(ref_mols)]).drop_duplicates()
+    fps = all_mols.apply(lambda x: AllChem.GetMorganFingerprint(x, radius))
+    morgan_sim = pd.DataFrame(index=mols.keys(), columns=ref_mols.keys())
+    def dice(col):
+        return np.array([DataStructs.DiceSimilarity(fps[col.name], fps[key]) for key in col.index])
+    for ref in tqdm(ref_mols):
+        morgan_sim[ref] = dice(morgan_sim[ref])
+    return morgan_sim
+    
+    #print("%d similarity features for %d molecules" % morgan.shape[::-1])
+    #return morgan
 
 
 def mol_file_to_smiles(mol_file_path):
