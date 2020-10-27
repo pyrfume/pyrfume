@@ -5,9 +5,9 @@ import pandas as pd
 from sklearn.preprocessing import MinMaxScaler, Normalizer, StandardScaler
 
 from eden.graph import Vectorizer
-from pyrfume import load_data, save_data
+from pyrfume import load_data, save_data, logger, odorants
 from pyrfume.mol2networx import smiles_to_eden
-from rickpy import ProgressBar
+from tqdm.auto import tqdm
 
 try:
     from mordred import Calculator, descriptors as all_descriptors
@@ -86,35 +86,20 @@ def cid_names():
     return names
 
 
-def smiles_to_mordred(smiles, features=None):
-    # create descriptor calculator with all descriptors
+def mol_to_mordred(mols, features=None):
     calc = Calculator(all_descriptors)
-    print("Convering SMILES string to Mol format...")
-    mols_raw = [Chem.MolFromSmiles(smi) for smi in smiles]
-    print("Computing 3D coordinates...")
-    s = SaltRemover.SaltRemover()
-    mols = {}
-    n = len(mols_raw)
-    p = ProgressBar(n)
-    for i, mol in enumerate(mols_raw):
-        p.animate(i, status="Embedding %s" % smiles[i])
-        try:
-            mol = s.StripMol(mol, dontRemoveEverything=True)
-            mol = Chem.AddHs(mol)
-            AllChem.Compute2DCoords(mol)
-            AllChem.EmbedMolecule(mol)
-            AllChem.UFFOptimizeMolecule(mol)  # Is this deterministic?
-        except Exception:
-            print("Exception for %s" % smiles[i])
-        else:
-            mols[smiles[i]] = mol
-    p.animate(n, status="Finished embedding all molecules")
     print("\nComputing Mordred features...")
     df = calc.pandas(mols.values())
     if features is not None:
         df = df[features]  # Retain only the specified features
     mordred = pd.DataFrame(df.values, index=mols.keys(), columns=df.columns)
     print("There are %d molecules and %d features" % mordred.shape)
+    return mordred
+
+
+def smiles_to_mordred(smiles, features=None):
+    mols = odorants.smiles_to_mols(smiles)
+    mordred = mol_to_mordred(mols, features=features)
     return mordred
 
 
@@ -186,7 +171,12 @@ def smiles_to_dragon(smiles, suffix="", features=None):
 
 
 def smiles_to_morgan(smiles, radius=5, features=None):
-    mols = [Chem.MolFromSmiles(smi) for smi in smiles]
+    mols = odorants.smiles_to_mol(smiles)
+    morgan = mol_to_morgan(mols, radius=radius, features=features)
+    return morgan
+
+
+def mol_to_morgan(mols, radius=5, features=None)
     fps = [AllChem.GetMorganFingerprint(mol, radius) for mol in mols]
     fp_ids = []
     for fp in fps:
