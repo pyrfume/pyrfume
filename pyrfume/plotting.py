@@ -2,6 +2,7 @@ import io
 import warnings
 
 import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
 import plotly.graph_objs as go
 from ipywidgets import Image, Layout, VBox
@@ -46,15 +47,19 @@ def mpl_embedding(
         ax.set_title(title)
 
 
-def smiles_to_image(smiles):
+def smiles_to_image(smiles, size=None):
+    if size is None:
+        size = (200, 200)
+    if isinstance(size, int):
+        size = (size, size)
     a = io.BytesIO()
     m = Chem.MolFromSmiles(smiles)
-    z = Draw.MolToImage(m)
+    z = Draw.MolToImage(m, size=size)
     z.save(a, format="PNG")
     return a.getvalue()
 
 
-def plotly_embedding(embedding, features=None, colors=None):
+def plotly_embedding(embedding, features=None, show_features=None, colors=None, colorscale='rainbow'):
     """
     params:
         embedding: A dataframe wrapped around e.g. a fitted TSNE object, with an index of CIDs
@@ -63,23 +68,26 @@ def plotly_embedding(embedding, features=None, colors=None):
     """
 
     if features is None:
-        file_path = pyrfume.DEFAULT_DATA_PATH / "odorants" / "all_cids_properties.csv"
-        features = pd.read_csv(file_path, usecols=range(5), index_col=0)
-    # Only retain those rows corresponding to odorants in the embedding
+        features = pyrfume.load_data("odorants/all-cids-properties.csv", usecols=range(5))
+        # Only retain those rows corresponding to odorants in the embedding
     features = features.loc[embedding.index]
+    show_features = show_features or list(features)
+    def format_features(col):
+        return "%s: %s" % (index_name, x.values.split('<br>'))
     try:
+        index_name = features.index.name or 'Index'
         names = (
-            features.loc[:, ["Name", "IUPACName"]]
+            features.loc[:, show_features]
             .reset_index()
             .astype("str")
-            .apply(lambda x: "CID: %s<br>%s<br>%s" % (x[0], x[1], x[2]), axis=1)
+            .apply(format_features, axis=1)
         )
     except Exception:
         names = features.index
     assert embedding.shape[0] == features.shape[0]
 
     # The scatter plot
-    scatter = go.Scattergl(
+    scatter = go.Scatter(
         x=embedding.iloc[:, 0],
         y=embedding.iloc[:, 1],
         text=names,
@@ -90,10 +98,10 @@ def plotly_embedding(embedding, features=None, colors=None):
             "size": 5,
             "line": {"width": 0.5, "color": "white"},
             "color": colors if colors is not None else "black",
-            "colorscale": "rainbow",
+            "colorscale": colorscale,
         },
     )
-
+    
     # The axes, etc.
     layout = go.Layout(
         xaxis={"type": "linear", "title": "", "showline": False, "showticklabels": False},
@@ -107,18 +115,16 @@ def plotly_embedding(embedding, features=None, colors=None):
         height=500,
     )
 
-    figure = go.Figure(data=[scatter], layout=layout)
-    fig = go.FigureWidget(figure)
+    fig = go.FigureWidget(data=[scatter], layout=layout)
+    fig.layout.hovermode = 'closest'
 
     # The 2D drawing of the molecule
     image_widget = Image(
-        value=smiles_to_image("CCCC"), layout=Layout(height="300px", width="300px")
+        value=smiles_to_image("CCCCO"), layout=Layout(height="300px", width="300px")
     )
 
     def hover_fn(trace, points, state):
         ind = points.point_inds[0]
-
-        # smiles = 'C' * np.random.randint(10)
         smiles = features["SMILES"].iloc[ind]
         image_widget.value = smiles_to_image(smiles)
 
