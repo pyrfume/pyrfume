@@ -90,6 +90,7 @@ def mol_to_mordred(mols, features=None):
     calc = Calculator(all_descriptors)
     print("\nComputing Mordred features...")
     df = calc.pandas(mols.values())
+    df = df.fill_missing()  # Use NaN instead of Missing object
     if features is not None:
         df = df[features]  # Retain only the specified features
     mordred = pd.DataFrame(df.values, index=mols.keys(), columns=df.columns)
@@ -97,8 +98,8 @@ def mol_to_mordred(mols, features=None):
     return mordred
 
 
-def smiles_to_mordred(smiles, features=None):
-    mols = odorants.smiles_to_mols(smiles)
+def smiles_to_mordred(smiles, features=None, max_attempts=10):
+    mols = odorants.smiles_to_mol(smiles, max_attempts=max_attempts)
     mordred = mol_to_mordred(mols, features=features)
     return mordred
 
