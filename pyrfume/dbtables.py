@@ -29,7 +29,7 @@ class Molecule(dj.Manual):
     ---
     inchi = NULL : int
     inchikey = "" : varchar(256)
-    pubchem_id = "" : varchar(256)
+    pubchem_id = "" : varchar(32)
     name = "" : varchar(256)
     iupac = "" : varchar(256)
     '''
@@ -71,7 +71,7 @@ class Solution(dj.Manual):
     diution = NULL : int
     concentration = NULL : float
     value = NULL : <quantity_adapter>
-    data = NULL : varchar(4096)
+    mixing_data = NULL : date
     '''
     class Compounds(dj.Part):
         definition = '''
