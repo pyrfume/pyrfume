@@ -19,6 +19,7 @@ def init_config(overwrite=False):
     if overwrite or not CONFIG_PATH.exists():
         config = configparser.ConfigParser()
         config["PATHS"] = {"pyrfume-data": str(DEFAULT_DATA_PATH)}
+        config["DATABASE"] = {"schema_name": "UNDEFINED"}
         with open(CONFIG_PATH, "w") as f:
             config.write(f)
 
