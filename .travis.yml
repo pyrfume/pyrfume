@@ -3,7 +3,7 @@ dist: bionic
 python:
   - "3.7"
   - "3.8"
-  - "3.9-dev"
+  - "3.9"
 install:
   - sudo apt update
   - python -m pip install --upgrade pip
