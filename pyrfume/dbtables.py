@@ -57,7 +57,7 @@ class Product(dj.Manual):
 class Compound(dj.Manual):
     definition = '''
     -> Product
-    date_delivered = NULL : datetime
+    date_delivered : datetime
     location = "" : varchar(64)
     ---
     date_opened = NULL : datetime
@@ -84,7 +84,7 @@ class Solution(dj.Manual):
 class Vessel(dj.Manual):
     definition = '''
     name = "" : varchar(64)
-    height = NULL : float
+    height = 0 : float
     base_area = "" : varchar(64)
     ---
     '''
@@ -122,6 +122,131 @@ class Stimulus(dj.Manual):
     class Odorants(dj.Part):
         definition = '''
         -> Stimulus
+        -> Odorant
+        ---
+        '''
+
+@schema
+class Subject(dj.Manual):
+    definition = '''
+    subject_id: int auto_increment
+    ---
+    -> age : tinyint
+    -> gender : tinyint
+    -> detail_info : varchar(65535)
+    '''
+
+@schema
+class Trial(dj.Manual):
+    definition = '''
+    trial_id: int auto_increment
+    ---
+    -> Stimulus
+    -> Subject
+    -> time : timestamp
+    '''
+
+@schema
+class Site(dj.Manual):
+    definition = '''
+    site_id: int auto_increment
+    ---
+    -> name : varchar(64)
+    -> kind : varchar(16)
+    '''
+
+@schema
+class Investigator(dj.Manual):
+    definition = '''
+    investigator_id: int auto_increment
+    ---
+    -> first_name : varchar(64)
+    -> last_name : varchar(64)
+    -> Site
+    '''
+
+@schema
+class Technician(dj.Manual):
+    definition = '''
+    technician_id: int auto_increment
+    ---
+    -> first_name : varchar(64)
+    -> last_name : varchar(64)
+    -> Investigator
+    '''
+
+@schema
+class Publication(dj.Manual):
+    definition = '''
+    publication_id: int auto_increment
+    ---
+    -> name : varchar(1024)
+    -> kind : varchar(32)
+    -> Investigator
+    '''
+
+@schema
+class Report(dj.Manual):
+    definition = '''
+    report_id: int auto_increment
+    ---
+    -> title : varchar(1024)
+    -> year : smallint
+    -> Publication
+    -> doi : varchar(128)
+    
+    -> last_name : varchar(64)
+    -> Investigator
+    '''
+
+@schema
+class Design(dj.Manual):
+    definition = '''
+    design_id: int auto_increment
+    ---
+    -> name : varchar(64)
+    '''
+
+@schema
+class Block(dj.Manual):
+    definition = '''
+    block_id: int auto_increment
+    ---
+    -> Technician
+    -> Design
+    '''
+    class Trials(dj.Part):
+        definition = '''
+        -> Block
+        -> Trial
+        ---
+        '''
+
+@schema
+class Experiment(dj.Manual):
+    definition = '''
+    experiment_id: int auto_increment
+    ---
+    -> Investigator
+    '''
+    class Blocks(dj.Part):
+        definition = '''
+        -> Experiment
+        -> Block
+        ---
+        '''
+
+@schema
+class Summary(dj.Manual):
+    definition = '''
+    summary_id: int auto_increment
+    ---
+    -> Publication
+    -> Design
+    '''
+    class Odorants(dj.Part):
+        definition = '''
+        -> Summary
         -> Odorant
         ---
         '''
