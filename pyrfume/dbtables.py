@@ -131,9 +131,9 @@ class Subject(dj.Manual):
     definition = '''
     subject_id: int auto_increment
     ---
-    -> age : tinyint
-    -> gender : tinyint
-    -> detail_info : varchar(65535)
+    age : tinyint
+    gender : tinyint
+    detail_info : varchar(512)
     '''
 
 @schema
@@ -143,7 +143,7 @@ class Trial(dj.Manual):
     ---
     -> Stimulus
     -> Subject
-    -> time : timestamp
+    time : timestamp
     '''
 
 @schema
@@ -151,8 +151,8 @@ class Site(dj.Manual):
     definition = '''
     site_id: int auto_increment
     ---
-    -> name : varchar(64)
-    -> kind : varchar(16)
+    name : varchar(64)
+    kind : varchar(16)
     '''
 
 @schema
@@ -160,8 +160,8 @@ class Investigator(dj.Manual):
     definition = '''
     investigator_id: int auto_increment
     ---
-    -> first_name : varchar(64)
-    -> last_name : varchar(64)
+    first_name : varchar(64)
+    last_name : varchar(64)
     -> Site
     '''
 
@@ -170,8 +170,8 @@ class Technician(dj.Manual):
     definition = '''
     technician_id: int auto_increment
     ---
-    -> first_name : varchar(64)
-    -> last_name : varchar(64)
+    first_name : varchar(64)
+    last_name : varchar(64)
     -> Investigator
     '''
 
@@ -180,8 +180,8 @@ class Publication(dj.Manual):
     definition = '''
     publication_id: int auto_increment
     ---
-    -> name : varchar(1024)
-    -> kind : varchar(32)
+    name : varchar(512)
+    kind : varchar(32)
     -> Investigator
     '''
 
@@ -190,12 +190,12 @@ class Report(dj.Manual):
     definition = '''
     report_id: int auto_increment
     ---
-    -> title : varchar(1024)
-    -> year : smallint
+    title : varchar(512)
+    year : smallint
     -> Publication
-    -> doi : varchar(128)
+    doi : varchar(128)
     
-    -> last_name : varchar(64)
+    last_name : varchar(64)
     -> Investigator
     '''
 
@@ -204,7 +204,7 @@ class Design(dj.Manual):
     definition = '''
     design_id: int auto_increment
     ---
-    -> name : varchar(64)
+    name : varchar(64)
     '''
 
 @schema
