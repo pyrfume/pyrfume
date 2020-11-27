@@ -10,7 +10,7 @@ import pandas as pd
 from tqdm.auto import tqdm, trange
 
 from .base import CONFIG_PATH, DEFAULT_DATA_PATH
-from typing import Any, List
+from typing import Any
 
 logger = logging.getLogger("pyrfume")
 
