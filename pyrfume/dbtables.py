@@ -10,7 +10,6 @@ schema = None
 def update_schema():
     init_schema()
 
-
 def init_schema():
     schema_name = read_config("DATABASE", "schema_name")
     context = globals()
@@ -52,10 +51,6 @@ def get_tables():
             result[key] = (schema(value))
     
     return result
-
-
-def print_global():
-    pass
 
 
 class QuantityAdapter(dj.AttributeAdapter):
