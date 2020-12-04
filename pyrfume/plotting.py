@@ -47,18 +47,6 @@ def mpl_embedding(
         ax.set_title(title)
 
 
-def smiles_to_image(smiles, size=None):
-    if size is None:
-        size = (200, 200)
-    if isinstance(size, int):
-        size = (size, size)
-    a = io.BytesIO()
-    m = Chem.MolFromSmiles(smiles)
-    z = Draw.MolToImage(m, size=size)
-    z.save(a, format="PNG")
-    return a.getvalue()
-
-
 def plotly_embedding(embedding, features=None, show_features=None, colors=None, colorscale='rainbow'):
     """
     params:

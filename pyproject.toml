@@ -9,13 +9,13 @@ documentation = "https://pyrfume.readthedocs.io"
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = ">=3.6.1"
+python = ">=3.6.1,<4.0"
 dask = {extras = ["bag"], version = "^2.17.0"}
 deap = ">=1.3.1"
 ipython = ">=7.14.0"
 ipywidgets = ">=7.5.1"
 matplotlib = ">=3.2.1"
-missingpy = ">=0.2.0"
+#missingpy = ">=0.2.0"
 mordred = ">=1.2.0"
 numpy = ">=1.18.4"
 pandas = ">=1.0.3"
@@ -27,12 +27,12 @@ sympy = ">=1.6"
 scikit-learn = ">=0.23.1"
 tqdm = ">=4.46.0"
 eden-kernel = {git = "https://github.com/fabriziocosta/EDeN.git"}
-fancyimpute = ">=0.5.4"
+#fancyimpute = ">=0.5.4"
 black = ">=19.10b0"
 isort = ">=4.3.21"
 flake8 = ">=3.8.2"
-datajoint = ">=0.12.5"
-Pillow = ">=7.1"
+datajoint = ">=0.12.6b1"
+#pillow = ">=7.1"
 
 
 [tool.poetry.dev-dependencies]
