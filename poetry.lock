@@ -263,12 +263,11 @@ graph = ["objgraph (>=1.7.2)"]
 
 [[package]]
 name = "eden-kernel"
-version = "0.0.0"
+version = "0.3.1335"
 description = "Explicit Decomposition with Neighborhoods"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
 
 [package.dependencies]
 dill = "*"
@@ -281,12 +280,6 @@ requests = "*"
 scikit-learn = ">=0.18.2"
 scipy = ">=0.14.0"
 toolz = "*"
-
-[package.source]
-type = "git"
-url = "https://github.com/fabriziocosta/EDeN.git"
-reference = "master"
-resolved_reference = "1ccf3e477908151848b623424f79502e8b7ec9af"
 
 [[package]]
 name = "entrypoints"
@@ -1325,7 +1318,7 @@ testing = ["pytest (>=3.5,!=3.7.3)", "pytest-checkdocs (>=1.2.3)", "pytest-flake
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.6.1,<4.0"
-content-hash = "77e76b111b7a1b62e2e87dd6d0adeafee3113f3162d6db62cecb129729f3a1ed"
+content-hash = "d36d123d9c3ef466e5e42cfb65e97f9ac9b1796b304d9fc7ca51c972d89770db"
 
 [metadata.files]
 appdirs = [
@@ -1491,7 +1484,9 @@ dill = [
     {file = "dill-0.3.3-py2.py3-none-any.whl", hash = "sha256:78370261be6ea49037ace8c17e0b7dd06d0393af6513cc23f9b222d9367ce389"},
     {file = "dill-0.3.3.zip", hash = "sha256:efb7f6cb65dba7087c1e111bb5390291ba3616741f96840bfc75792a1a9b5ded"},
 ]
-eden-kernel = []
+eden-kernel = [
+    {file = "eden-kernel-0.3.1335.tar.gz", hash = "sha256:1cef73ac9151bbaa4b687668033e740be8a0692411fc7fa50bd9e6ba21e54625"},
+]
 entrypoints = [
     {file = "entrypoints-0.3-py2.py3-none-any.whl", hash = "sha256:589f874b313739ad35be6e0cd7efde2a4e9b6fea91edcc34e58ecbb8dbe56d19"},
     {file = "entrypoints-0.3.tar.gz", hash = "sha256:c70dd71abe5a8c85e55e12c19bd91ccfeec11a6e99044204511f9ed547d48451"},

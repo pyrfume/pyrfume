@@ -26,7 +26,7 @@ scipy = ">=1.4.1"
 sympy = ">=1.6"
 scikit-learn = ">=0.23.1"
 tqdm = ">=4.46.0"
-eden-kernel = {git = "https://github.com/fabriziocosta/EDeN.git"}
+eden-kernel = ">=0.3.1335"
 #fancyimpute = ">=0.5.4"
 black = ">=19.10b0"
 isort = ">=4.3.21"
