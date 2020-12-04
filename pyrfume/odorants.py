@@ -20,7 +20,6 @@ from PIL import Image
 import quantities as pq
 from pyrfume import load_data, logger, tqdm, trange
 from pyrfume.physics import mackay
-from pyrfume.publication import Publication
 from quantities.constants.statisticalmechanics import R
 from typing import Dict
 try:
