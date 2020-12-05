@@ -24,12 +24,12 @@ from quantities.constants.statisticalmechanics import R
 from typing import Dict
 try:
     from rdkit import Chem
-    from rdkit.Chem import Draw
+    from rdkit.Chem import Draw, AllChem, SaltRemover
 except ImportError:
     warnings.warn(
-        "Parts of rdkit could not be imported; try installing rdkit via conda", UserWarning
+        "Parts of mordred and/or rdkit could not be imported; try installing rdkit via conda",
+        UserWarning,
     )
-
 
 ROOM_TEMP = (22 + 273.15) * pq.Kelvin
 ROOM_PRESSURE = 1 * pq.atm
@@ -306,6 +306,7 @@ class ChemicalOrder:
     # List of known impurities (Molecules)
     known_impurities: list = None
 
+
 class Compound:
     def __init__(
         self, chemical_order: ChemicalOrder, stock: str="", date_arrived: datetime=None, 
@@ -351,6 +352,15 @@ def url_to_json(url, verbose=True) -> str:
         for msg in msgs:
             print(msg)
     return json_data
+
+
+def deisomerize_smiles(smiles: str) -> str:
+    mol = Chem.MolFromSmiles(smiles)
+    if mol:  # If a mol object was successfully create (i.e. not `None`)
+        smiles = Chem.MolToSmiles(mol, isomericSmiles=False)
+    else:
+        smiles = smiles.replace('@','').replace('@@','').replace('/','').replace('\\','')
+    return smiles
 
 
 def canonical_smiles(smiles: str, kekulize: bool = False) -> str:
@@ -588,6 +598,34 @@ def smiles_to_image(smiles, png=True, b64=False, crop=True, padding=10, size=300
         assert png, "Can only base64 encode PNG data, not a PIL image"
         image = base64.b64encode(image).decode("utf8")
     return image
+
+
+def smiles_to_mol(smiles: list, max_attempts: int=10, use_random_coords: bool=False, deisomerize=False) -> dict:
+    if deisomerize:
+        f = deisomerize_smiles
+    else:
+        f = lambda x: x
+    mols_raw = [Chem.MolFromSmiles(f(smi)) for smi in smiles]
+    logger.info("Computing 3D coordinates...")
+    s = SaltRemover.SaltRemover()
+    mols = {}
+    n = len(mols_raw)
+    pbar = tqdm(total=n)
+    for i, mol in enumerate(mols_raw):
+        pbar.update()
+        logger.debug("Embedding %s" % smiles[i])
+        try:
+            mol = s.StripMol(mol, dontRemoveEverything=True)
+            mol = Chem.AddHs(mol)
+            AllChem.Compute2DCoords(mol)
+            AllChem.EmbedMolecule(mol, maxAttempts=max_attempts, useRandomCoords=use_random_coords)
+            AllChem.UFFOptimizeMolecule(mol)  # Is this deterministic?
+        except Exception as e:
+            logger.warning("Exception for %s: %s" % (smiles[i], str(e)))
+        else:
+            mols[smiles[i]] = mol
+    logger.info("Finished embedding all molecules")
+    return mols
 
 
 def crop_image(img, padding=0):

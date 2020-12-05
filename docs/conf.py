@@ -10,7 +10,7 @@ extensions = ['sphinxcontrib.apidoc',
               'sphinx.ext.viewcode',
               'sphinx.ext.githubpages']
 apidoc_module_dir = '../pyrfume'
-apidoc_output_dir = '_build'
+apidoc_output_dir = 'build'
 apidoc_excluded_paths = ['*unit_test*']
 apidoc_separate_modules = True
 master_doc = 'index'
