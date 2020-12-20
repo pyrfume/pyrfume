@@ -5,6 +5,7 @@ from importlib import import_module
 from inspect import isclass
 from typing import Any, ForwardRef, _GenericAlias
 import datajoint as dj
+from .dbtables import QuantityAdapter
 dj.errors._switch_adapted_types(True)
 
 QUANTITY_ADAPTER = None
@@ -27,26 +28,12 @@ def schematize(cls, schema: dj.schema):
     cls = schema(cls)
     return cls
 
-def create_quantity_adapter():
+def create_quantity_adapter() -> None:
     """ Create an datajoint adapter class, `QuantityAdapter`, that puts and gets 
         Python Quantity objects to and from the datajoint database server.
         The adapter will be assigned to the global variable `QUANTITY_ADAPTER`
-        in `datajoint_tools.py`
+        in this module.
     """
-    import quantities as pq
-    class QuantityAdapter(dj.AttributeAdapter):
-        """ The datajoint adapter class that puts and gets Python Quantity objects 
-            to and from the datajoint database server.
-        """
-        attribute_type = 'float'
-    
-        def put(self, obj: pq.Quantity):
-            assert isinstance(obj, pq.Quantity)
-            obj = obj.rescale(pq.mL)
-            return obj.item()
-
-        def get(self, value: float):
-            return value * pq.mL
 
     global QUANTITY_ADAPTER
     QUANTITY_ADAPTER = QuantityAdapter()
