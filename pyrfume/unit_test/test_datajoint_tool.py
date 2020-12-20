@@ -12,6 +12,10 @@ class DataJointTestCase(unittest.TestCase):
         dj.config['database.password'] = 'simple'
 
     def test_schematizing_odorants(self):
+        """Test case for schematizations of classes in the odorants module 
+            and inserting sample data into datajoint table.
+        """
+
         from pyrfume.odorants import Molecule, Vendor, ChemicalOrder, Compound, Solution
         from pyrfume import datajoint_tools as djt
 
