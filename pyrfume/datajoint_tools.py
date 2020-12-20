@@ -28,13 +28,16 @@ def schematize(cls, schema: dj.schema):
     return cls
 
 def create_quantity_adapter():
-    """ Create an datajoint adapter, `QuantityAdapter`, that puts and gets 
+    """ Create an datajoint adapter class, `QuantityAdapter`, that puts and gets 
         Python Quantity objects to and from the datajoint database server.
         The adapter will be assigned to the global variable `QUANTITY_ADAPTER`
         in `datajoint_tools.py`
     """
     import quantities as pq
     class QuantityAdapter(dj.AttributeAdapter):
+        """ The datajoint adapter class that puts and gets Python Quantity objects 
+            to and from the datajoint database server.
+        """
         attribute_type = 'float'
     
         def put(self, obj: pq.Quantity):
