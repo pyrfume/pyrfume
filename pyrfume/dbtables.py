@@ -1,30 +1,67 @@
+""" Definitions of datajoint tables and functions for operating the datajoint schema."""
+
 import datajoint as dj
+from datajoint.user_tables import UserTable
 import quantities as pq
-from pyrfume import read_config
+from pyrfume import read_config, write_config
 import inspect
+import warnings
+from typing import Dict
 
 dj.errors._switch_adapted_types(True)
 schema = None
 
 
-def update_schema():
-    init_schema()
+def set_schema_name(new_schema_name: str) -> None:
+    """ Set a new schema name into the config file. The data saved 
+        into the old schema will be keeped on the server unless 
+        `drop_schema` was called.
 
-def init_schema():
+    Args:
+        new_schema_name (str): The new name of the schema.
+    """
+    write_config("DATABASE", "schema_name", new_schema_name)
+
+
+def init_schema() -> None:
+    """ Get the name of schema from the config file 
+        and initialize the schema with it.
+    """
+
     schema_name = read_config("DATABASE", "schema_name")
+    if schema_name == "":
+        warnings.warn("Schema name was not set in pyrfume config.")
+        return
     context = globals()
     global schema
     schema = dj.schema(schema_name, context)
     schema.context.update({'quantity_adapter': QuantityAdapter()})
 
-def drop_schema(force=False):
+
+def drop_schema(force=False) -> None:
+    """Drop the datajoint schema.
+
+    Args:
+        force (bool, optional): Dropping it without a pop up confirmation. 
+        Defaults to False.
+    """
+
     global schema
     if not schema:
         init_schema()
     schema.drop(force=force)
     schema = None
 
-def get_table(table_name):
+
+def get_table(table_name: str) -> UserTable:
+    """ Get a single datajoint table by table name.
+
+    Args:
+        table_name (str): The name of the datajoint table.
+
+    Returns:
+        UserTable: The datajoint table.
+    """
     global schema
     if not schema:
         init_schema()
@@ -37,10 +74,17 @@ def get_table(table_name):
                 result = schema(cls)
         except KeyError:
             print("Class does not exist.")
-    
+
     return result
 
-def get_tables():
+
+def get_tables() -> Dict[str, UserTable]:
+    """ Get all datajoint tables in this module.
+
+    Returns:
+        Dict[str, UserTable]: The dict that contains all the table classes.
+    """
+
     global schema
     if not schema:
         init_schema()
@@ -49,11 +93,14 @@ def get_tables():
     for key, value in globals().items():
         if inspect.isclass(value) and value is not QuantityAdapter:
             result[key] = (schema(value))
-    
+
     return result
 
 
 class QuantityAdapter(dj.AttributeAdapter):
+    """ The datajoint adapter class that puts and gets Python Quantity objects 
+        to and from the datajoint database server.
+    """
     attribute_type = 'float'
 
     def put(self, obj: pq.Quantity):
