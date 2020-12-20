@@ -8,7 +8,7 @@ from .test_test import *
 from .test_others_in__init__ import *
 from .test_physics import *
 from .test_odorants import *
-from .test_datajoint import DataJointTestCase
+from .test_datajoint_tools import DataJointTestCase
 
 def main():
     buffer = 'buffer' in sys.argv
