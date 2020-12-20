@@ -3,7 +3,7 @@
 import re
 from importlib import import_module
 from inspect import isclass
-from typing import Any
+from typing import Any, ForwardRef, _GenericAlias
 import datajoint as dj
 dj.errors._switch_adapted_types(True)
 
@@ -28,6 +28,11 @@ def schematize(cls, schema: dj.schema):
     return cls
 
 def create_quantity_adapter():
+    """ Create an datajoint adapter, `QuantityAdapter`, that puts and gets 
+        Python Quantity objects to and from the datajoint database server.
+        The adapter will be assigned to the global variable `QUANTITY_ADAPTER`
+        in `datajoint_tools.py`
+    """
     import quantities as pq
     class QuantityAdapter(dj.AttributeAdapter):
         attribute_type = 'float'
@@ -44,14 +49,20 @@ def create_quantity_adapter():
     QUANTITY_ADAPTER = QuantityAdapter()
 
 
-def handle_dict(cls, _type_map: dict, attr: Any, type_hint: Any):
-    """ Using master-part relation to store a dict. It is assumed that 
+def handle_dict(cls, _type_map: dict, attr: Any, type_hint: _GenericAlias):
+    """Using master-part relation to store a dict. It is assumed that 
         the type of keys have corresponding tables in the database.
 
         It is assumed that values of the dict are:
-        primitive type which is in the _type_map
+        primitive type which is in `_type_map`
         OR
-        quantities.Quantity instance.
+        `quantities.Quantity` instance.
+
+    Args:
+        _type_map (dict): A map that maps type hint to data type that accepted by datajoint.
+        attr (Any): Variable name of the dict.
+        type_hint (typing._GenericAlias): Required to be a type hint like `Dict[TypeA, int]`.
+                                            A type hint of `dict` will cause an exception.
 
     Returns:
         type: `cls` that contains a part class for the keys of the dict.
@@ -68,7 +79,6 @@ def handle_dict(cls, _type_map: dict, attr: Any, type_hint: Any):
     key_type = type_hint.__args__[0]
     value_type = type_hint.__args__[1]
 
-    from typing import ForwardRef
     key_cls_name = key_type.__forward_arg__ if isinstance(key_type, ForwardRef) else key_type.__name__
     value_type = value_type.__forward_arg__ if isinstance(value_type, ForwardRef) else value_type.__name__
 
