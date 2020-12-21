@@ -3,7 +3,7 @@
 import datajoint as dj
 from datajoint.user_tables import UserTable
 import quantities as pq
-from pyrfume import read_config, write_config
+from pyrfume import read_config, write_config, init_config
 import inspect
 import warnings
 from typing import Dict
@@ -20,6 +20,7 @@ def set_schema_name(new_schema_name: str) -> None:
     Args:
         new_schema_name (str): The new name of the schema.
     """
+    init_config(False)
     write_config("DATABASE", "schema_name", new_schema_name)
 
 
@@ -91,7 +92,7 @@ def get_tables() -> Dict[str, UserTable]:
 
     result = {}
     for key, value in globals().items():
-        if inspect.isclass(value) and value is not QuantityAdapter:
+        if inspect.isclass(value) and value is not QuantityAdapter and value is not UserTable:
             result[key] = (schema(value))
 
     return result
