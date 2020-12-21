@@ -21,7 +21,7 @@ import quantities as pq
 from pyrfume import load_data, logger, tqdm, trange
 from pyrfume.physics import mackay
 from quantities.constants.statisticalmechanics import R
-
+from typing import Dict
 try:
     from rdkit import Chem
     from rdkit.Chem import Draw, AllChem, SaltRemover
@@ -40,9 +40,10 @@ ODORANT_SOURCES_PATH = "odorants/all-cids.csv"
 
 
 class Solution:
-    components: dict = {}
-    
-    def __init__(self, components: dict, date_created: datetime.timestamp = None):
+    components: Dict["Compound", pq.quantity.Quantity] = None
+    date_created: datetime = None
+
+    def __init__(self, components: dict, date_created: datetime=None):
         self.total_volume = 0 * pq.mL
         assert isinstance(components, dict), "Components must be a dict"
         for component, volume in components.items():
@@ -55,6 +56,8 @@ class Solution:
                 raise ValueError("Components must be provided with volumes")
             self.total_volume += volume  # Assume that volume is conserved
         self.components = components
+        if not date_created:
+            date_created = str(datetime.now())[:-7]
         self.date_created = date_created if date_created else datetime.now()
 
     @property
@@ -165,6 +168,7 @@ class Solution:
 class Molecule:
     def __init__(self, cid: int, name: str=None, fill: bool=False):
         self.cid = cid
+
         if fill:
             self.fill_details()
         if name:
@@ -305,8 +309,10 @@ class ChemicalOrder:
 
 class Compound:
     def __init__(
-        self, chemical_order: ChemicalOrder, stock: str="", date_arrived: datetime=None, date_opened: datetime=None, is_solvent: bool=False
+        self, chemical_order: ChemicalOrder, stock: str="", date_arrived: datetime=None, 
+        date_opened: datetime=None, is_solvent: bool=False
     ):
+
         self.chemical_order = chemical_order
         self.stock = stock
         self.date_arrived = date_arrived if date_arrived else datetime.now
