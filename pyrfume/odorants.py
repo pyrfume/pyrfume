@@ -398,6 +398,9 @@ def get_cid(
 ) -> int:
     """Return data about a molecule from any synonym,
     including a chemical name or a CAS"""
+    replace = [('α', 'alpha'), ('β', 'beta'), ('γ', 'gamma'), ('δ', 'delta')]
+    for a, b in replace:
+        identifier = identifier.replace(a, b)
     kind = kind.lower()
     if isinstance(identifier, float) and np.isnan(identifier):
         return 0
