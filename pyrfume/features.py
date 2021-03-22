@@ -209,6 +209,7 @@ def smiles_to_morgan_sim(smiles, ref_smiles, radius=5, features=None):
 def mol_to_morgan_sim(mols, ref_mols, radius=5, features=None):
     all_mols = pd.concat([pd.Series(mols), pd.Series(ref_mols)]).drop_duplicates()
     fps = all_mols.apply(lambda x: AllChem.GetMorganFingerprint(x, radius))
+    fps = fps[~fps.index.duplicated()]
     morgan_sim = pd.DataFrame(index=mols.keys(), columns=ref_mols.keys())
     def dice(col):
         return np.array([DataStructs.DiceSimilarity(fps[col.name], fps[key]) for key in col.index])
