@@ -1,16 +1,16 @@
 import configparser
 import json
 import logging
-import pickle
-import urllib
-from pathlib import Path
-
 import numpy as np
 import pandas as pd
+from pathlib import Path
+import pickle
+import requests
 from tqdm.auto import tqdm, trange
-
-from .base import CONFIG_PATH, DEFAULT_DATA_PATH
 from typing import Any
+import urllib
+
+from .base import CONFIG_PATH, DEFAULT_DATA_PATH, REMOTE_DATA_PATH, TEMP_LOCAL, RemoteDataError
 
 logger = logging.getLogger("pyrfume")
 
@@ -59,8 +59,29 @@ def get_data_path():
     return path
 
 
-def load_data(rel_path, **kwargs):
-    full_path = get_data_path() / rel_path
+def get_remote_data_path(branch='master'):
+    path = REMOTE_DATA_PATH + '/' + branch
+    return path
+
+
+def localize_remote_data(rel_path, branch='master'):
+    url = get_remote_data_path(branch=branch) + '/' + rel_path
+    target_path = Path(TEMP_LOCAL.name) / rel_path
+    response = requests.get(url)
+    if response.status_code != 200:
+        raise RemoteDataError('Could not get file at %s' % url)
+    target_path.parent.mkdir(exist_ok=True)
+    with open(target_path, 'wb') as f:
+        f.write(response.content)
+    return target_path
+    
+
+def load_data(rel_path, remote=False, **kwargs):
+    if remote:
+        full_path = localize_remote_data(rel_path)
+    else:
+        full_path = get_data_path() / rel_path
+        
     is_pickle = any([str(full_path).endswith(x) for x in (".pkl", ".pickle", ".p")])
     is_excel = any([str(full_path).endswith(x) for x in (".xls", ".xlsx")])
     if is_pickle:

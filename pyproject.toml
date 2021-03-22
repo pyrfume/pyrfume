@@ -1,10 +1,10 @@
 [tool.poetry]
 name = "pyrfume"
-version = "0.13.0"
+version = "0.14"
 description = "A validation library for human olfactory psychophysics research."
 authors = ["Rick Gerkin <rgerkin@asu.edu>"]
 license = "MIT"
-homepage = "http://pyrfume.scidash.org"
+homepage = "http://pyrfume.org"
 documentation = "https://pyrfume.readthedocs.io"
 readme = "README.md"
 
@@ -21,6 +21,7 @@ numpy = ">=1.18.4"
 pandas = ">=1.0.3"
 plotly = ">=4.8.0"
 pubchempy = ">=1.0.4"
+requests = ">=2.20.0"
 quantities = ">=0.12.4"
 scipy = ">=1.4.1"
 sympy = ">=1.6"
