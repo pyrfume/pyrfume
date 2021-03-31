@@ -1,4 +1,5 @@
 import unittest
+import pyrfume
 
 class DataLoadRemoteTestCase(unittest.TestCase):
     def setUp(self):
