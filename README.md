@@ -7,16 +7,19 @@
 [![Coverage Status](https://coveralls.io/repos/github/pyrfume/pyrfume/badge.svg?branch=master)](https://coveralls.io/github/pyrfume/pyrfume?branch=master)
 
 ### Examples:
-#### Note: these require the Pyrfume data library, *provided separately*.
 ```
-# Get raw data from the Sigma Fragrance & Flavor Catalog
-from pyrfume import sigma_ff
-descriptors, data = sigma_ff.get_data()
-
-# Get a PubChem CID-indexed dataframe of the odorant and descriptor data from that catalog:
+# Load data for Snitz et al, 2013 (PLOS Computational Biology)
 import pyrfume
-sigma = pyrfume.load_data('sigma/sigma.csv')
+behavior = pyrfume.load_data('snitz_2013/behavior.csv')
+molecules = pyrfume.load_data('snitz_2013/molecules.csv')
+
+# Load data for Bushdid et al, 2014 (Science)
+import pyrfume
+behavior = pyrfume.load_data('bushdid_2014/behavior.csv')
+molecules = pyrfume.load_data('bushdid_2014/molecules.csv')
+mixtures = pyrfume.load_data('bushdid_2014/behavior.csv')
 ```
+
 ### [Website](http://pyrfume.org)
 
 ### [Data Curation Status](http://status.pyrfume.org)
