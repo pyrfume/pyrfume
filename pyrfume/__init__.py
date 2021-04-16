@@ -5,12 +5,15 @@ import numpy as np
 import pandas as pd
 from pathlib import Path
 import pickle
+from pprint import pprint
 import requests
+import toml
 from tqdm.auto import tqdm, trange
 from typing import Any
 import urllib
 
-from .base import CONFIG_PATH, DEFAULT_DATA_PATH, REMOTE_DATA_PATH, TEMP_LOCAL, RemoteDataError
+from .base import CONFIG_PATH, DEFAULT_DATA_PATH, REMOTE_DATA_PATH, TEMP_LOCAL, MANIFEST_NAME
+from .base import LocalDataError, RemoteDataError
 
 logger = logging.getLogger("pyrfume")
 
@@ -76,23 +79,50 @@ def localize_remote_data(rel_path, branch='master'):
     return target_path
     
 
-def load_data(rel_path, remote=False, **kwargs):
+def load_manifest(archive_name, remote=None):
+    rel_path = archive_name + '/' + MANIFEST_NAME 
+    return load_data(rel_path, remote=remote)
+
+
+def show_files(archive_name, remote=None, raw=False):
+    manifest = load_manifest(archive_name, remote=remote)
+    items = manifest['processed']
+    if raw:
+        items.update(manifest['raw'])
+    pprint(items)
+    
+    
+def load_data(rel_path, remote=None, **kwargs):
     if remote:
         full_path = localize_remote_data(rel_path)
     else:
         full_path = get_data_path() / rel_path
-        
-    is_pickle = any([str(full_path).endswith(x) for x in (".pkl", ".pickle", ".p")])
-    is_excel = any([str(full_path).endswith(x) for x in (".xls", ".xlsx")])
+        if not full_path.exists():
+            if remote is None:
+                logger.info('Did not find file %s locally; fetching remotely.' % full_path)
+                return load_data(rel_path, remote=True, **kwargs)
+            else:
+                raise LocalDataError('Could not get file at %s' % full_path)
+      
+    is_csv = full_path.suffix in [".csv"]
+    is_pickle = full_path.suffix in [".pkl", ".pickle", ".p"]
+    is_excel = full_path.suffix in  [".xls", ".xlsx"]
+    is_manifest = full_path.suffix == Path(MANIFEST_NAME).suffix
+    
     if is_pickle:
         with open(full_path, "rb") as f:
             data = pickle.load(f)
     elif is_excel:
         data = pd.read_excel(full_path, **kwargs)
-    else:
+    elif is_csv:
         if "index_col" not in kwargs:
             kwargs["index_col"] = 0
         data = pd.read_csv(full_path, **kwargs)
+    elif is_manifest:
+        with open(full_path, 'r') as f:
+            data = toml.load(f)
+    else:
+        raise LocalDataError("%s has an unknown data type" % rel_path)
     return data
 
 

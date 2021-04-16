@@ -1,3 +1,4 @@
+from pathlib import Path
 import unittest
 
 class DataAndConfigTestCase(unittest.TestCase):
@@ -27,7 +28,7 @@ class DataAndConfigTestCase(unittest.TestCase):
         path2 = get_data_path()
         self.assertEqual(path1, path2)
 
-        os.mkdir(DEFAULT_DATA_PATH)
+        Path(DEFAULT_DATA_PATH).mkdir(exist_ok=True)
         set_data_path(DEFAULT_DATA_PATH)
         path3 = get_data_path()
         self.assertEqual(path3, DEFAULT_DATA_PATH)
