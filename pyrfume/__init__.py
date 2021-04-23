@@ -12,7 +12,7 @@ from tqdm.auto import tqdm, trange
 from typing import Any
 import urllib
 
-from .base import CONFIG_PATH, DEFAULT_DATA_PATH, REMOTE_DATA_PATH, TEMP_LOCAL, MANIFEST_NAME
+from .base import CONFIG_PATH, DEFAULT_DATA_PATH, REMOTE_DATA_PATH, TEMP_LOCAL, MANIFEST_NAME, REMOTE_DATA_ORG, REMOTE_DATA_REPO
 from .base import LocalDataError, RemoteDataError
 
 logger = logging.getLogger("pyrfume")
@@ -78,7 +78,35 @@ def localize_remote_data(rel_path, branch='master'):
         f.write(response.content)
     return target_path
     
+def get_remote_archives_info(branch='master'):
+    url = 'https://api.github.com/repos/%s/%s/git/trees/%s' % (REMOTE_DATA_ORG, REMOTE_DATA_REPO, branch)
+    response = requests.get(url)
+    if response.status_code != 200:
+        raise RemoteDataError('Could not get archive list at %s' % url)
+    info = json.loads(response.content)
+    return info
 
+    
+def list_archives(branch='master', remote=None):
+    archives = []
+    if remote:
+        info = get_remote_archives_info(branch=branch)
+        for item in info['tree']:
+            if item['type'] == 'tree':
+                archives.append(item['path'])    
+    else:
+        path = get_data_path()
+        for directory in path.iterdir():
+            if (directory / 'manifest.toml').is_file():
+                archives.append(directory)
+        if not len(archives):
+            f = logger.info if remote is None else logger.warning
+            f('No local archives found; searching remotely...')
+            return list_archives(branch=branch, remote=True)
+    archives = sorted(archives)
+    return archives
+    
+    
 def load_manifest(archive_name, remote=None):
     rel_path = archive_name + '/' + MANIFEST_NAME 
     return load_data(rel_path, remote=remote)
