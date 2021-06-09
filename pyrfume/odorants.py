@@ -223,7 +223,7 @@ class Molecule:
                 assert value == self.cid, "REST API CID does not match provided CID"
             key = convert(key)
             if key == "molecular_weight":
-                value *= pq.g / pq.mol
+                value = float(value) * pq.g / pq.mol
             setattr(self, key, value)
 
         if not self.name:
