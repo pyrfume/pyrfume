@@ -28,7 +28,7 @@ def load_dragon(suffix=""):
     """Loads dragon features.
     Use a suffix to specify a precomputed cleaning of this data"""
     path = "%s/%s" % (FEATURES_DIR, DRAGON_STEM % suffix)
-    dragon = load_data(path).set_index("PubChemID")
+    dragon = load_data(path)
     return dragon
 
 
