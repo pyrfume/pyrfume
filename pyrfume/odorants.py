@@ -389,6 +389,9 @@ def get_cids(
         results = {}
     p = tqdm(identifiers)
     for identifier in p:
+        #if not isinstance(identifier, str):
+        #    logger.warning("%s is not a string" % identifier)
+        #    continue
         p.set_description(str(identifier))
         cid = get_cid(identifier, kind=kind, verbose=verbose)
         if not cid:
@@ -404,12 +407,12 @@ def get_cid(
 ) -> int:
     """Return data about a molecule from any synonym,
     including a chemical name or a CAS"""
+    if isinstance(identifier, float) and np.isnan(identifier):
+        return 0
     replace = [('α', 'alpha'), ('β', 'beta'), ('γ', 'gamma'), ('δ', 'delta')]
     for a, b in replace:
         identifier = identifier.replace(a, b)
     kind = kind.lower()
-    if isinstance(identifier, float) and np.isnan(identifier):
-        return 0
     try:
         result = pcp.get_cids(identifier, namespace=kind)
     except pcp.BadRequestError:
