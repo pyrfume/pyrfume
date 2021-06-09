@@ -132,7 +132,7 @@ def load_data(rel_path, remote=None, **kwargs):
             else:
                 raise LocalDataError('Could not get file at %s' % full_path)
       
-    is_csv = full_path.suffix in [".csv"]
+    is_csv = full_path.suffix in [".csv", ".txt"]
     is_pickle = full_path.suffix in [".pkl", ".pickle", ".p"]
     is_excel = full_path.suffix in  [".xls", ".xlsx"]
     is_manifest = full_path.suffix == Path(MANIFEST_NAME).suffix
