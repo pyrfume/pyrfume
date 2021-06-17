@@ -13,6 +13,7 @@ from urllib.parse import quote
 from urllib.request import urlopen
 
 import numpy as np
+import pandas as pd
 import pubchempy as pcp
 from IPython.display import display
 from PIL import Image
@@ -25,6 +26,8 @@ from typing import Dict
 try:
     from rdkit import Chem
     from rdkit.Chem import Draw, AllChem, SaltRemover
+    from rdkit import RDLogger
+    rdkit_logger = RDLogger.logger()
 except ImportError:
     warnings.warn(
         "Parts of mordred and/or rdkit could not be imported; try installing rdkit via conda",
@@ -35,8 +38,10 @@ ROOM_TEMP = (22 + 273.15) * pq.Kelvin
 ROOM_PRESSURE = 1 * pq.atm
 GAS_MOLAR_DENSITY = ROOM_PRESSURE / (R * ROOM_TEMP)
 
-ODORANTS_BASIC_INFO_PATH = "odorants/all-cids-properties.csv"
-ODORANT_SOURCES_PATH = "odorants/all-cids.csv"
+ODORANTS_BASIC_INFO_PATH = "molecules/all-cids-properties.csv"
+ODORANT_SOURCES_PATH = "molecules/all-cids.csv"
+
+PUBCHEM_KINDS = ['name', 'smiles', 'inchi', 'inchikey', 'formula', 'sdf', None]
 
 
 class Solution:
@@ -354,6 +359,27 @@ def url_to_json(url, verbose=True) -> str:
     return json_data
 
 
+def is_kind(identifier: str, kind: str) -> bool:
+    if kind == 'smiles':
+        rdkit_logger.setLevel(RDLogger.CRITICAL)
+        result = Chem.MolFromSmiles(identifier) is not None
+        rdkit_logger.setLevel(RDLogger.WARNING)
+        return result
+    elif kind == 'inchikey':
+        return len(identifier) == 27 and identifier[14]=='-' and identifier[25]=='-'
+    elif kind == 'inchi':
+        return Chem.inchi.MolFromInchi(identifier, logLevel=None) is not None
+    elif kind == 'name':
+        return True
+    else:
+        return False
+    
+    
+def get_kind(identifier: str):
+    kinds = [kind for kind in PUBCHEM_KINDS if is_kind(identifier, kind)]
+    return kinds[-1]  # Return most sophisticated kind ('name' will always be in the list)
+        
+
 def deisomerize_smiles(smiles: str) -> str:
     mol = Chem.MolFromSmiles(smiles)
     if mol:  # If a mol object was successfully create (i.e. not `None`)
@@ -377,14 +403,14 @@ def canonical_smiles(smiles: str, kekulize: bool = False) -> str:
 
 def get_cids(
     identifiers: list,
-    kind: str = "name",
+    kind: str = None,
     verbose: bool = True,
     wait: float = 0,
     results: dict = None,
 ) -> dict:
     """Return CIDs for molecule based on any synonym,
     including a chemical name or a CAS"""
-    kind = kind.lower()
+    assert kind in PUBCHEM_KINDS
     if results is None:
         results = {}
     p = tqdm(identifiers)
@@ -403,21 +429,34 @@ def get_cids(
 
 
 def get_cid(
-    identifier: str, kind: str = "name", verbose: bool = True, fix_smiles_on_error: bool = True
+    identifier: str, kind: str = None, verbose: bool = True, fix_smiles_on_error: bool = True, attempt=0
 ) -> int:
-    """Return data about a molecule from any synonym,
-    including a chemical name or a CAS"""
+    """
+    Return data about a molecule from any synonym,
+    including a chemical name or a CAS.
+    change_kind: Whether to try other kinds if the search fails.
+    """
     if isinstance(identifier, float) and np.isnan(identifier):
         return 0
     replace = [('α', 'alpha'), ('β', 'beta'), ('γ', 'gamma'), ('δ', 'delta')]
     for a, b in replace:
         identifier = identifier.replace(a, b)
-    kind = kind.lower()
+    if kind is None:
+        kind = get_kind(identifier)
+    else:
+        kind = kind.lower()
     try:
         result = pcp.get_cids(identifier, namespace=kind)
     except pcp.BadRequestError:
         logger.warning('Request Error for "%s"' % identifier)
         result = []
+    except pcp.PubChemHTTPError as e:
+        if attempt == 0:
+            import time
+            time.sleep(10)
+            return get_cid(identifier,kind,verbose, fix_smiles_on_error, 1)
+        else:
+            raise e
     if not len(result):
         cid = 0
     else:
@@ -428,7 +467,7 @@ def get_cid(
         # Retry with canonical SMILES
         identifier = canonical_smiles(identifier)
         if identifier:
-            cid = get_cid(identifier, kind=kind, verbose=verbose, fix_smiles_on_error=False)
+            cid = get_cid(identifier, kind=kind, verbose=verbose, fix_smiles_on_error=False, change_kind=change_kind)
     return cid
 
 
@@ -585,6 +624,38 @@ def _parse_other_info(info, records=None):
         for value in info:
             _parse_other_info(value, records=records)
     return records
+
+
+def display_molecules(molecules: pd.DataFrame, no_of_columns=5, figsize=(15, 15)):
+    import matplotlib.pyplot as plt
+    from IPython.display import display
+    fig = plt.figure(figsize=figsize)
+    column = 0
+    for i, (cid, info) in enumerate(molecules.iterrows()):
+        column += 1
+        #  check for end of column and create a new figure
+        if column == no_of_columns+1:
+            fig = plt.figure(figsize=figsize)
+            column = 1
+        fig.add_subplot(1, no_of_columns, column)
+        image = smiles_to_image(info['IsomericSMILES'], png=False)
+        plt.imshow(image)
+        plt.axis('off')
+        plt.title("%d: %s" % (cid, info['name']))
+        
+        
+def embed_molecules(molecules: pd.DataFrame):
+    import matplotlib.pyplot as plt
+    plt.figure(figsize=(6, 6))
+    ax = plt.gca()
+    embedding = load_data('embedding/pf_umap.pkl')
+    ax = embedding.plot.scatter(x=0, y=1, alpha=0.05, c='k', ax=ax)
+    smiles = molecules['IsomericSMILES']
+    embedding_ = embedding.loc[smiles]
+    embedding_.plot.scatter(x=0, y=1, alpha=1, c='r', s=100, ax=ax)
+    ax.set_xlabel('Dimension 1')
+    ax.set_ylabel('Dimension 2')
+    
 
 
 def smiles_to_image(smiles, png=True, b64=False, crop=True, padding=10, size=300):
