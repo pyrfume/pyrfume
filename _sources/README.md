@@ -1,5 +1,4 @@
 # Welcome to Pyrfume’s documentation!
-![Pyrfume logo](logo.png])
 
 `pyrfume` is a python library for odorant-linked research.
 - See the tutorials at https://docs.pyrfume.org.
