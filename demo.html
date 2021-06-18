@@ -1,0 +1,1667 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pyrfume Demo &#8212; Pyrfume: a python library for odorant-linked research</title>
+    
+  <link href="_static/css/theme.css" rel="stylesheet" />
+  <link href="_static/css/index.c5995385ac14fb8791e8eb36b4908be2.css" rel="stylesheet" />
+
+    
+  <link rel="stylesheet"
+    href="_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    
+      
+
+    
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/sphinx-book-theme.acff12b8f9c144ce68a297486a2fa670.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
+    <link rel="stylesheet" type="text/css" href="_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
+    
+  <link rel="preload" as="script" href="_static/js/index.1c5a1a01449ed65a7b51.js">
+
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/togglebutton.js"></script>
+    <script src="_static/clipboard.min.js"></script>
+    <script src="_static/copybutton.js"></script>
+    <script >var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script src="_static/sphinx-book-theme.12a9622fbb08dcb3a2a40b2c02b83a57.js"></script>
+    <script async="async" src="https://unpkg.com/thebelab@latest/lib/index.js"></script>
+    <script >
+        const thebe_selector = ".thebe"
+        const thebe_selector_input = "pre"
+        const thebe_selector_output = ".output"
+    </script>
+    <script async="async" src="_static/sphinx-thebe.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="en" />
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<div class="col-12 col-md-3 bd-sidebar site-navigation show" id="site-navigation">
+    
+        <div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="index.html">
+      
+      
+      <h1 class="site-logo" id="site-title">Pyrfume: a python library for odorant-linked research</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
+    <div class="bd-toc-item active">
+        <ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="README.html">
+   Welcome to Pyrfume’s documentation!
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  Tutorial
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="featurization.html">
+   1. Featurization for machine learning
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="visualization.html">
+   2. Visualization
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  API Docs
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference external" href="https://pyrfume.readthedocs.io/en/latest/py-modindex.html">
+   https://pyrfume.readthedocs.io/en/latest/py-modindex.html
+  </a>
+ </li>
+</ul>
+
+    </div>
+</nav> <!-- To handle the deprecated key -->
+
+<div class="navbar_extra_footer">
+  Powered by <a href="https://jupyterbook.org">Jupyter Book</a>
+</div>
+
+</div>
+
+
+          
+
+
+          
+<main class="col py-md-3 pl-md-4 bd-content overflow-auto" role="main">
+    
+    <div class="topbar container-xl fixed-top">
+    <div class="topbar-contents row">
+        <div class="col-12 col-md-3 bd-topbar-whitespace site-navigation show"></div>
+        <div class="col pl-md-4 topbar-main">
+            
+            <button id="navbar-toggler" class="navbar-toggler ml-0" type="button" data-toggle="collapse"
+                data-toggle="tooltip" data-placement="bottom" data-target=".site-navigation" aria-controls="navbar-menu"
+                aria-expanded="true" aria-label="Toggle navigation" aria-controls="site-navigation"
+                title="Toggle navigation" data-toggle="tooltip" data-placement="left">
+                <i class="fas fa-bars"></i>
+                <i class="fas fa-arrow-left"></i>
+                <i class="fas fa-arrow-up"></i>
+            </button>
+            
+            
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn" aria-label="Download this page"><i
+            class="fas fa-download"></i></button>
+
+    <div class="dropdown-buttons">
+        <!-- ipynb file if we had a myst markdown file -->
+        
+        <!-- Download raw file -->
+        <a class="dropdown-buttons" href="_sources/demo.ipynb"><button type="button"
+                class="btn btn-secondary topbarbtn" title="Download source file" data-toggle="tooltip"
+                data-placement="left">.ipynb</button></a>
+        <!-- Download PDF via print -->
+        <button type="button" id="download-print" class="btn btn-secondary topbarbtn" title="Print to PDF"
+            onClick="window.print()" data-toggle="tooltip" data-placement="left">.pdf</button>
+    </div>
+</div>
+
+            <!-- Source interaction buttons -->
+
+            <!-- Full screen (wrap in <a> to have style consistency -->
+
+<a class="full-screen-button"><button type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip"
+        data-placement="bottom" onclick="toggleFullScreen()" aria-label="Fullscreen mode"
+        title="Fullscreen mode"><i
+            class="fas fa-expand"></i></button></a>
+
+            <!-- Launch buttons -->
+
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn"
+        aria-label="Launch interactive content"><i class="fas fa-rocket"></i></button>
+    <div class="dropdown-buttons">
+        
+        <a class="binder-button" href="https://mybinder.org/v2/gh/executablebooks/jupyter-book/master?urlpath=tree/demo.ipynb"><button type="button"
+                class="btn btn-secondary topbarbtn" title="Launch Binder" data-toggle="tooltip"
+                data-placement="left"><img class="binder-button-logo"
+                    src="_static/images/logo_binder.svg"
+                    alt="Interact on binder">Binder</button></a>
+        
+        
+        
+        
+    </div>
+</div>
+
+        </div>
+
+        <!-- Table of contents -->
+        <div class="d-none d-md-block col-md-2 bd-toc show">
+            
+            <div class="tocsection onthispage pt-5 pb-3">
+                <i class="fas fa-list"></i> Contents
+            </div>
+            <nav id="bd-toc-nav">
+                <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#part-1-standardizing-your-own-data">
+   Part 1: Standardizing your own data
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#part-2-featurization-for-machine-learning">
+   Part 2: Featurization for machine learning
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#part-3-visualization">
+   Part 3: Visualization
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#part-4-working-with-the-pyrfume-datasets">
+   Part 4: Working with the Pyrfume datasets
+  </a>
+ </li>
+</ul>
+
+            </nav>
+        </div>
+    </div>
+</div>
+    <div id="main-content" class="row">
+        <div class="col-12 col-md-9 pl-md-3 pr-md-0">
+        
+              <div>
+                
+  <div class="section" id="pyrfume-demo">
+<h1><em>Pyrfume</em> Demo<a class="headerlink" href="#pyrfume-demo" title="Permalink to this headline">¶</a></h1>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span>pip install -q pyrfume  # Install pyrfume <span class="k">if</span> it is not already installed
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="k">load_ext</span> autoreload
+<span class="o">%</span><span class="k">autoreload</span> 2
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">pyrfume</span>
+<span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">font_scale</span><span class="o">=</span><span class="mf">1.5</span><span class="p">)</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">set_style</span><span class="p">(</span><span class="s1">&#39;whitegrid&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="part-1-standardizing-your-own-data">
+<h2>Part 1: Standardizing your own data<a class="headerlink" href="#part-1-standardizing-your-own-data" title="Permalink to this headline">¶</a></h2>
+<p>You may already have your own data, and you would like to link the odorants you’ve used in one dataset with those from other datasets, or simply be able to do analyses that require your odorants to be well-descibed of featurized.</p>
+<p><em>Pyrfume</em> operates under the principle that the proper identifier for a single odorant molecule (e.g. d-Limonene) is the PubChem compound ID (<a class="reference external" href="https://pubchem.ncbi.nlm.nih.gov/compound/440917">440917</a>), for a single (known) mixture (e.g. light mineral oil) is the PubChem substance ID (<a class="reference external" href="https://pubchem.ncbi.nlm.nih.gov/substance/402315722">402315722</a>).</p>
+<ul class="simple">
+<li><p>A PubChem compound ID uniquely identifiers a molecular structure (unlike a CAS registry number).</p></li>
+<li><p>A given structure resolves to only one PubChem ID (unlike a SMILES string which depends on implementation).</p></li>
+<li><p><a class="reference external" href="https://pubchem.ncbi.nlm.nih.gov/">PubChem</a> itself is indexed by these IDs and provides a wealth of additional records covering experimental data, computable properties, safety information, and other externally linked data.</p></li>
+</ul>
+<p>In order to get access to all of this information, and to link the <em>same molecule</em> across datasets, the first step is to obtain PubChem IDs (henceforth, CIDs) for the molecules in question.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;d-limonene&#39;</span><span class="p">,</span> <span class="s1">&#39;98-86-2&#39;</span><span class="p">,</span> <span class="s1">&#39;(+)-carvone&#39;</span><span class="p">,</span> <span class="s1">&#39;CCCCCC=O&#39;</span><span class="p">,</span> <span class="s1">&#39;GXANMBISFKBPEX-ARJAWSKDSA-N&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Above we have 5 different molecules, represented with a mix of names (with different annotations), CAS numbers, SMILES strings, and InChiKeys.  Your data may use one of these formats, or a mix of them, or some other format entirely.  The <a class="reference external" href="https://pubchem.ncbi.nlm.nih.gov/idexchange/idexchange.cgi">PubChem exchange identifier</a> service can do a good job of converting between (some of) these format, or identifying potential CIDs.  Pyrfume does the extra work of auto-identifying the current identifier, checking for alternative conversions, and providing information about names that did not match or had multiple matches.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pyrfume</span> <span class="kn">import</span> <span class="n">get_cids</span>
+<span class="n">cids</span> <span class="o">=</span> <span class="n">get_cids</span><span class="p">(</span><span class="n">names</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id": "0839649a1b8e4b3ba80d02bde8566a1e", "version_major": 2, "version_minor": 0}
+</script></div>
+</div>
+<p>The process above can be a little bit slow (resolving only a few identifers per second) because the PubChem database itself is not indexed by most of these (only CIDs and InChiKeys).  Still, it returns a dictionary of unique identifiers (CIDs) for each original identifier:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cids</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{&#39;d-limonene&#39;: 440917,
+ &#39;98-86-2&#39;: 7410,
+ &#39;(+)-carvone&#39;: 16724,
+ &#39;CCCCCC=O&#39;: 6184,
+ &#39;GXANMBISFKBPEX-ARJAWSKDSA-N&#39;: 643941}
+</pre></div>
+</div>
+</div>
+</div>
+<p>Which looks a bit nicer as a Pandas series</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cids</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">cids</span><span class="p">)</span>
+<span class="n">cids</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>d-limonene                     440917
+98-86-2                          7410
+(+)-carvone                     16724
+CCCCCC=O                         6184
+GXANMBISFKBPEX-ARJAWSKDSA-N    643941
+dtype: int64
+</pre></div>
+</div>
+</div>
+</div>
+<p>Now that you have unique identifiers, you can access a lot more information:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pyrfume</span> <span class="kn">import</span> <span class="n">from_cids</span>
+<span class="n">info</span> <span class="o">=</span> <span class="n">from_cids</span><span class="p">(</span><span class="n">cids</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id": "1c18e35fa25b46a28142789722d18b13", "version_major": 2, "version_minor": 0}
+</script><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Retrieving 0 through 4
+</pre></div>
+</div>
+</div>
+</div>
+<p>That part was quite fast and scales very well, because PubChem is indexed by CID.  Pyrfume runs this in batches of 100 CIDs, and each batch takes about 1 second.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">molecules</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">info</span><span class="p">)</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;CID&#39;</span><span class="p">)</span>
+<span class="n">molecules</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>MolecularWeight</th>
+      <th>IsomericSMILES</th>
+      <th>IUPACName</th>
+      <th>name</th>
+    </tr>
+    <tr>
+      <th>CID</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>440917</th>
+      <td>136.23</td>
+      <td>CC1=CC[C@@H](CC1)C(=C)C</td>
+      <td>(4R)-1-methyl-4-prop-1-en-2-ylcyclohexene</td>
+      <td>d-limonene</td>
+    </tr>
+    <tr>
+      <th>7410</th>
+      <td>120.15</td>
+      <td>CC(=O)C1=CC=CC=C1</td>
+      <td>1-phenylethanone</td>
+      <td>acetophenone</td>
+    </tr>
+    <tr>
+      <th>16724</th>
+      <td>150.22</td>
+      <td>CC1=CC[C@@H](CC1=O)C(=C)C</td>
+      <td>(5S)-2-methyl-5-prop-1-en-2-ylcyclohex-2-en-1-one</td>
+      <td>d-carvone</td>
+    </tr>
+    <tr>
+      <th>6184</th>
+      <td>100.16</td>
+      <td>CCCCCC=O</td>
+      <td>hexanal</td>
+      <td>hexanal</td>
+    </tr>
+    <tr>
+      <th>643941</th>
+      <td>98.14</td>
+      <td>CC/C=C\CC=O</td>
+      <td>(Z)-hex-3-enal</td>
+      <td>cis-3-hexenal</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<p>The above contains the original set of molecules, indexed by CID, but also containing some other useful identifiers that (unlike CAS or InChiKey) actually tell you something about the molecule in question just by looking at them.  The “IsomericSMILES” columns is standardized SMILES string computed using the same software (on PubChem) for every molecule.  The “<a class="reference external" href="https://en.wikipedia.org/wiki/IUPAC_nomenclature_of_organic_chemistry">IUPACName</a>” is similarly, a standardized nomenclature for molecle names.  “name” is simply the most common name (sometimes a trade name) of the molecule, as you might see it in a publication.  CID, IsomericSMILES, and IUPACName, all uniquely describe the molecule.  If you have multiple datasets from multiple sources, and you want to integrate them together, you can use stock Pandas functions for merging and/or concatenating data.</p>
+<p>This representation for a set of molecules will recur again and again in Part 4, when looking at external datasets.</p>
+</div>
+<div class="section" id="part-2-featurization-for-machine-learning">
+<h2>Part 2: Featurization for machine learning<a class="headerlink" href="#part-2-featurization-for-machine-learning" title="Permalink to this headline">¶</a></h2>
+<p>Many applications, such as predictive models, propose that molecular structure of an odorant is causal to neural activity or behavior (a reasonable proposition).  Training these models requires that each molecule be represented by a vector of predictors, or features, which in some way describe the structure quantitatively.  Traditionally the chemoinformatic feature-calculation software called <a class="reference external" href="https://chm.kode-solutions.net/pf/dragon-7-0/">Dragon</a> has been used for this, but since Dragon is commercial software this creates challenges for replication and reproducibility.  Some have found that open source feature-calculation packages such as <a class="reference external" href="https://jcheminf.biomedcentral.com/articles/10.1186/s13321-018-0258-y">Mordred</a> perform as or nearly as well.</p>
+<p>Feature-calculation on molecules involves several steps including 1) expression of structure in a standard representation (such as SMILES or InChi), 2) conversion of that structure to a molecule object in memory (e.g. <a class="reference external" href="https://www.rdkit.org/">rdkit</a> Mol), 3) addition of hydrogens (omitted from the SMILES by design), removal of salts, etc. 4) embedding in 3 dimensions (without violating steric or electostatic principles), 5) feature calculation on this 3d structure.  <em>Pyrfume</em> abstracts all of this away into one step.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">smiles</span> <span class="o">=</span> <span class="n">molecules</span><span class="p">[</span><span class="s1">&#39;IsomericSMILES&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+<span class="n">smiles</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;CC1=CC[C@@H](CC1)C(=C)C&#39;,
+ &#39;CC(=O)C1=CC=CC=C1&#39;,
+ &#39;CC1=CC[C@@H](CC1=O)C(=C)C&#39;,
+ &#39;CCCCCC=O&#39;,
+ &#39;CC/C=C\\CC=O&#39;]
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pyrfume.features</span> <span class="kn">import</span> <span class="n">smiles_to_mordred</span>
+<span class="n">mordred_features</span> <span class="o">=</span> <span class="n">smiles_to_mordred</span><span class="p">(</span><span class="n">smiles</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id": "3f3a57047ada41f0a008d04ac7eab63d", "version_major": 2, "version_minor": 0}
+</script><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Computing Mordred features...
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  0%|          | 0/5 [00:00&lt;?, ?it/s]
+
+100%|██████████| 5/5 [00:00&lt;00:00,  9.81it/s]
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>There are 5 molecules and 1826 features
+</pre></div>
+</div>
+</div>
+</div>
+<p>The code above implements all of the steps required for featurization (except for obtaining the SMILES string, which was done in Part 1).  One can also obtain a SMILES string directly by calling <code class="docutils literal notranslate"><span class="pre">pyrfume.odorants.cids_to_smiles</span></code>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">mordred_features</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>ABC</th>
+      <th>ABCGG</th>
+      <th>nAcid</th>
+      <th>nBase</th>
+      <th>SpAbs_A</th>
+      <th>SpMax_A</th>
+      <th>SpDiam_A</th>
+      <th>SpAD_A</th>
+      <th>SpMAD_A</th>
+      <th>LogEE_A</th>
+      <th>...</th>
+      <th>SRW10</th>
+      <th>TSRW10</th>
+      <th>MW</th>
+      <th>AMW</th>
+      <th>WPath</th>
+      <th>WPol</th>
+      <th>Zagreb1</th>
+      <th>Zagreb2</th>
+      <th>mZagreb1</th>
+      <th>mZagreb2</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>CC1=CC[C@@H](CC1)C(=C)C</th>
+      <td>7.358797</td>
+      <td>6.909742</td>
+      <td>0</td>
+      <td>0</td>
+      <td>11.936238</td>
+      <td>2.236068</td>
+      <td>4.472136</td>
+      <td>11.936238</td>
+      <td>1.193624</td>
+      <td>3.197236</td>
+      <td>...</td>
+      <td>8.815964</td>
+      <td>39.140584</td>
+      <td>136.125201</td>
+      <td>5.235585</td>
+      <td>120</td>
+      <td>11</td>
+      <td>46.0</td>
+      <td>50.0</td>
+      <td>4.333333</td>
+      <td>2.277778</td>
+    </tr>
+    <tr>
+      <th>CC(=O)C1=CC=CC=C1</th>
+      <td>6.542301</td>
+      <td>6.236096</td>
+      <td>0</td>
+      <td>0</td>
+      <td>11.189957</td>
+      <td>2.193993</td>
+      <td>4.387987</td>
+      <td>11.189957</td>
+      <td>1.243329</td>
+      <td>3.089765</td>
+      <td>...</td>
+      <td>8.590258</td>
+      <td>37.289972</td>
+      <td>120.057515</td>
+      <td>7.062207</td>
+      <td>88</td>
+      <td>9</td>
+      <td>40.0</td>
+      <td>43.0</td>
+      <td>3.472222</td>
+      <td>2.111111</td>
+    </tr>
+    <tr>
+      <th>CC1=CC[C@@H](CC1=O)C(=C)C</th>
+      <td>8.134854</td>
+      <td>7.731889</td>
+      <td>0</td>
+      <td>0</td>
+      <td>13.152542</td>
+      <td>2.292456</td>
+      <td>4.584911</td>
+      <td>13.152542</td>
+      <td>1.195686</td>
+      <td>3.294652</td>
+      <td>...</td>
+      <td>9.071423</td>
+      <td>40.991311</td>
+      <td>150.104465</td>
+      <td>6.004179</td>
+      <td>152</td>
+      <td>14</td>
+      <td>52.0</td>
+      <td>58.0</td>
+      <td>5.194444</td>
+      <td>2.472222</td>
+    </tr>
+    <tr>
+      <th>CCCCCC=O</th>
+      <td>4.242641</td>
+      <td>4.53095</td>
+      <td>0</td>
+      <td>0</td>
+      <td>8.054679</td>
+      <td>1.847759</td>
+      <td>3.695518</td>
+      <td>8.054679</td>
+      <td>1.150668</td>
+      <td>2.739193</td>
+      <td>...</td>
+      <td>6.900731</td>
+      <td>30.25721</td>
+      <td>100.088815</td>
+      <td>5.267832</td>
+      <td>56</td>
+      <td>4</td>
+      <td>22.0</td>
+      <td>20.0</td>
+      <td>3.25</td>
+      <td>2.0</td>
+    </tr>
+    <tr>
+      <th>CC/C=C\CC=O</th>
+      <td>4.242641</td>
+      <td>4.53095</td>
+      <td>0</td>
+      <td>0</td>
+      <td>8.054679</td>
+      <td>1.847759</td>
+      <td>3.695518</td>
+      <td>8.054679</td>
+      <td>1.150668</td>
+      <td>2.739193</td>
+      <td>...</td>
+      <td>6.900731</td>
+      <td>30.25721</td>
+      <td>98.073165</td>
+      <td>5.76901</td>
+      <td>56</td>
+      <td>4</td>
+      <td>22.0</td>
+      <td>20.0</td>
+      <td>3.25</td>
+      <td>2.0</td>
+    </tr>
+  </tbody>
+</table>
+<p>5 rows × 1826 columns</p>
+</div></div></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">mordred_features</span></code> Pandas dataframe has (for the current version of Mordred, installed by Pyrfume) 1826 computed physicochemical features for each molecule.  What do these features mean?  That’s a question for the computational chemists.  As investigators asking how molecular structure might explain or be represented in brain activity or behavior, we just want a set of predictors with a track record of success in structure-based predictive models.</p>
+<p>It has been shown previously that the physics-based features of Dragon (or of Mordred, which implements similar calculations) are good at predicting some kinds of structure-driven outcomes, but not others.  For example, in <a class="reference external" href="https://science.sciencemag.org/content/355/6327/820.abstract">Keller et al 2017 (Science)</a> it was shown that such features are good for predicting perceived intensity, but not as good at predicting perceived “bakery” smell.  That paper showed that the latter was better predicted by a template-matching approach – molecules that smell like “bakery” are best predicted by asking whether they are structurally similar to other molecules known to smell like “bakery”.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pyrfume.features</span> <span class="kn">import</span> <span class="n">smiles_to_morgan</span>
+<span class="n">morgan_features</span> <span class="o">=</span> <span class="n">smiles_to_morgan</span><span class="p">(</span><span class="n">smiles</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id": "d7bdf551e94745d9a3f952bbcd73dfac", "version_major": 2, "version_minor": 0}
+</script><script type="application/vnd.jupyter.widget-view+json">
+{"model_id": "51e3d09416a949cdb96536a7bf7e6a4a", "version_major": 2, "version_minor": 0}
+</script></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">morgan_features</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>10565946</th>
+      <th>56091288</th>
+      <th>118067289</th>
+      <th>121328373</th>
+      <th>153234704</th>
+      <th>180311863</th>
+      <th>226893386</th>
+      <th>245578872</th>
+      <th>256538328</th>
+      <th>269476445</th>
+      <th>...</th>
+      <th>3910734833</th>
+      <th>3967719433</th>
+      <th>3983702751</th>
+      <th>3990544841</th>
+      <th>4056449865</th>
+      <th>4084831613</th>
+      <th>4166400509</th>
+      <th>4175270308</th>
+      <th>4209952873</th>
+      <th>4277593716</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>CC1=CC[C@@H](CC1)C(=C)C</th>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>...</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>16.0</td>
+    </tr>
+    <tr>
+      <th>CC(=O)C1=CC=CC=C1</th>
+      <td>0.0</td>
+      <td>5.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>2.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>...</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>8.0</td>
+    </tr>
+    <tr>
+      <th>CC1=CC[C@@H](CC1=O)C(=C)C</th>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>...</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>14.0</td>
+    </tr>
+    <tr>
+      <th>CCCCCC=O</th>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>...</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>12.0</td>
+    </tr>
+    <tr>
+      <th>CC/C=C\CC=O</th>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>...</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>10.0</td>
+    </tr>
+  </tbody>
+</table>
+<p>5 rows × 105 columns</p>
+</div></div></div>
+</div>
+<p>The dataframe above contains fragment counts, i.e. the number of times, within each molecule (represented by a SMILES string) that a given sub-molecular pattern (e.g. an acetyl group, a benzene ring, or any other possible substructure) occurs.  Each substructure has a unique “hash”, which is simply a long integer that can be resolved to that sub-structure (also called a <a class="reference external" href="https://towardsdatascience.com/a-practical-introduction-to-the-use-of-molecular-fingerprints-in-drug-discovery-7f15021be2b1">fingerprint</a>).  The larger and more diverse the number of molecules that we want to featurize, the larger the number of potential substructures, so the number of predictors can become quite larger (here since we are only working with 5 molecules, there are only 105 unique substructures, of some maximum size).</p>
+<p>These features can be used directly, but they still don’t tell us how similar two molecules are.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pyrfume.features</span> <span class="kn">import</span> <span class="n">smiles_to_morgan_sim</span>
+<span class="n">morgan_sim_features</span> <span class="o">=</span> <span class="n">smiles_to_morgan_sim</span><span class="p">(</span><span class="n">smiles</span><span class="p">,</span> <span class="n">smiles</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id": "5779e2682fdb47428dd979937b59faed", "version_major": 2, "version_minor": 0}
+</script><script type="application/vnd.jupyter.widget-view+json">
+{"model_id": "210036e0907f40449ddc6d5820938242", "version_major": 2, "version_minor": 0}
+</script><script type="application/vnd.jupyter.widget-view+json">
+{"model_id": "03b80ec6082f4e8fbccc5fef4960d6ab", "version_major": 2, "version_minor": 0}
+</script></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">morgan_sim_features</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>CC1=CC[C@@H](CC1)C(=C)C</th>
+      <th>CC(=O)C1=CC=CC=C1</th>
+      <th>CC1=CC[C@@H](CC1=O)C(=C)C</th>
+      <th>CCCCCC=O</th>
+      <th>CC/C=C\CC=O</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>CC1=CC[C@@H](CC1)C(=C)C</th>
+      <td>1.000000</td>
+      <td>0.272000</td>
+      <td>0.680556</td>
+      <td>0.360656</td>
+      <td>0.372881</td>
+    </tr>
+    <tr>
+      <th>CC(=O)C1=CC=CC=C1</th>
+      <td>0.272000</td>
+      <td>1.000000</td>
+      <td>0.308943</td>
+      <td>0.297030</td>
+      <td>0.309278</td>
+    </tr>
+    <tr>
+      <th>CC1=CC[C@@H](CC1=O)C(=C)C</th>
+      <td>0.680556</td>
+      <td>0.308943</td>
+      <td>1.000000</td>
+      <td>0.383333</td>
+      <td>0.396552</td>
+    </tr>
+    <tr>
+      <th>CCCCCC=O</th>
+      <td>0.360656</td>
+      <td>0.297030</td>
+      <td>0.383333</td>
+      <td>1.000000</td>
+      <td>0.574468</td>
+    </tr>
+    <tr>
+      <th>CC/C=C\CC=O</th>
+      <td>0.372881</td>
+      <td>0.309278</td>
+      <td>0.396552</td>
+      <td>0.574468</td>
+      <td>1.000000</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<p>By using <code class="docutils literal notranslate"><span class="pre">smiles_to_morgan_sim</span></code> we have the option of a second argument, which is a list of SMILES to compare the original SMILES to.  The result is a measure of similarity between two molecules, defined as their similarity in substructure counts.</p>
+<p>But rather than restrict the the similarity to only those molecules we want to predict, why not compute the similarity to other known odorous (or non-odorous) molecules?</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pyrfume.odorants</span> <span class="kn">import</span> <span class="n">all_smiles</span>
+<span class="n">reference_smiles</span> <span class="o">=</span> <span class="n">all_smiles</span><span class="p">()</span>
+<span class="c1">#smiles_to_morgan_sim(smiles, reference_smiles)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>The code above (after uncommenting the last line) will compute a dataframe of similarities between your molecule of interest and several thousand known odorants curated through the Pyrfume project.  This list consists of odorants used in <a class="reference external" href="http://status.pyrfume.org">&gt;40 notable journal articles and industrial databases</a>.</p>
+<p>Because this list is so large, there is a good chance that all of the molecules you are using for your project are already in it.  This means that the feature values can be computed once and you can simply look them up.  These pre-computed values have already been filtred to remove non-informative (e.g. zero variance) features or features with a large fraction of missing values (some features, especially for Mordred, are only computable for esoteric molecules). Furthermore, the remaining missing values have been filled with <a class="reference external" href="https://medium.com/&#64;kyawsawhtoon/a-guide-to-knn-imputation-95e2dc496e">KNN imputation</a>.  This means that they are “ready to go” for machine learning applications (which typically require finite and non-missing values in all predictors).</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">morgan_sim</span> <span class="o">=</span> <span class="n">pyrfume</span><span class="o">.</span><span class="n">load_data</span><span class="p">(</span><span class="s1">&#39;morgan/features_sim.csv&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">mordred</span> <span class="o">=</span> <span class="n">pyrfume</span><span class="o">.</span><span class="n">load_data</span><span class="p">(</span><span class="s1">&#39;mordred/features.csv&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>These files are quite large (thousands of molecules (rows) by thousands of features (columns)) and may take a minute to load.  Directly querying the pyrfume database, rather than loading the entire files, would be faster and is documented separately.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">morgan_sim_</span> <span class="o">=</span> <span class="n">morgan_sim</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">cids</span><span class="p">]</span>
+<span class="n">mordred_</span> <span class="o">=</span> <span class="n">mordred</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">cids</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Because every stored value in Pyrfume is indexed by CID, we can access the molecules we care about (that we want to get features for) using CIDs as keys.  We can then join them to produce one final set of features for machine learning applications.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">features</span> <span class="o">=</span> <span class="n">mordred_</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">morgan_sim_</span><span class="p">)</span>
+<span class="n">features</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>ABC</th>
+      <th>ABCGG</th>
+      <th>nAcid</th>
+      <th>nBase</th>
+      <th>SpAbs_A</th>
+      <th>SpMax_A</th>
+      <th>SpDiam_A</th>
+      <th>SpAD_A</th>
+      <th>SpMAD_A</th>
+      <th>LogEE_A</th>
+      <th>...</th>
+      <th>CC(=O)O.C1=CC=C2C(=C1)C(=CC3=C2N=C4C=CC(=N)C=C4O3)N</th>
+      <th>CCC(C)N1CCC2(CC1)NC3=C4C5=C(C(=NC(=O)/C(=C/C=C/[C@@H]([C@@H]([C@H]([C@H]([C@H]([C@@H]([C@@H]([C@H](/C=C/O[C@@]6(C(=O)C4=C(O6)C(=C5O)C)C)OC)C)OC(=O)C)C)O)C)O)C)/C)C3=N2)O</th>
+      <th>C[C@H]1/C=C/C=C(\C(=O)NC2=C(C(=C3C(=C2O)C(=C(C4=C3C(=O)[C@](O4)(O/C=C/[C@@H]([C@H]([C@H]([C@@H]([C@@H]([C@@H]([C@H]1O)C)O)C)OC(=O)C)C)OC)C)C)O)O)/C=N\N5CCN(CC5)C)/C</th>
+      <th>C[C@H]1/C=C/C=C(\C(=O)NC2=C(C(=C3C(=C2O)C(=C(C4=C3C(=O)[C@](O4)(O/C=C/[C@@H]([C@H]([C@H]([C@@H]([C@@H]([C@@H]([C@H]1O)C)O)C)OC(=O)C)C)OC)C)C)O)O)/C=N\N5CCN(CC5)C6CCCC6)/C</th>
+      <th>COC1=CC(=CC(=C1O)OC)/C=N\N=C/C2=CC(=C(C(=C2)OC)O)OC</th>
+      <th>C[N+]1=CC=CC=C1/C=N\O.[Cl-]</th>
+      <th>COC(=O)N/N=C\C1=[N+](C2=CC=CC=C2[N+](=C1)[O-])[O-]</th>
+      <th>C1=CC(=C(C(=C1)Cl)CC(=O)NC(=N)N)Cl.Cl</th>
+      <th>C1(=C(N=C(C(=N1)Cl)N)N)C(=O)NC(=N)N.O.O.Cl</th>
+      <th>CCCCCCCOC1=C(C=C(C=C1)CC=C)OC</th>
+    </tr>
+    <tr>
+      <th>CID</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>440917</th>
+      <td>7.358797</td>
+      <td>6.909742</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>11.936238</td>
+      <td>2.236068</td>
+      <td>4.472136</td>
+      <td>11.936238</td>
+      <td>1.193624</td>
+      <td>3.197236</td>
+      <td>...</td>
+      <td>0.139303</td>
+      <td>0.174089</td>
+      <td>0.185263</td>
+      <td>0.178218</td>
+      <td>0.257261</td>
+      <td>0.266667</td>
+      <td>0.218579</td>
+      <td>0.222222</td>
+      <td>0.160000</td>
+      <td>0.289593</td>
+    </tr>
+    <tr>
+      <th>7410</th>
+      <td>6.542301</td>
+      <td>6.236096</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>11.189957</td>
+      <td>2.193993</td>
+      <td>4.387987</td>
+      <td>11.189957</td>
+      <td>1.243329</td>
+      <td>3.089765</td>
+      <td>...</td>
+      <td>0.288889</td>
+      <td>0.114165</td>
+      <td>0.123348</td>
+      <td>0.115702</td>
+      <td>0.254545</td>
+      <td>0.456140</td>
+      <td>0.395062</td>
+      <td>0.409091</td>
+      <td>0.232558</td>
+      <td>0.250000</td>
+    </tr>
+    <tr>
+      <th>16724</th>
+      <td>8.134854</td>
+      <td>7.731889</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>13.152542</td>
+      <td>2.292456</td>
+      <td>4.584911</td>
+      <td>13.152542</td>
+      <td>1.195686</td>
+      <td>3.294652</td>
+      <td>...</td>
+      <td>0.150754</td>
+      <td>0.174797</td>
+      <td>0.190275</td>
+      <td>0.178926</td>
+      <td>0.251046</td>
+      <td>0.285714</td>
+      <td>0.243094</td>
+      <td>0.251656</td>
+      <td>0.189189</td>
+      <td>0.283105</td>
+    </tr>
+    <tr>
+      <th>6184</th>
+      <td>4.242641</td>
+      <td>4.530950</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>8.054679</td>
+      <td>1.847759</td>
+      <td>3.695518</td>
+      <td>8.054679</td>
+      <td>1.150668</td>
+      <td>2.739193</td>
+      <td>...</td>
+      <td>0.124294</td>
+      <td>0.144681</td>
+      <td>0.141907</td>
+      <td>0.133056</td>
+      <td>0.267281</td>
+      <td>0.270270</td>
+      <td>0.226415</td>
+      <td>0.232558</td>
+      <td>0.174603</td>
+      <td>0.385787</td>
+    </tr>
+    <tr>
+      <th>643941</th>
+      <td>4.242641</td>
+      <td>4.530950</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>8.054679</td>
+      <td>1.847759</td>
+      <td>3.695518</td>
+      <td>8.054679</td>
+      <td>1.150668</td>
+      <td>2.739193</td>
+      <td>...</td>
+      <td>0.115607</td>
+      <td>0.103004</td>
+      <td>0.111857</td>
+      <td>0.104822</td>
+      <td>0.225352</td>
+      <td>0.280374</td>
+      <td>0.245161</td>
+      <td>0.256000</td>
+      <td>0.196721</td>
+      <td>0.279793</td>
+    </tr>
+  </tbody>
+</table>
+<p>5 rows × 11144 columns</p>
+</div></div></div>
+</div>
+<p>We now have one giant dataframe with all 10000+ features (all physicochemical features for Mordred and all Morgan fingerprint similarity features), indexed by CID.  You are now ready for prediction on targets (receptor activation, glomerular imaging data, PCx firing rates, human perception, animal behavior, etc.) using your favoriate ML framework (scikit-learn, pytorch, etc.)</p>
+<p><em>Pyrfume</em> also supports some additional featurizations (e.g. <a class="reference external" href="https://dtai.cs.kuleuven.be/drupal/software/nspdk">NSPDK</a>) and is working on supporting more (e.g. from <a class="reference external" href="https://arxiv.org/abs/1910.10685">Graph Convolution Networks</a> or <a class="reference external" href="https://www.biorxiv.org/content/10.1101/464735v1">Auto-Encoders</a>).</p>
+</div>
+<div class="section" id="part-3-visualization">
+<h2>Part 3: Visualization<a class="headerlink" href="#part-3-visualization" title="Permalink to this headline">¶</a></h2>
+<p>Now that our molecules have standard representations (from Part 1), we can easily visualize them:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pyrfume.odorants</span> <span class="kn">import</span> <span class="n">display_molecules</span>
+<span class="n">display_molecules</span><span class="p">(</span><span class="n">molecules</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/demo_43_0.png" src="_images/demo_43_0.png" />
+</div>
+</div>
+<p>Or we can ask where they live in low-dimensional spaces built from features, compared with other odorous molecules.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pyrfume.odorants</span> <span class="kn">import</span> <span class="n">embed_molecules</span>
+<span class="n">acetophenone</span> <span class="o">=</span> <span class="n">molecules</span><span class="o">.</span><span class="n">loc</span><span class="p">[[</span><span class="mi">7410</span><span class="p">]]</span>
+<span class="n">embed_molecules</span><span class="p">(</span><span class="n">acetophenone</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/demo_45_0.png" src="_images/demo_45_0.png" />
+</div>
+</div>
+<p>The above shows thousands of molecules from the Pyrfume database (black) and acetophenone in red, using a 2-dimensional <a class="reference external" href="https://umap-learn.readthedocs.io/en/latest/">UMAP embedding</a> built from those thousands of molecules.</p>
+</div>
+<div class="section" id="part-4-working-with-the-pyrfume-datasets">
+<h2>Part 4: Working with the Pyrfume datasets<a class="headerlink" href="#part-4-working-with-the-pyrfume-datasets" title="Permalink to this headline">¶</a></h2>
+<p>Whether you want to build predictive models or simply organize data, it is essential to begin integrating across datasets and wherever possible bringing the largest datasets to bear on the problem.  Most breakthroughs <a class="reference external" href="https://academic.oup.com/chemse/article/doi/10.1093/chemse/bjab020/6226923?login=true">don’t come from new algorithms but from new, large datasets</a>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">bushdid_molecules</span> <span class="o">=</span> <span class="n">pyrfume</span><span class="o">.</span><span class="n">load_data</span><span class="p">(</span><span class="s1">&#39;bushdid_2014/molecules.csv&#39;</span><span class="p">)</span>
+<span class="n">bushdid_molecules</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>MolecularWeight</th>
+      <th>IsomericSMILES</th>
+      <th>IUPACName</th>
+      <th>name</th>
+      <th>Odorant name</th>
+      <th>C.A.S.</th>
+      <th>% odorant</th>
+      <th>Solvent</th>
+    </tr>
+    <tr>
+      <th>CID</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>176</th>
+      <td>60.05</td>
+      <td>CC(=O)O</td>
+      <td>acetic acid</td>
+      <td>acetic acid</td>
+      <td>acetic acid</td>
+      <td>64-19-7</td>
+      <td>10.00</td>
+      <td>mineral oil</td>
+    </tr>
+    <tr>
+      <th>177</th>
+      <td>44.05</td>
+      <td>CC=O</td>
+      <td>acetaldehyde</td>
+      <td>acetaldehyde</td>
+      <td>acetaldehyde</td>
+      <td>75-07-0</td>
+      <td>5.00</td>
+      <td>water</td>
+    </tr>
+    <tr>
+      <th>179</th>
+      <td>88.11</td>
+      <td>CC(C(=O)C)O</td>
+      <td>3-hydroxybutan-2-one</td>
+      <td>acetoin</td>
+      <td>acetoin</td>
+      <td>513-86-0</td>
+      <td>0.10</td>
+      <td>1,2-propanediol</td>
+    </tr>
+    <tr>
+      <th>180</th>
+      <td>58.08</td>
+      <td>CC(=O)C</td>
+      <td>propan-2-one</td>
+      <td>acetone</td>
+      <td>propan-2-one</td>
+      <td>67-64-1</td>
+      <td>25.00</td>
+      <td>water</td>
+    </tr>
+    <tr>
+      <th>240</th>
+      <td>106.12</td>
+      <td>C1=CC=C(C=C1)C=O</td>
+      <td>benzaldehyde</td>
+      <td>benzaldehyde</td>
+      <td>benzaldehyde</td>
+      <td>100-52-7</td>
+      <td>0.25</td>
+      <td>mineral oil</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<p>The above shows the first 5 molecules (all 128 are in the full dataframe) from <a class="reference external" href="https://science.sciencemag.org/content/343/6177/1370.long">Bushdid et al, 2014</a> which looked at the perceptual discriminability of random mixtures in humans.  The first thing to note is that the index and the first 5 columns are structured identically to what we generated in Part 1 from our own data.  ALL <em>pyrfume</em> datasets have this structure, whether there were obtained from supplemental figures and tables, excel files or pdfs, industrial databases, books, or papyrus scrolls.  Additional columns (such as the final 4 shown above) may also be present, on case-by-case basis, depending on what the authors chose to include in their source materials.</p>
+<p>What else has the <code class="docutils literal notranslate"><span class="pre">Pyrfume</span></code> project extracted from this data source?</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pyrfume</span><span class="o">.</span><span class="n">show_files</span><span class="p">(</span><span class="s1">&#39;bushdid_2014&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{&#39;behavior&#39;: {&#39;csv&#39;: &#39;Triangle test results&#39;},
+ &#39;main&#39;: {&#39;ipynb&#39;: &#39;Processing workflow&#39;},
+ &#39;mixtures&#39;: {&#39;csv&#39;: &#39;Mixtures used&#39;},
+ &#39;molecules&#39;: {&#39;csv&#39;: &#39;Molecules used&#39;}}
+</pre></div>
+</div>
+</div>
+</div>
+<p>The above shows a manifest of files available.  Curated file names are simple and memorable (typically, “molecules”, “behavior”, “imaging”, etc.) which means you will often not even need to examine the manifest before retrieving the files you care about.  Importantly, every data archive contains at least one notebook (<a class="reference external" href="https://github.com/pyrfume/pyrfume-data/blob/master/bushdid_2014/main.ipynb"><code class="docutils literal notranslate"><span class="pre">main.ipynb</span></code></a>) which provides the full processing workflow going from the raw data provided in the original data source to the cleaned, standardized, organized and mutually compatible datasets provided by <em>Pyrfume</em>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">bushdid_mixtures</span> <span class="o">=</span> <span class="n">pyrfume</span><span class="o">.</span><span class="n">load_data</span><span class="p">(</span><span class="s1">&#39;bushdid_2014/mixtures.csv&#39;</span><span class="p">)</span>
+<span class="n">bushdid_behavior</span> <span class="o">=</span> <span class="n">pyrfume</span><span class="o">.</span><span class="n">load_data</span><span class="p">(</span><span class="s1">&#39;bushdid_2014/behavior.csv&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Information about each mixture, including the CID (not provided in the original source data) is given in the mixtures file.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">bushdid_mixtures</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Answer</th>
+      <th>Components in mixtures</th>
+      <th>Components that differ</th>
+      <th>% mixture overlap</th>
+      <th>Stimulus dilution</th>
+      <th>Molecule 1</th>
+      <th>Molecule 2</th>
+      <th>Molecule 3</th>
+      <th>Molecule 4</th>
+      <th>Molecule 5</th>
+      <th>...</th>
+      <th>Molecule 21</th>
+      <th>Molecule 22</th>
+      <th>Molecule 23</th>
+      <th>Molecule 24</th>
+      <th>Molecule 25</th>
+      <th>Molecule 26</th>
+      <th>Molecule 27</th>
+      <th>Molecule 28</th>
+      <th>Molecule 29</th>
+      <th>Molecule 30</th>
+    </tr>
+    <tr>
+      <th>Test UID</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>1</th>
+      <td>right</td>
+      <td>30</td>
+      <td>30</td>
+      <td>0.0</td>
+      <td>1.00</td>
+      <td>12232</td>
+      <td>7731</td>
+      <td>7888</td>
+      <td>7966</td>
+      <td>7848</td>
+      <td>...</td>
+      <td>8103</td>
+      <td>7344</td>
+      <td>8051</td>
+      <td>7921</td>
+      <td>460</td>
+      <td>7583</td>
+      <td>11002</td>
+      <td>12367</td>
+      <td>6590</td>
+      <td>7991</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>wrong</td>
+      <td>30</td>
+      <td>30</td>
+      <td>0.0</td>
+      <td>0.25</td>
+      <td>440917</td>
+      <td>5281515</td>
+      <td>8030</td>
+      <td>3314</td>
+      <td>31272</td>
+      <td>...</td>
+      <td>6561</td>
+      <td>22386</td>
+      <td>11509</td>
+      <td>443162</td>
+      <td>8797</td>
+      <td>16666</td>
+      <td>7749</td>
+      <td>7793</td>
+      <td>7799</td>
+      <td>7762</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>wrong</td>
+      <td>30</td>
+      <td>30</td>
+      <td>0.0</td>
+      <td>0.50</td>
+      <td>440917</td>
+      <td>5281515</td>
+      <td>8030</td>
+      <td>3314</td>
+      <td>31272</td>
+      <td>...</td>
+      <td>6561</td>
+      <td>22386</td>
+      <td>11509</td>
+      <td>443162</td>
+      <td>8797</td>
+      <td>16666</td>
+      <td>7749</td>
+      <td>7793</td>
+      <td>7799</td>
+      <td>7762</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>right</td>
+      <td>10</td>
+      <td>4</td>
+      <td>60.0</td>
+      <td>0.50</td>
+      <td>3314</td>
+      <td>62433</td>
+      <td>5281515</td>
+      <td>7749</td>
+      <td>6561</td>
+      <td>...</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>wrong</td>
+      <td>10</td>
+      <td>4</td>
+      <td>60.0</td>
+      <td>0.25</td>
+      <td>3314</td>
+      <td>62433</td>
+      <td>5281515</td>
+      <td>7749</td>
+      <td>6561</td>
+      <td>...</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+  </tbody>
+</table>
+<p>5 rows × 35 columns</p>
+</div></div></div>
+</div>
+<p>Finally, the human behavioral results for each mixture are provided in the behavior file.  How one chooses to join these tables to produce prediction target or otherwise explore the data is up to individual taste, but with standards in place it is much less work than it would have been with the source data alone!</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">bushdid_behavior</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Subject</th>
+      <th>Correct</th>
+    </tr>
+    <tr>
+      <th>Test UID</th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>1</th>
+      <td>1</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>2</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>3</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>4</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>5</td>
+      <td>True</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<p>Many other datasets are available now, with several dozen additional datasets ready for release in the next 12 months.  Licensing issues stand in the way of some, but the <em>Pyrfume</em> maintainers are working this out.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pyrfume</span><span class="o">.</span><span class="n">list_archives</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;abraham_2012&#39;,
+ &#39;bushdid_2014&#39;,
+ &#39;haddad_2008&#39;,
+ &#39;keller_2016&#39;,
+ &#39;manoel_2021&#39;,
+ &#39;ravia_2020&#39;,
+ &#39;snitz_2013&#39;,
+ &#39;wakayama_2019&#39;]
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            kernelName: "python3",
+            path: "./."
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+              </div>
+              
+        
+        <div class='prev-next-bottom'>
+            
+
+        </div>
+        
+        </div>
+    </div>
+    <footer class="footer mt-5 mt-md-0">
+    <div class="container">
+      <p>
+        
+          By The Jupyter Book community<br/>
+        
+            &copy; Copyright 2021.<br/>
+      </p>
+    </div>
+  </footer>
+</main>
+
+
+      </div>
+    </div>
+  
+  <script src="_static/js/index.1c5a1a01449ed65a7b51.js"></script>
+
+  
+  </body>
+</html>
