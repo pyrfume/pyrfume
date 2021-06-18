@@ -224,6 +224,7 @@
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pyrfume</span>
 <span class="n">molecules</span> <span class="o">=</span> <span class="n">pyrfume</span><span class="o">.</span><span class="n">load_data</span><span class="p">(</span><span class="s1">&#39;my_data/molecules.csv&#39;</span><span class="p">)</span>  <span class="c1"># Load the data we created in the last chapter</span>
+<span class="n">cids</span> <span class="o">=</span> <span class="n">molecules</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -745,31 +746,23 @@
 <p>Because this list is so large, there is a good chance that all of the molecules you are using for your project are already in it.  This means that the feature values can be computed once and you can simply look them up.  These pre-computed values have already been filtred to remove non-informative (e.g. zero variance) features or features with a large fraction of missing values (some features, especially for Mordred, are only computable for esoteric molecules). Furthermore, the remaining missing values have been filled with <a class="reference external" href="https://medium.com/&#64;kyawsawhtoon/a-guide-to-knn-imputation-95e2dc496e">KNN imputation</a>.  This means that they are “ready to go” for machine learning applications (which typically require finite and non-missing values in all predictors).</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">morgan_sim</span> <span class="o">=</span> <span class="n">pyrfume</span><span class="o">.</span><span class="n">load_data</span><span class="p">(</span><span class="s1">&#39;morgan/features_sim.csv&#39;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">morgan_sim</span> <span class="o">=</span> <span class="n">pyrfume</span><span class="o">.</span><span class="n">load_data</span><span class="p">(</span><span class="s1">&#39;morgan/features_sim.csv&#39;</span><span class="p">,</span> <span class="n">cids</span><span class="o">=</span><span class="n">cids</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">mordred</span> <span class="o">=</span> <span class="n">pyrfume</span><span class="o">.</span><span class="n">load_data</span><span class="p">(</span><span class="s1">&#39;mordred/features.csv&#39;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">mordred</span> <span class="o">=</span> <span class="n">pyrfume</span><span class="o">.</span><span class="n">load_data</span><span class="p">(</span><span class="s1">&#39;mordred/features.csv&#39;</span><span class="p">,</span> <span class="n">cids</span><span class="o">=</span><span class="n">cids</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 </div>
-<p>These files are quite large (thousands of molecules (rows) by thousands of features (columns)) and may take a minute to load.  Directly querying the pyrfume database, rather than loading the entire files, would be faster and is documented separately.</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">morgan_sim_</span> <span class="o">=</span> <span class="n">morgan_sim</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">cids</span><span class="p">]</span>
-<span class="n">mordred_</span> <span class="o">=</span> <span class="n">mordred</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">cids</span><span class="p">]</span>
-</pre></div>
-</div>
-</div>
-</div>
+<p>These files are quite large (thousands of molecules (rows) by thousands of features (columns)), but we’ve selected only the rows (feature vectors) for the 5 CIDs of interest.</p>
 <p>Because every stored value in Pyrfume is indexed by CID, we can access the molecules we care about (that we want to get features for) using CIDs as keys.  We can then join them to produce one final set of features for machine learning applications.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">features</span> <span class="o">=</span> <span class="n">mordred_</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">morgan_sim_</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">features</span> <span class="o">=</span> <span class="n">mordred</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">morgan_sim</span><span class="p">)</span>
 <span class="n">features</span>
 </pre></div>
 </div>
@@ -842,28 +835,28 @@
   </thead>
   <tbody>
     <tr>
-      <th>440917</th>
-      <td>7.358797</td>
-      <td>6.909742</td>
+      <th>6184</th>
+      <td>4.242641</td>
+      <td>4.530950</td>
       <td>0.0</td>
       <td>0.0</td>
-      <td>11.936238</td>
-      <td>2.236068</td>
-      <td>4.472136</td>
-      <td>11.936238</td>
-      <td>1.193624</td>
-      <td>3.197236</td>
+      <td>8.054679</td>
+      <td>1.847759</td>
+      <td>3.695518</td>
+      <td>8.054679</td>
+      <td>1.150668</td>
+      <td>2.739193</td>
       <td>...</td>
-      <td>0.139303</td>
-      <td>0.174089</td>
-      <td>0.185263</td>
-      <td>0.178218</td>
-      <td>0.257261</td>
-      <td>0.266667</td>
-      <td>0.218579</td>
-      <td>0.222222</td>
-      <td>0.160000</td>
-      <td>0.289593</td>
+      <td>0.124294</td>
+      <td>0.144681</td>
+      <td>0.141907</td>
+      <td>0.133056</td>
+      <td>0.267281</td>
+      <td>0.270270</td>
+      <td>0.226415</td>
+      <td>0.232558</td>
+      <td>0.174603</td>
+      <td>0.385787</td>
     </tr>
     <tr>
       <th>7410</th>
@@ -914,28 +907,28 @@
       <td>0.283105</td>
     </tr>
     <tr>
-      <th>6184</th>
-      <td>4.242641</td>
-      <td>4.530950</td>
+      <th>440917</th>
+      <td>7.358797</td>
+      <td>6.909742</td>
       <td>0.0</td>
       <td>0.0</td>
-      <td>8.054679</td>
-      <td>1.847759</td>
-      <td>3.695518</td>
-      <td>8.054679</td>
-      <td>1.150668</td>
-      <td>2.739193</td>
+      <td>11.936238</td>
+      <td>2.236068</td>
+      <td>4.472136</td>
+      <td>11.936238</td>
+      <td>1.193624</td>
+      <td>3.197236</td>
       <td>...</td>
-      <td>0.124294</td>
-      <td>0.144681</td>
-      <td>0.141907</td>
-      <td>0.133056</td>
-      <td>0.267281</td>
-      <td>0.270270</td>
-      <td>0.226415</td>
-      <td>0.232558</td>
-      <td>0.174603</td>
-      <td>0.385787</td>
+      <td>0.139303</td>
+      <td>0.174089</td>
+      <td>0.185263</td>
+      <td>0.178218</td>
+      <td>0.257261</td>
+      <td>0.266667</td>
+      <td>0.218579</td>
+      <td>0.222222</td>
+      <td>0.160000</td>
+      <td>0.289593</td>
     </tr>
     <tr>
       <th>643941</th>
