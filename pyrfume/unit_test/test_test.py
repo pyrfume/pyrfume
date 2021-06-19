@@ -1,7 +1,8 @@
 import unittest
 
 from pyrfume.odorants import Compound, ChemicalOrder, Vendor, Molecule
-from pyrfume import TriangleTest, Component, Mixture
+from pyrfume.experiments import TriangleTest, Result
+from pyrfume.objects import Component, Mixture
 from datetime import datetime
 
 from .unittest_utils import get_substances
@@ -86,8 +87,6 @@ class TriangleTestTestCase(unittest.TestCase):
         self.assertTrue(str(component_C2H6O) in unique_components)
         self.assertTrue(str(component_C4H8O2) in unique_components)
         self.assertEqual(test.n_undescribed('unittest source'), (0, 0))
-
-        from pyrfume import Result
 
         result1 = Result(test, 0, True)
         results = [result1]

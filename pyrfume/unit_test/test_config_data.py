@@ -19,6 +19,8 @@ class DataAndConfigTestCase(unittest.TestCase):
         from pyrfume.base import PACKAGE_DIR, DEFAULT_DATA_PATH
         import os
 
+        curr_data_path = get_data_path()
+        
         path_not_exists = PACKAGE_DIR / "THIS_IS_AN_INVALID_PATH"
         self.assertRaises(Exception, set_data_path, path_not_exists)
         self.assertRaises(Exception, get_data_path, path_not_exists)
@@ -33,7 +35,7 @@ class DataAndConfigTestCase(unittest.TestCase):
         path3 = get_data_path()
         self.assertEqual(path3, DEFAULT_DATA_PATH)
 
-        
+        set_data_path(curr_data_path)
 
     def test_load_data(self):
         import pickle, os

@@ -1,6 +1,7 @@
 import sys
 import unittest
 
+from .test_docs import *
 from .test_load_data import *
 from .test_config_data import *
 from .test_make_solutions import *

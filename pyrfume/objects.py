@@ -1,5 +1,5 @@
 import json
-from numpy import np
+import numpy as np
 import urllib
 
 

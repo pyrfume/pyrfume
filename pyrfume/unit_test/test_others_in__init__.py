@@ -1,6 +1,6 @@
 import unittest
 import numpy as np
-from pyrfume import Distance, Result, odorant_distances, ROC, correct_matrix, TriangleTest
+from pyrfume.experiments import Distance, Result, odorant_distances, ROC, correct_matrix, TriangleTest
 from .unittest_utils import get_substances
 
 
