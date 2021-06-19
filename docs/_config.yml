@@ -1,0 +1,9 @@
+# in _config.yml
+title: "Pyrfume: a python library for odorant-linked research"
+logo: logo.png
+execute:
+  execute_notebooks: "off"
+
+
+
+
