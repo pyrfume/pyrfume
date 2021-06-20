@@ -8,13 +8,13 @@ import time
 import warnings
 from collections import OrderedDict
 from datetime import datetime
-from urllib.error import HTTPError
 from urllib.parse import quote
-from urllib.request import urlopen
+
 
 import numpy as np
 import pandas as pd
 import pubchempy as pcp
+import requests
 from IPython.display import display
 from PIL import Image
 
@@ -348,13 +348,14 @@ class Compound:
 
 def url_to_json(url, verbose=True) -> str:
     json_data = None
-    try:
-        page = urlopen(url)
-        string = page.read().decode("utf-8")
+    response = requests.get(url)
+    if response.status_code == 200:
+        string = response.content.decode("utf-8")
         json_data = json.loads(string)
-    except HTTPError:
+    else:
         if verbose:
-            logger.error("HTTPError for query '%s'" % url)
+            logger.error("HTTP Status Code %d for %s" % (response.status_code, url))
+        print(
     return json_data
 
 
@@ -560,8 +561,12 @@ def cactus(identifier: str, output: str = "cas") -> str:
     url_template = "https://cactus.nci.nih.gov/chemical/structure/%s/%s"
     identifier = identifier.replace(' ', '%20')
     url = url_template % (identifier, output)
-    page = urlopen(url)
-    result = page.read().decode("utf-8")
+    response = requests.get(url)
+    if response.status_code == 200:
+        result = response.content.decode("utf-8")
+    else:
+        logger.error("HTTP Status Code %d for %s" % (response.status_code, url))
+        result = None
     return result
 
 
@@ -569,9 +574,13 @@ def cactus_image(smiles: str) -> None:
     url_template = "https://cactus.nci.nih.gov/chemical/structure/%s/image"
     smiles = smiles.replace(' ', '%20')
     url = url_template % smiles
-    image_data = urlopen(url).read()
-    image = Image(image_data)
-    display(image)
+    response = requests.get(url)
+    if response.status_code == 200:
+        image_data = response.content.decode("utf-8")
+        image = Image(image_data)
+        display(image)
+    else:
+        logger.error("HTTP Status Code %d for %s" % (response.status_code, url))
 
 
 def get_compound_summary(cid: int, heading: str):
