@@ -19,6 +19,6 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - name: Install dependencies
       run: |
-        echo `curl http://www.google.com`
-        echo `curl http://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/8857/property/MolecularWeight,IsomericSMILES/JSON`
+        pip install requests
         echo `curl https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/8857/property/MolecularWeight,IsomericSMILES/JSON`
+        python url.py
