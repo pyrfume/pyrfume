@@ -377,7 +377,7 @@ def is_kind(identifier: str, kind: str) -> bool:
         else:
             result = None
     elif kind == 'name':
-        result True
+        result = True
     else:
         result = False
     return result
