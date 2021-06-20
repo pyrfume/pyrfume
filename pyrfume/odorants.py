@@ -353,8 +353,10 @@ def url_to_json(url, verbose=True) -> str:
         string = response.content.decode("utf-8")
         json_data = json.loads(string)
     else:
+        msg = "HTTP Status Code %d for %s" % (response.status_code, url)
+        print(msg)
         if verbose:
-            logger.error("HTTP Status Code %d for %s" % (response.status_code, url))
+            logger.error(msg)
     return json_data
 
 
