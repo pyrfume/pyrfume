@@ -28,11 +28,13 @@ try:
     from rdkit.Chem import Draw, AllChem, SaltRemover
     from rdkit import RDLogger
     rdkit_logger = RDLogger.logger()
+    RDKIT = True
 except ImportError:
     warnings.warn(
         "Parts of mordred and/or rdkit could not be imported; try installing rdkit via conda",
         UserWarning,
     )
+    RDKIT = False
 
 ROOM_TEMP = (22 + 273.15) * pq.Kelvin
 ROOM_PRESSURE = 1 * pq.atm
@@ -361,19 +363,25 @@ def url_to_json(url, verbose=True) -> str:
 
 def is_kind(identifier: str, kind: str) -> bool:
     if kind == 'smiles':
-        rdkit_logger.setLevel(RDLogger.CRITICAL)
-        result = Chem.MolFromSmiles(identifier) is not None
-        rdkit_logger.setLevel(RDLogger.WARNING)
-        return result
+        if RDKIT:
+            rdkit_logger.setLevel(RDLogger.CRITICAL)
+            result = Chem.MolFromSmiles(identifier) is not None
+            rdkit_logger.setLevel(RDLogger.WARNING)
+        else:
+            result = None
     elif kind == 'inchikey':
-        return len(identifier) == 27 and identifier[14]=='-' and identifier[25]=='-'
+        result = len(identifier) == 27 and identifier[14]=='-' and identifier[25]=='-'
     elif kind == 'inchi':
-        return Chem.inchi.MolFromInchi(identifier, logLevel=None) is not None
+        if RDKIT:
+            result = Chem.inchi.MolFromInchi(identifier, logLevel=None) is not None
+        else:
+            result = None
     elif kind == 'name':
-        return True
+        result True
     else:
-        return False
-    
+        result = False
+    return result
+
     
 def get_kind(identifier: str):
     kinds = [kind for kind in PUBCHEM_KINDS if is_kind(identifier, kind)]

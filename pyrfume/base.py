@@ -64,7 +64,7 @@ def write_config(header, key, value):
         config.write(f)
 
 
-def set_data_path(path):
+def set_data_path(path, create=True):
     path = Path(path).resolve()
     if not path.exists():
         raise Exception("Could not find path %s" % path)
