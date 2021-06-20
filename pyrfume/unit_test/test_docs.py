@@ -1,8 +1,9 @@
-from pathlib import Path
-import unittest
-import nbformat
 from nbconvert.preprocessors import ExecutePreprocessor
+import nbformat
 from pathlib import Path
+import platform
+import unittest
+
 
 class DocsTest(unittest.TestCase):
     def setUp(self):
@@ -23,6 +24,7 @@ class DocsTest(unittest.TestCase):
     def test_1_your_data(self):
         self.execute_doc('your-data')
         
+    @unittest.skipIf('spike' not in platform.node(), "Only tested on Spike")
     def test_2_featurization(self):
         self.execute_doc('featurization')
         
