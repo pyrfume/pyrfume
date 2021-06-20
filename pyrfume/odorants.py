@@ -348,16 +348,13 @@ class Compound:
 
 def url_to_json(url, verbose=True) -> str:
     json_data = None
-    msgs = []
     try:
         page = urlopen(url)
         string = page.read().decode("utf-8")
         json_data = json.loads(string)
     except HTTPError:
-        msgs.append("HTTPError for query '%s'" % url)
-    if json_data is None and verbose:
-        for msg in msgs:
-            logger.warning(msg)
+        if verbose:
+            logger.error("HTTPError for query '%s'" % url)
     return json_data
 
 
