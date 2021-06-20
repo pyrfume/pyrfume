@@ -1,5 +1,8 @@
+import platform
 import unittest
+
 import pyrfume
+
 
 class DataLoadRemoteTestCase(unittest.TestCase):
     def test_load_manoel_2021(self):
@@ -13,6 +16,7 @@ class DataLoadRemoteTestCase(unittest.TestCase):
         data = pyrfume.load_data('ravia_2020/behavior1.csv')
         manifest = pyrfume.load_manifest('ravia_2020')
         
+    @unittest.skipIf('spike' not in platform.node(), "Only tested on Spike")
     def test_load_morgan_skipped(self):
         my_cids = [129, 239]
         morgan_sim = pyrfume.load_data('morgan/features_sim.csv', cids=my_cids)
