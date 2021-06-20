@@ -30,8 +30,8 @@ class MixtureTestCase(unittest.TestCase):
         self.assertIsInstance(getattr(compound, "vendor"), Vendor)
         self.assertIsInstance(getattr(compound, "cid"), int)
 
-        component = Component(cid, "I am a name", cas, 0.5, compound)
-        component1 = Component(cid, "I am a name 1", cas, 0.8, compound)
+        component = Component(cid, "name1", cas, 0.5, compound)
+        component1 = Component(cid, "name2", cas, 0.8, compound)
         mixture = Mixture(1, [component])
 
         components_vector = mixture.components_vector(mixture.components, 1)
