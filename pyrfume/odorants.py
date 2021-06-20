@@ -357,7 +357,7 @@ def url_to_json(url, verbose=True) -> str:
         msgs.append("HTTPError for query '%s'" % url)
     if json_data is None and verbose:
         for msg in msgs:
-            print(msg)
+            logger.warning(msg)
     return json_data
 
 
@@ -486,7 +486,7 @@ def from_cids(cids: list, property_list: bool = None) -> list:
     chunk_size = 100
     for start in trange(0, len(cids), chunk_size):
         stop = min(start + chunk_size, len(cids))
-        print("Retrieving %d through %d" % (start, stop - 1))
+        logger.info("Retrieving %d through %d" % (start, stop - 1))
         cid_subset = [
             str(x) for x in [cid for cid in cids[start:stop] if int(cid) > 0 and cid is not None]
         ]

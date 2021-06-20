@@ -13,7 +13,7 @@ from pyrfume.odorants import url_to_json, Solution, get_cid, \
 
 from .unittest_utils import get_substances
 
-class OdotantsTestCase(unittest.TestCase):
+class OdorantsTestCase(unittest.TestCase):
     def setUp(self):
         self.compound_C4H8O2, self.compound_C4H8S, self.compound_C2H6O = get_substances("compounds")
         

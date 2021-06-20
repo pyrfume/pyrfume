@@ -4,6 +4,7 @@ from pyrfume.objects import Component, Mixture
 from datetime import datetime
 import quantities as pq
 
+
 def get_water(substance_type: str = "mixtures"):
     vendor = Vendor("Test_Vendor", "")
 
@@ -34,6 +35,7 @@ def get_water(substance_type: str = "mixtures"):
         return molecule_H2O
     elif substance_type == "chemical_order":
         return chemical_order_molecule_H2O
+
 
 def get_substances(substance_type: str = "mixtures"):
     vendor = Vendor("Test_Vendor", "")
