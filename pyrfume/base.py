@@ -149,7 +149,6 @@ def load_data(rel_path, remote=None, cids=None, quiet=False, **kwargs):
         full_path = localize_remote_data(rel_path, quiet=quiet)
     else:
         full_path = get_data_path() / rel_path
-        print(full_path)
         if not full_path.exists():
             if remote is None:
                 logger.info('Did not find file %s locally; fetching remotely.' % full_path)
