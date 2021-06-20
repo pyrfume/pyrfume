@@ -22,8 +22,8 @@ class DataAndConfigTestCase(unittest.TestCase):
         curr_data_path = get_data_path()
         
         path_not_exists = PACKAGE_DIR / "THIS_IS_AN_INVALID_PATH"
-        self.assertRaises(Exception, set_data_path, path_not_exists)
-        self.assertRaises(Exception, get_data_path, path_not_exists)
+        self.assertRaises(Exception, set_data_path, path_not_exists, create=False)
+        self.assertRaises(Exception, get_data_path, path_not_exists, create=False)
 
         path1 = PACKAGE_DIR / "unit_test"
         set_data_path(path1)
