@@ -66,14 +66,18 @@ def write_config(header, key, value):
 
 def set_data_path(path, create=True):
     path = Path(path).resolve()
+    if create:
+        path.mkdir(exist_ok=True, parents=True)
     if not path.exists():
         raise Exception("Could not find path %s" % path)
     write_config("PATHS", "pyrfume-data", str(path))
 
 
-def get_data_path():
+def get_data_path(create=True):
     path = read_config("PATHS", "pyrfume-data")
     path = Path(path).resolve()
+    if create:
+        path.mkdir(exist_ok=True, parents=True)
     if not path.exists():
         raise Exception("Could not find data path %s" % path)
     return path
