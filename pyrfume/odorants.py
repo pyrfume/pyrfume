@@ -355,7 +355,6 @@ def url_to_json(url, verbose=True) -> str:
     else:
         if verbose:
             logger.error("HTTP Status Code %d for %s" % (response.status_code, url))
-        print(
     return json_data
 
 
