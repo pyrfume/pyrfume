@@ -1,5 +1,15 @@
+import pandas as pd
 from scipy.spatial import distance_matrix
+from scipy.spatial.distance import pdist, squareform
 from scipy.stats import pearsonr, spearmanr
+
+
+def get_distance_matrix(features):
+    # Compute distance matrix.
+    dist = pdist(features, metric="euclidean")
+    dist = squareform(dist)
+    distances = pd.DataFrame(dist, index=features.index, columns=features.index)
+    return distances
 
 
 def embedding_distance_correlation(original_distances, embedding, quiet=False):
