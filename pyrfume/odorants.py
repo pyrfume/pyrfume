@@ -417,6 +417,8 @@ def get_cids(
 ) -> dict:
     """Return CIDs for molecule based on any synonym,
     including a chemical name or a CAS"""
+    if isinstance(kind, str):
+        kind = kind.lower()
     assert kind in PUBCHEM_KINDS
     if results is None:
         results = {}
@@ -441,7 +443,6 @@ def get_cid(
     """
     Return data about a molecule from any synonym,
     including a chemical name or a CAS.
-    change_kind: Whether to try other kinds if the search fails.
     """
     if isinstance(identifier, float) and np.isnan(identifier):
         return 0
@@ -474,7 +475,7 @@ def get_cid(
         # Retry with canonical SMILES
         identifier = canonical_smiles(identifier)
         if identifier:
-            cid = get_cid(identifier, kind=kind, verbose=verbose, fix_smiles_on_error=False, change_kind=change_kind)
+            cid = get_cid(identifier, kind=kind, verbose=verbose, fix_smiles_on_error=False)
     return cid
 
 
