@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pyrfume"
-version = "0.17.3"
+version = "0.17.4"
 description = "A validation library for human olfactory psychophysics research."
 authors = ["Rick Gerkin <rgerkin@asu.edu>"]
 license = "MIT"
@@ -19,6 +19,7 @@ matplotlib = ">=3.2.1"
 mordred = ">=1.2.0"
 numpy = ">=1.18.4"
 pandas = ">=1.0.3"
+rdkit-pypi = ">=2021.3.4"
 plotly = ">=4.8.0"
 pubchempy = ">=1.0.4"
 requests = ">=2.20.0"
