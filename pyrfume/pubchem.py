@@ -1,6 +1,7 @@
 import json
 
 import requests
+from tqdm.auto import tqdm, trange
 
 
 def get_summary(cid):
@@ -135,3 +136,57 @@ def parse_ghs_classification_for_odor(
                                 string = string.split(":")[0]
                             strings.append(string)
     return strings
+
+
+def get_strings(annotation):
+    strings = []
+    for x in annotation['Data']:
+        for y in x['Value']['StringWithMarkup']:
+            strings.append(y['String'])
+    return strings
+
+def update_results(records, results):
+    # Iterate through the list of annotations
+    for annotation in tqdm(records['Annotations']['Annotation']):
+        try:
+            # Get CIDs for the current record
+            cids = annotation['LinkedRecords']['CID']
+        except:
+            # If they are none then just move to the next annoation
+            pass
+        else:
+            # If there are CIDs then extract the corresponding record content
+            # Iterate through the actual text of the data
+            strings = get_strings(annotation)
+            
+            # Associate with each of the associated CIDs
+            for cid in cids:
+                results[cid] = (results.get(cid) or []) + strings
+
+
+def get_records(heading, page):
+    url = (f"https://pubchem.ncbi.nlm.nih.gov/rest/pug_view/annotations/heading/"
+           f"JSON?heading_type=Compound&heading={heading}&page={page}")
+    response = requests.get(url)
+    records = response.json()
+    return records
+
+
+def get_results(heading):
+    # Empty dict to hold results
+    results = {}
+    # Get records from the first page of the response
+    page_1_records = get_records(heading, 1)
+    # Update results with the parsed output of the first page
+    update_results(page_1_records, results)
+    # Check how many total pages the response has
+    n_pages = page_1_records['Annotations']['TotalPages']
+    
+    # Iterate through the remaining pages, if any
+    p_bar = trange(2, n_pages+1)
+    for page in p_bar:
+        page_n = get_records(heading, page)
+        update_results(page_n_records, results)
+        desc = "%d CIDs described" % len(results)
+        p_bar.set_description(desc)
+    return results
