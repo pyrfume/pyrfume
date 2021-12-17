@@ -1073,6 +1073,17 @@ optional = false
 python-versions = "*"
 
 [[package]]
+name = "rdkit-pypi"
+version = "2021.3.4"
+description = "A collection of chemoinformatics and machine-learning software written in C++ and Python"
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+numpy = ">=1.19"
+
+[[package]]
 name = "regex"
 version = "2020.11.13"
 description = "Alternative regular expression module, to replace re."
@@ -1318,7 +1329,7 @@ testing = ["pytest (>=3.5,!=3.7.3)", "pytest-checkdocs (>=1.2.3)", "pytest-flake
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.6.1,<4.0"
-content-hash = "d36d123d9c3ef466e5e42cfb65e97f9ac9b1796b304d9fc7ca51c972d89770db"
+content-hash = "7e191a82a5371587751a21781147a181fc4d7ed52120d4b448d04c0da29b1ab0"
 
 [metadata.files]
 appdirs = [
@@ -1957,6 +1968,16 @@ pyzmq = [
 ]
 quantities = [
     {file = "quantities-0.12.4.tar.gz", hash = "sha256:a33d636d1870c9e1127631185d89b0105a49f827d6aacd44ad9d8f151f331d8b"},
+]
+rdkit-pypi = [
+    {file = "rdkit_pypi-2021.3.4-cp36-cp36m-macosx_10_9_x86_64.whl", hash = "sha256:0d2e8c153622fb9c75ce4c34c5a5e48930e6ee71ea23d4eaed03164590cf4ad0"},
+    {file = "rdkit_pypi-2021.3.4-cp36-cp36m-manylinux2014_x86_64.whl", hash = "sha256:41af76dc82721239f3f3d2d6bcbb06ea3f8887b04827e462dd384d43308ae6ac"},
+    {file = "rdkit_pypi-2021.3.4-cp37-cp37m-macosx_10_9_x86_64.whl", hash = "sha256:04e0be5845ca5f7c87551d3b29af6e7e5734c3d384a6524bbb0d15792b230733"},
+    {file = "rdkit_pypi-2021.3.4-cp37-cp37m-manylinux2014_x86_64.whl", hash = "sha256:cdd28237b1c70facb265431d0963f516bc48f68779ba76e4691f43c7d6ddb43f"},
+    {file = "rdkit_pypi-2021.3.4-cp38-cp38-macosx_10_9_x86_64.whl", hash = "sha256:c4d2a38f0c125bd277423bd72a3f69e8cad7bc1cb8512f7390de6212dbc91113"},
+    {file = "rdkit_pypi-2021.3.4-cp38-cp38-manylinux2014_x86_64.whl", hash = "sha256:683a4d865ee8120645e0fbeae901dd1180294d2ae87f94105772cab352659bbb"},
+    {file = "rdkit_pypi-2021.3.4-cp39-cp39-macosx_10_9_x86_64.whl", hash = "sha256:e684f8c172e2a9f7d7ef03f9253d30338683000292ed218919b5404e4b17a566"},
+    {file = "rdkit_pypi-2021.3.4-cp39-cp39-manylinux2014_x86_64.whl", hash = "sha256:632f35832c94834e85a78dd4c31c4091e4759660ef0f56388ad75cdc9006d9f6"},
 ]
 regex = [
     {file = "regex-2020.11.13-cp36-cp36m-macosx_10_9_x86_64.whl", hash = "sha256:8b882a78c320478b12ff024e81dc7d43c1462aa4a3341c754ee65d857a521f85"},
