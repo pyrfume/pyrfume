@@ -1,4 +1,5 @@
-from typing import Iterable, Iterator, Optional
+import functools
+from typing import Iterable, Iterator, Optional, Callable
 import warnings
 
 import numpy as np
