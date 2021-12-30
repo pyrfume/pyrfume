@@ -1,3 +1,4 @@
+from typing import Iterable, Iterator, Optional
 import warnings
 
 import numpy as np
@@ -219,7 +220,42 @@ def mol_to_morgan_sim(mols, ref_mols, radius=5, features=None):
     
     #print("%d similarity features for %d molecules" % morgan.shape[::-1])
     #return morgan
+   
 
+# rdkit's DataStructs.ExplicitBitVect is more efficient for rdkit-internal use.
+get_morgan_fp: Callable[[Chem.Mol], DataStructs.ExplicitBitVect] = functools.partial(
+    Chem.rdMolDescriptors.GetMorganFingerprintAsBitVect,
+    radius=2, nBits=2048)
+
+def tanimoto_sim(mol1: Chem.Mol, mol2: Chem.Mol) -> float:
+    """Compute Tanimoto similarity for just two molecules."""
+    return DataStructs.FingerprintSimilarity(
+        get_morgan_fp(mol1), get_morgan_fp(mol2), metric=DataStructs.TanimotoSimilarity)
+
+
+def _bulk_similarity(
+    mols1: Iterable[Chem.Mol],
+    mols2: Optional[Iterable[Chem.Mol]] = None) -> Iterator[np.ndarray]:
+    if mols2 is None:
+        mols2 = mols1
+    mol1_fps = map(get_morgan_fp, mols1)
+    mol2_fps = tuple(map(get_morgan_fp, mols2))
+    for fp in mol1_fps:
+        yield DataStructs.BulkTanimotoSimilarity(fp, mol2_fps)
+
+
+def get_maximum_tanimoto_similarity(
+    molecules: Iterable[Chem.Mol],
+    reference_set: Optional[Iterable[Chem.Mol]] = None) -> np.ndarray:
+    """Compute maximal Tanimoto similarity to `reference_set` for all given molecules."""
+    computing_self_similarity = reference_set is None
+
+    result = []
+    for i, similarities in enumerate(_bulk_similarity(molecules, reference_set)):
+        if computing_self_similarity:
+            similarities[i] = 0
+        result.append(max(similarities))
+    return np.array(result)
 
 def mol_file_to_smiles(mol_file_path):
     # Takes a path to a .mol file and returns a SMILES string
