@@ -22,6 +22,10 @@ mixtures = pyrfume.load_data('bushdid_2014/behavior.csv')
 
 ### [Website](http://pyrfume.org)
 
+### [Data Repository](https://github.com/pyrfume/pyrfume-data)
+
 ### [Data Curation Status](http://status.pyrfume.org)
 
 ### [Docs](https://pyrfume.readthedocs.io/)
+
+*Licensing/Copyright*: Data is provided as-is.  Licensing information for individual datasets is available in the data repository.  Takedown requests for datasets may be directed to admin at pyrfume dot org.  
