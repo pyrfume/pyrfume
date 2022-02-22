@@ -83,12 +83,12 @@ def get_data_path(create=True):
     return path
 
 
-def get_remote_data_path(branch='master'):
+def get_remote_data_path(branch='main'):
     path = REMOTE_DATA_PATH + '/' + branch
     return path
 
 
-def localize_remote_data(rel_path, branch='master', quiet=False):
+def localize_remote_data(rel_path, branch='main', quiet=False):
     url = get_remote_data_path(branch=branch) + '/' + rel_path
     target_path = Path(TEMP_LOCAL.name) / rel_path
     response = requests.get(url)
@@ -102,7 +102,7 @@ def localize_remote_data(rel_path, branch='master', quiet=False):
         f.write(response.content)
     return target_path
     
-def get_remote_archives_info(branch='master'):
+def get_remote_archives_info(branch='main'):
     url = 'https://api.github.com/repos/%s/%s/git/trees/%s' % (REMOTE_DATA_ORG, REMOTE_DATA_REPO, branch)
     response = requests.get(url)
     if response.status_code != 200:
@@ -111,7 +111,7 @@ def get_remote_archives_info(branch='master'):
     return info
 
     
-def list_archives(branch='master', remote=None):
+def list_archives(branch='main', remote=None):
     archives = []
     if remote:
         info = get_remote_archives_info(branch=branch)
