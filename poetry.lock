@@ -933,7 +933,7 @@ pandas = ["pandas"]
 
 [[package]]
 name = "py"
-version = "1.9.0"
+version = "1.10.0"
 description = "library with cross-python path, ini-parsing, io, code, log facilities"
 category = "main"
 optional = false
@@ -1330,7 +1330,7 @@ testing = ["pytest (>=3.5,!=3.7.3)", "pytest-checkdocs (>=1.2.3)", "pytest-flake
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.6.1,<4.0"
-content-hash = "6cf7190c9f16941949a6f41c8de10901052346644b6f204ff2fdfd27ddb673fa"
+content-hash = "b2903df734c54ce67a1309761fd61abb7a1a3b48a997f652ed415400453f2d2c"
 
 [metadata.files]
 appdirs = [
@@ -1926,8 +1926,8 @@ pubchempy = [
     {file = "PubChemPy-1.0.4.tar.gz", hash = "sha256:24e9dc2fc90ab153b2764bf805e510b1410700884faf0510a9e7cf0d61d8ed0e"},
 ]
 py = [
-    {file = "py-1.9.0-py2.py3-none-any.whl", hash = "sha256:366389d1db726cd2fcfc79732e75410e5fe4d31db13692115529d34069a043c2"},
-    {file = "py-1.9.0.tar.gz", hash = "sha256:9ca6883ce56b4e8da7e79ac18787889fa5206c79dcc67fb065376cd2fe03f342"},
+    {file = "py-1.10.0-py2.py3-none-any.whl", hash = "sha256:3b80836aa6d1feeaa108e046da6423ab8f6ceda6468545ae8d02d9d58d18818a"},
+    {file = "py-1.10.0.tar.gz", hash = "sha256:21b81bda15b66ef5e1a777a21c4dcd9c20ad3efd0b3f817e7a809035269e1bd3"},
 ]
 pycodestyle = [
     {file = "pycodestyle-2.6.0-py2.py3-none-any.whl", hash = "sha256:2295e7b2f6b5bd100585ebcb1f616591b652db8a741695b3d8f5d28bdc934367"},
