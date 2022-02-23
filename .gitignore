@@ -1,3 +1,7 @@
+mydata
+*scratch.py
+.devcontainer.json
+Untitled.*
 *.settings
 *.project
 *.pydevproject

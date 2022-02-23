@@ -17,22 +17,12 @@ RUN apt-get -qq update && apt-get -qq -y install curl bzip2 \
 ENV PATH /opt/conda/bin:$PATH
 
 ##### Conda packages #####
-RUN conda install -c conda-forge -y rdkit
 RUN pip install -U pip
-
-##### Create pyrfume directory #####
-RUN mkdir /pyrfume
-WORKDIR /pyrfume
+RUN pip install pyrfume
 
 #### Dash stuff ####
-COPY dash ./dash
-RUN pip install -r ./dash/odormap/requirements.txt
-COPY ./dash/odormap/app /app
-
-#### Install pyrfume (root of the build context) #####
-COPY setup.py ./
-COPY requirements.txt ./
-COPY pyrfume ./pyrfume
-RUN pip install -e .
+COPY requirements.txt requirements.txt
+RUN pip install -r requirements.txt
+COPY app /app
 
 ENV NGINX_WORKER_PROCESSES auto
