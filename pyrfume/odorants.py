@@ -40,8 +40,8 @@ ROOM_TEMP = (22 + 273.15) * pq.Kelvin
 ROOM_PRESSURE = 1 * pq.atm
 GAS_MOLAR_DENSITY = ROOM_PRESSURE / (R * ROOM_TEMP)
 
-ODORANTS_BASIC_INFO_PATH = "molecules/all-cids-properties.csv"
-ODORANT_SOURCES_PATH = "molecules/all-cids.csv"
+ODORANTS_BASIC_INFO_PATH = "molecules/molecules.csv"
+ODORANT_SOURCES_PATH = "molecules/usage.csv"
 
 PUBCHEM_KINDS = ['name', 'smiles', 'inchi', 'inchikey', 'formula', 'sdf', None]
 
@@ -759,7 +759,7 @@ def all_smiles():
     """All SMILES found in the file at ODORANTS_BASIC_INFO_PATH.
     May contain duplicates (if two CIDs give the same SMILES)"""
     df = all_odorants()
-    return list(df["SMILES"])
+    return list(df["IsomericSMILES"])
 
 
 if __name__ == "__main__":
