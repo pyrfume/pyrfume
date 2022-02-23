@@ -26,7 +26,7 @@ class OdorantSetOptimizer:
         library: pd.DataFrame,
         n_desired: int,
         weights: list,
-        keep_cids: bool = None,
+        keep: bool = None,
         fitness=None,
         n_gen: int = 300,
         mu: int = 100,
@@ -45,7 +45,7 @@ class OdorantSetOptimizer:
                 molecular weight, price, etc.  They can also be descriptors.
             n_desired (int): The size of the set of odorants desired from this
                 library.
-            keep_cids (list): An iterable of CIDs that must exist in every
+            keep (list): An iterable of library index values that must exist in every
                 candidate set. Obviously this must be less than `n_desired`.
             weights (list): A list of 3-tuples each containing the name of a
                 weight, a method to apply to the library dataframe, and a
@@ -74,11 +74,12 @@ class OdorantSetOptimizer:
         # Number of available odorants
         self.library_size = self.library.shape[0]
 
-        if self.keep_cids:
+        if self.keep is not None:
             # Get library integer indices of the CIDs to keep
-            is_kept = self.library.index.isin(self.keep_cids)
-            self.keep = set(np.flatnonzero(is_kept))
-            self.n_needed = self.n_desired - len(self.keep)
+            is_kept = self.library.index.isin(self.keep)
+            self.keep_ix = set(np.flatnonzero(is_kept))
+            self.explore_ix = set(np.flatnonzero(1-is_kept))
+            self.n_needed = self.n_desired - len(self.keep_ix)
 
         # Setup DEAP fundamentals
         creator.create("Fitness", self.fitness, weights=weight_values)
@@ -86,8 +87,12 @@ class OdorantSetOptimizer:
         self.toolbox = base.Toolbox()
 
         # Describe the process for selecting a random set of items
-        self.toolbox.register("random_set", random.sample, range(self.library_size), self.n_desired)
-
+        if self.keep is not None:
+            f_keep = lambda explore, needed: self.keep_ix | set(random.sample(explore, needed))
+            self.toolbox.register("random_set", f_keep, self.explore_ix, self.n_needed)
+        else:
+            self.toolbox.register("random_set", random.sample, range(self.library_size), self.n_desired)
+        
         # Describe the process for creating a single set
         self.toolbox.register(
             "individual", tools.initIterate, creator.Individual, self.toolbox.random_set
@@ -122,28 +127,30 @@ class OdorantSetOptimizer:
         self.stds = fitnesses.std()
         self.means = fitnesses.mean()
 
-    def eval_individual(self, individual, standardize: bool = None):
+    def eval_individual(self, ind, standardize: bool = None):
         """Evaluate the fitness of the odorant set.
 
         Args:
-            individual: A DEAP individual as registered above.
+            ind: A DEAP individual as registered above.
             standardize (bool, optional): Whether to standardize the
                 resulting score.
 
         Returns:
             A fitness score.
         """
+        
+        #print(len(ind - self.keep_ix))
         fitness = []
         for weight_name, func_name, value in self.weights:
             if isinstance(func_name, str):
                 f = getattr(self, "eval_%s" % func_name)
-                component = f(individual, weight_name)
+                component = f(ind, weight_name)
             elif isinstance(func_name, (tuple, list, set)):
                 f, *args = func_name
-                component = f(individual, *args)
+                component = f(ind, *args)
             else:
                 f = func_name
-                component = f(individual)
+                component = f(ind)
             if self.standardize_weights and (standardize is not False):
                 m = self.means[weight_name]
                 s = self.stds[weight_name]
@@ -170,7 +177,7 @@ class OdorantSetOptimizer:
         ind2.update(x2)
         assert len(ind1) == self.n_desired, "Individual smaller than desired size."
         assert len(ind2) == self.n_desired, "Individual smaller than desired size."
-        if self.keep_cids is not None:
+        if self.keep is not None:
             ind1 = self.force_keep(ind1)
             ind2 = self.force_keep(ind2)
         return ind1, ind2
@@ -195,12 +202,12 @@ class OdorantSetOptimizer:
         # Adds elements found in `to_add`
         individual |= set(to_add)
         assert len(individual) == self.n_desired, "Individual smaller than desired size."
-        if self.keep_cids is not None:
+        if self.keep is not None:
             individual = self.force_keep(individual)
         return (individual,)
 
     def force_keep(self, ind):
-        """Ensure that the CIDs in `self.keep` get included
+        """Ensure that the library indices in `self.keep` get included
 
         Args:
             ind: An individual.
@@ -210,13 +217,13 @@ class OdorantSetOptimizer:
         """
         # Consider only molecules for this individual
         # which are not in the keep set
-        candidates = ind.difference(self.keep)
+        candidates = ind.difference(self.keep_ix)
         # Keep only enough of those that there are room for
         to_add = set(random.sample(candidates, self.n_needed))
         # Set this individual to contain this subset
         # of the candidates plus the keep set
         ind.clear()
-        ind.update(to_add | self.keep)
+        ind.update(to_add | self.keep_ix)
         return ind
 
     def run(self, pop=None, hof=None, quiet: bool = False) -> tuple:
@@ -246,18 +253,18 @@ class OdorantSetOptimizer:
         self.stats.register("best", best)
 
         f = algorithms.eaMuPlusLambda
-        with suppress_stdout(quiet):
-            self.pop, self.logbook = f(
-                self.pop,
-                self.toolbox,
-                self.mu,
-                self.lamda,
-                self.p_cx,
-                self.p_mut,
-                self.n_gen,
-                self.stats,
-                halloffame=self.hof,
-            )
+        #with suppress_stdout(quiet):
+        self.pop, self.logbook = f(
+            self.pop,
+            self.toolbox,
+            self.mu,
+            self.lamda,
+            self.p_cx,
+            self.p_mut,
+            self.n_gen,
+            self.stats,
+            halloffame=self.hof,
+        )
 
         return self.pop, self.stats, self.hof, self.logbook
 
@@ -305,7 +312,7 @@ class OdorantSetOptimizer:
         """Plot the history of each of the scores over generations."""
         rows = 2
         cols = math.ceil((len(self.weights) + 1) / 2)
-        fig, axes = plt.subplots(rows, cols, figsize=(20, 8))
+        fig, axes = plt.subplots(rows, cols, figsize=(20, 8), squeeze=False)
         scores = [x["best"][0] for x in self.logbook]
         axes[0, 0].plot(scores)
         axes[0, 0].set_title("Total")
@@ -316,6 +323,40 @@ class OdorantSetOptimizer:
             ax.set_title(feature)
         axes[0, 0].set_xlabel("Generation")
         plt.tight_layout()
+        
+    def summarize_gene(self, gene=None, n_cols=4):
+        gene = gene or self.hof[0] 
+        assert gene
+        attributes = self.library.iloc[list(gene)]
+        n_attributes = attributes.shape[1]
+        n_rows = math.ceil(n_attributes/n_cols)
+        n_cols = min(n_attributes, n_cols)
+        fig, axes = plt.subplots(n_rows, n_cols, figsize=(n_cols*2, n_rows*2))
+        for col, ax in zip(attributes, axes.flat):
+            counts = attributes[col].value_counts().sort_index()
+            if len(counts)<=2:
+                counts.plot.bar(ax=ax)
+            else:
+                attributes[col].hist(ax=ax)
+            ax.set_title(col)
+        plt.tight_layout()
+        
+    def embed_gene_2d(self, emb, gene=None, size_col=None, size=(0, 5)):
+        """
+        size: a tuple of base size and a multiplier for values in the size column
+        """
+        gene = gene or self.hof[0] 
+        assert gene
+        x, y = emb.columns[:2]
+        if size_col is None:
+            size_series = pd.Series(1, index=self.library.index)
+        else:
+            size_series = self.library[size_col]
+        size_series = size[0] + size[1]*size_series.copy()
+        ix = list(gene)
+        ax = emb.plot.scatter(x=x, y=y, s=size_series, alpha=0.5)
+        emb.iloc[ix].plot.scatter(x=x, y=y, s=size_series.iloc[ix],
+                                  alpha=0.5, color='r', ax=ax)
 
 
 class BetterFitness(base.Fitness):
@@ -353,13 +394,13 @@ def get_entropy(odorant_indices, space, bins_per_dim=10):
     return h
 
 
-def get_spacing(odorant_indices, space, n=5):
+def get_spacing(odorant_indices, dist, n=5):
     """These function will be used to determine the spacing between the
     selected odorants in the low-d manifold. We don't want to select odorants
     which are right next to each other in odorant space"""
     ind = list(odorant_indices)
     # Pairwise distances between selected odorants
-    x = space.iloc[ind, ind].values
+    x = dist.iloc[ind, ind].values
     # Unraveled (ignoring diagonal)
     x = x[np.triu_indices(len(ind), 1)]
     # Penalize the closest n odorant pairs
