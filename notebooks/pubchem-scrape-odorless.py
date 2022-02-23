@@ -32,8 +32,6 @@ import re
 import requests
 from tqdm.auto import tqdm
 
-pip install tqdm
-
 
 def update_results(records, results):
     """For a given set of PubChem records, add any strings with the matching keywords to the list of results"""

@@ -34,12 +34,12 @@ df_cleaned_minmaxed.shape
 df_cleaned_standardized = features.scale_features(df_cleaned, 'standardize')
 df_cleaned_standardized.shape
 
-# %time df_cleaned_minmaxed_imputed = features.impute_features(df_cleaned_minmaxed)
+df_cleaned_minmaxed_imputed = features.impute_features(df_cleaned_minmaxed)
 df_cleaned_minmaxed_imputed.shape
 
 features.save_dragon(df_cleaned_minmaxed_imputed, '-cleaned-minmaxed-imputed')
 
-# %time df_cleaned_standardized_imputed = features.impute_features(df_cleaned_standardized)
+df_cleaned_standardized_imputed = features.impute_features(df_cleaned_standardized)
 df_cleaned_standardized_imputed.shape
 
 features.save_dragon(df_cleaned_standardized_imputed, '-cleaned-standardized-imputed')

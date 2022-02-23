@@ -185,7 +185,7 @@ def get_results(heading):
     # Iterate through the remaining pages, if any
     p_bar = trange(2, n_pages+1)
     for page in p_bar:
-        page_n = get_records(heading, page)
+        page_n_records = get_records(heading, page)
         update_results(page_n_records, results)
         desc = "%d CIDs described" % len(results)
         p_bar.set_description(desc)

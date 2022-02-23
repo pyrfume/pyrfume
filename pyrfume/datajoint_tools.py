@@ -168,18 +168,24 @@ def import_classes(module_name: str, match: str = None) -> dict:
 # A demonstration of adding to the schema requires an active schema.
 if __name__ == "__main__":
 
+    class OtherStuff:
+        z: int = 5
+        """type: int"""
+
     class Stuff:
         """A regular Python class that does not use DataJoint.
         All of its attributes (that you want to use in DataJoint)
         must have type hints."""
 
-        other: "OtherStuff" = None
+        other: OtherStuff = None
 
         x: int = 3
         """type: int"""
 
         y: str = "something"
         """type: str"""
+
+    
 
     # Set DataJoint definitions in each class based on inspection
     # of class attributes.
@@ -188,8 +194,11 @@ if __name__ == "__main__":
     # Schematize each of these classes (will include foreign keys)
     from pyrfume.odorants import Molecule, Vendor, ChemicalOrder
 
+    schema = dj.schema('u_%s_odorants' % dj.config['database.user'],
+                       locals())
+
     for cls in [Molecule, Vendor, ChemicalOrder]:
-        locals()[cls.__name__] = djt.schematize(cls, schema)
+        locals()[cls.__name__] = schematize(cls, schema)
 
     # May require a Jupyter notebook or other canvas
     dj.ERD(schema).draw()

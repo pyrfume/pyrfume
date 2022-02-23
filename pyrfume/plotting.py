@@ -8,14 +8,10 @@ import plotly.graph_objs as go
 from ipywidgets import Image, Layout, VBox
 
 import pyrfume
+from pyrfume.odorants import smiles_to_image
 
-try:
-    from rdkit import Chem
-    from rdkit.Chem import Draw
-except ImportError:
-    warnings.warn(
-        "Parts of rdkit could not be imported; try installing rdkit via conda", UserWarning
-    )
+from rdkit import Chem
+from rdkit.Chem import Draw
 
 
 def mpl_embedding(
@@ -61,7 +57,7 @@ def plotly_embedding(embedding, features=None, show_features=None, colors=None, 
     features = features.loc[embedding.index]
     show_features = show_features or list(features)
     def format_features(col):
-        return "%s: %s" % (index_name, x.values.split('<br>'))
+        return "%s: %s" % (index_name, col.values.split('<br>'))
     try:
         index_name = features.index.name or 'Index'
         names = (

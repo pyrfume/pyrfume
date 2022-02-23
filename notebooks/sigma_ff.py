@@ -15,6 +15,7 @@
 
 import os
 import pandas as pd
+import pyrfume
 from pyrfume import sigma_ff, odorants
 
 # Load raw Sigma FF data

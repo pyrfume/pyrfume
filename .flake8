@@ -3,3 +3,4 @@ max-line-length = 100
 inline-quotes = "
 multiline-quotes = "
 ignore = E203,W503
+exclude = build, _build, .ipynb_checkpoints

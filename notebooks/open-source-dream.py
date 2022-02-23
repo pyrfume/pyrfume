@@ -26,6 +26,7 @@ import opc_python.utils.loading as dream_loading
 import numpy as np
 import pandas as pd
 import pickle
+import pyrfume
 from pyrfume.odorants import from_cids, all_smiles
 from pyrfume.features import smiles_to_mordred, smiles_to_morgan, smiles_to_morgan_sim
 from rickpy import ProgressBar
@@ -146,8 +147,9 @@ n_descriptors = Y.shape[1]
 rfr = RandomForestRegressor(n_estimators=10, random_state=0)
 # A multioutput regressor used to fit one model per descriptor, in parallel
 mor = MultiOutputRegressor(rfr, n_jobs=n_descriptors)
+
 # Check the cross-validation performance of this kind of model
-# %time cv_scores = cross_validate(mor, X, Y, scoring=scorers, cv=n_splits)
+cv_scores = cross_validate(mor, X, Y, scoring=scorers, cv=n_splits)
 # -
 
 # An empty dataframe to hold the cross-validation summary
@@ -184,7 +186,3 @@ novel_smiles = [x['IsomericSMILES'] for x in novel_info]
 model_, use_features_, descriptors_, imputer_ = load_dream_model()
 features_ = smiles_to_features(novel_smiles, use_features_, imputer_)
 predict(model_, features_, descriptors_)
-
-Out[1].to_dict('records')
-
-

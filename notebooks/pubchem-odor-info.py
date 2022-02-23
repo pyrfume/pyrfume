@@ -62,7 +62,8 @@ kinds['nothing'] = x[x['odor']==''].index
 kinds['odorless'] = x[x['odor'].str.lower().str.contains('odorless')].index
 
 # Which CIDs have some other kind of odor information
-kinds['odorous'] = x[~x.index.isin(nothing) & ~x.index.isin(odorless)].index
+kinds['odorous'] = x[~x.index.isin(kinds['nothing']) &
+                     ~x.index.isin(kinds['odorless'])].index
 
 for kind in kinds:
     print("There are %d compounds in '%s'" % (len(kinds[kind]), kind))

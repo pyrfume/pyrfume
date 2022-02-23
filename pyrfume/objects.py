@@ -202,7 +202,7 @@ class Component(object):
     A single molecule, which may or may not be present in an odorant.
     """
 
-    def __init__(self, component_id: int, name: str, cas: str, percent: float, solvent: "Compound"):
+    def __init__(self, component_id: int, name: str, cas: str, percent: float, solvent: "Component"):
         """
         Components are defined by a component_id from the Bushdid et al
         supplemental material, a name, a CAS number, a percent dilution,

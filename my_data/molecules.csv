@@ -1,0 +1,6 @@
+CID,MolecularWeight,IsomericSMILES,IUPACName,name
+440917,136.23,CC1=CC[C@@H](CC1)C(=C)C,(4R)-1-methyl-4-prop-1-en-2-ylcyclohexene,d-limonene
+7410,120.15,CC(=O)C1=CC=CC=C1,1-phenylethanone,acetophenone
+16724,150.22,CC1=CC[C@@H](CC1=O)C(=C)C,(5S)-2-methyl-5-prop-1-en-2-ylcyclohex-2-en-1-one,d-carvone
+6184,100.16,CCCCCC=O,hexanal,hexanal
+643941,98.14,CC/C=C\CC=O,(Z)-hex-3-enal,cis-3-hexenal

@@ -15,6 +15,7 @@
 
 import os
 import pandas as pd
+import pyrfume
 from pyrfume import snitz, odorants
 
 file_path = os.path.join(pyrfume.DATA, 'snitz', 'Snitz144.csv')
