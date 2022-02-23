@@ -4,13 +4,15 @@ from pyrfume.objects import Component, Mixture
 from datetime import datetime
 import quantities as pq
 
+DELAY = 5  # Delay for URL requests to avoid getting throttled by PubChem
+
 
 def get_water(substance_type: str = "mixtures"):
     vendor = Vendor("Test_Vendor", "")
 
     cid_H2O = 962
     cas_H2O = "7732-18-5"
-    molecule_H2O = Molecule(cid_H2O, "Water", True)
+    molecule_H2O = Molecule(cid_H2O, "Water", True, delay=DELAY)
     molecule_H2O.density = 	0.902 * pq.g / pq.mL
     molecule_H2O.molecular_weight = 	88.106 * pq.g / pq.mol
     molecule_H2O.cas = cas_H2O
@@ -42,7 +44,7 @@ def get_substances(substance_type: str = "mixtures"):
 
     cid_C4H8O2 = 8857
     cas_C4H8O2 = "141-78-6"
-    molecule_C4H8O2 = Molecule(cid_C4H8O2, "Ethyl acetate", True)
+    molecule_C4H8O2 = Molecule(cid_C4H8O2, "Ethyl acetate", True, delay=DELAY)
     molecule_C4H8O2.density = 	0.902 * pq.g / pq.mL
     molecule_C4H8O2.molecular_weight = 	88.106 * pq.g / pq.mol
     molecule_C4H8O2.vapor_pressure = 12.425 * pq.kPa
@@ -60,7 +62,7 @@ def get_substances(substance_type: str = "mixtures"):
 
     cid_C2H6O = 702
     cas_C2H6O = "64-17-5"
-    molecule_C2H6O = Molecule(cid_C2H6O, "Ethanol", True)
+    molecule_C2H6O = Molecule(cid_C2H6O, "Ethanol", True, delay=DELAY)
     molecule_C2H6O.density = 0.7893 * pq.g / pq.mL
     molecule_C2H6O.molecular_weight = 46.069 * pq.g / pq.mol
     molecule_C2H6O.vapor_pressure = 7.906 * pq.kPa
@@ -78,7 +80,7 @@ def get_substances(substance_type: str = "mixtures"):
 
     cid_C4H8S = 1127
     cas_C4H8S = "110-01-0"
-    molecule_C4H8S = Molecule(cid_C4H8S, "Tetrahydrothiophene", True)
+    molecule_C4H8S = Molecule(cid_C4H8S, "Tetrahydrothiophene", True, delay=DELAY)
     molecule_C4H8S.density = 0.997 * pq.g / pq.mL
     molecule_C4H8S.molecular_weight = 88.17 * pq.g / pq.mol
     molecule_C4H8S.vapor_pressure = 2.4 * pq.kPa

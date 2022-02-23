@@ -10,7 +10,7 @@ from collections import OrderedDict
 from datetime import datetime
 from urllib.parse import quote
 
-
+from datetime import datetime
 import numpy as np
 import pandas as pd
 import pubchempy as pcp
@@ -45,6 +45,8 @@ ODORANT_SOURCES_PATH = "molecules/usage.csv"
 
 PUBCHEM_KINDS = ['name', 'smiles', 'inchi', 'inchikey', 'formula', 'sdf', None]
 
+REQUESTS_INTERVAL = 0
+LAST_REQUEST = datetime.now()
 
 class Solution:
     components: Dict["Compound", pq.quantity.Quantity] = None
@@ -173,11 +175,11 @@ class Solution:
 
 
 class Molecule:
-    def __init__(self, cid: int, name: str=None, fill: bool=False):
+    def __init__(self, cid: int, name: str=None, fill: bool=False, delay=0):
         self.cid = cid
 
         if fill:
-            self.fill_details()
+            self.fill_details(delay=delay)
         if name:
             self.name = name
 
@@ -211,14 +213,14 @@ class Molecule:
     def molar_evaporation_rate(self):
         return mackay(self.vapor_pressure)
 
-    def fill_details(self):
+    def fill_details(self, delay=0):
         assert self.cid is not None
         url_template = (
             "https://pubchem.ncbi.nlm.nih.gov/" "rest/pug/compound/cid/%d/property/" "%s/JSON"
         )
         property_list = ["MolecularWeight", "IsomericSMILES"]
         url = url_template % (self.cid, ",".join(property_list))
-        json_data = url_to_json(url)
+        json_data = url_to_json(url, delay=delay)
         details = json_data["PropertyTable"]["Properties"][0]
 
         def convert(name):
@@ -346,8 +348,9 @@ class Compound:
             return getattr(self.chemical_order.molecule, attr)
 
 
-def url_to_json(url, verbose=True) -> str:
+def url_to_json(url, verbose=True, delay=0) -> str:
     json_data = None
+    time.sleep(delay)
     response = requests.get(url)
     if response.status_code == 200:
         string = response.content.decode("utf-8")

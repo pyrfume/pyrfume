@@ -1,5 +1,8 @@
 import json
 import unittest
+import random
+import time
+
 import quantities as pq
 from quantities.units.velocity import speed_of_light
 from pyrfume import save_data, set_data_path, get_data_path
@@ -11,7 +14,10 @@ from pyrfume.odorants import url_to_json, Solution, get_cid, \
                             all_odorants, all_sources, all_cids, all_smiles
                             
 
+import unittest_utils
+import unittest_utils.DELAY = 5
 from .unittest_utils import get_substances
+
 
 class OdorantsTestCase(unittest.TestCase):
     def setUp(self):
