@@ -34,7 +34,6 @@ eden-kernel = ">=0.3.1335"
 black = ">=19.10b0"
 isort = ">=4.3.21"
 flake8 = ">=3.8.2"
-datajoint = ">=0.12.6b1"
 toml = ">=0.10.2"
 #pillow = ">=7.1"
 
