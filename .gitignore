@@ -1,3 +1,4 @@
+*notebooks/*.ipynb
 mydata
 *scratch.py
 .devcontainer.json
