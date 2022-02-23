@@ -18,6 +18,7 @@
 import os
 import pandas as pd
 import pyrfume
+from pyrfume import odorants
 
 file_path = os.path.join(pyrfume.DATA, 'mergedOdorants.csv')
 df = pd.read_csv(file_path, index_col=0)

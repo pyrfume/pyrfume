@@ -44,7 +44,3 @@ app
 # -
 
 app.show(port=8951, websocket_origin=['spike.asu.edu:8952'])
-
-_.stop()
-
-

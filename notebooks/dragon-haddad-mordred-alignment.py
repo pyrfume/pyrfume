@@ -13,6 +13,7 @@
 #     name: python3
 # ---
 
+import numpy as np
 import pandas as pd
 
 # Fix the file that Emily sent me

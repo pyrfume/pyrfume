@@ -13,6 +13,10 @@
 #     name: python3
 # ---
 
+import os
+import pandas as pd
+from pyrfume import sigma_ff, odorants
+
 # Load raw Sigma FF data
 descriptors, data = sigma_ff.get_data()
 

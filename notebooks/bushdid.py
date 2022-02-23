@@ -13,6 +13,11 @@
 #     name: python3
 # ---
 
+import os
+import pandas as pd
+import pyrfume
+from pyrfume import bushdid, odorants
+
 bushdid_data = bushdid.load_data()
 bushdid_cas_list = bushdid_data.index.unique()
 results = odorants.get_cids(bushdid_cas_list, kind='name', verbose=False)

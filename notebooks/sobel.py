@@ -13,6 +13,10 @@
 #     name: python3
 # ---
 
+import os
+import pandas as pd
+from pyrfume import snitz, odorants
+
 file_path = os.path.join(pyrfume.DATA, 'snitz', 'Snitz144.csv')
 snitz_data_raw = pd.read_csv(file_path)
 

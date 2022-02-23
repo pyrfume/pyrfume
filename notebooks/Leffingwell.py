@@ -13,6 +13,11 @@
 #     name: python3
 # ---
 
+import os
+import pandas as pd
+import pyrfume
+from pyrfume import odorants
+
 file_path = os.path.join(pyrfume.DATA, 'westeros', 'molecules.csv')
 leffingwell_data_raw = pd.read_csv(file_path, sep='\t')
 

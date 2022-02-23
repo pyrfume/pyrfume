@@ -13,6 +13,11 @@
 #     name: python3
 # ---
 
+import os
+import pandas as pd
+import pyrfume
+from pyrfume import odorants, dravnieks
+
 cas, descriptors, data = dravnieks.get_data()
 drav = pd.DataFrame.from_dict(data).T.round(2)
 

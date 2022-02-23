@@ -13,6 +13,11 @@
 #     name: python3
 # ---
 
+import os
+import pandas as pd
+import pyrfume
+from pyrfume import odorants
+
 file_path = os.path.join(pyrfume.DATA, 'GRAS.smi')
 gras_data_raw = pd.read_csv(file_path, header=None, names=['SMILES', 'CAS'], sep='\t')
 

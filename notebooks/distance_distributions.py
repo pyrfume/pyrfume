@@ -15,9 +15,12 @@
 
 # %matplotlib inline
 import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
 import pyrfume
 from pyrfume import features, snitz, haddad
+
+distances = {}
 
 # Load minmaxed, imputed Dragon features (cached from previous work) for all Pyrfume odorants
 # (Alternatively, load raw Dragon features and apply `features.clean_dragon`.)

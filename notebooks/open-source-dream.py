@@ -46,8 +46,6 @@ kv2016_perceptual_data = dream_loading.format_bmc_data(kv2016_perceptual_data,
 # Get the list of PubChem IDs from this data
 kv_cids = list(kv2016_perceptual_data.index.get_level_values('CID').unique())
 
-   in kv_cids
-
 # Get information from PubChem about these molecules
 info = from_cids(kv_cids)
 # Make a Pandas series relating PubChem IDs to SMILES strings
