@@ -45,8 +45,6 @@ ODORANT_SOURCES_PATH = "molecules/usage.csv"
 
 PUBCHEM_KINDS = ['name', 'smiles', 'inchi', 'inchikey', 'formula', 'sdf', None]
 
-REQUESTS_INTERVAL = 0
-LAST_REQUEST = datetime.now()
 
 class Solution:
     components: Dict["Compound", pq.quantity.Quantity] = None

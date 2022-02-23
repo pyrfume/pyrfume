@@ -15,7 +15,7 @@ from pyrfume.odorants import url_to_json, Solution, get_cid, \
                             
 
 import unittest_utils
-import unittest_utils.DELAY = 5
+unittest_utils.DELAY = 5
 from .unittest_utils import get_substances
 
 
