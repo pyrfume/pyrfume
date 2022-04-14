@@ -6,11 +6,12 @@ import pandas as pd
 from pathlib import Path
 import pickle
 from pprint import pprint
+import re
 import requests
 import tempfile
 import toml
 from tqdm.auto import tqdm, trange
-from typing import Any
+from typing import Any, Iterable, List, Dict, Union
 import urllib
 
 
@@ -35,7 +36,7 @@ class RemoteDataError(Exception):
 logger = logging.getLogger("pyrfume")
 
 
-def init_config(overwrite=False):
+def init_config(overwrite: bool=False):
     if overwrite or not CONFIG_PATH.exists():
         config = configparser.ConfigParser()
         config["PATHS"] = {"pyrfume-data": str(DEFAULT_DATA_PATH)}
@@ -48,14 +49,14 @@ def reset_config():
     init_config(overwrite=True)
 
 
-def read_config(header, key):
+def read_config(header: str, key: str):
     config = configparser.ConfigParser()
     init_config()
     config.read(CONFIG_PATH)
     return config[header][key]
 
 
-def write_config(header, key, value):
+def write_config(header: str, key: str, value: Any):
     config = configparser.ConfigParser()
     init_config()
     config.read(CONFIG_PATH)
@@ -64,7 +65,7 @@ def write_config(header, key, value):
         config.write(f)
 
 
-def set_data_path(path, create=True):
+def set_data_path(path: str, create: bool=True):
     path = Path(path).resolve()
     if create:
         path.mkdir(exist_ok=True, parents=True)
@@ -73,7 +74,7 @@ def set_data_path(path, create=True):
     write_config("PATHS", "pyrfume-data", str(path))
 
 
-def get_data_path(create=True):
+def get_data_path(create: bool=True) -> str:
     path = read_config("PATHS", "pyrfume-data")
     path = Path(path).resolve()
     if create:
@@ -88,7 +89,7 @@ def get_remote_data_path(branch='main'):
     return path
 
 
-def localize_remote_data(rel_path, branch='main', quiet=False):
+def localize_remote_data(rel_path: str, branch: str='main', quiet: bool=False) -> str:
     url = get_remote_data_path(branch=branch) + '/' + rel_path
     target_path = Path(TEMP_LOCAL.name) / rel_path
     response = requests.get(url)
@@ -101,8 +102,9 @@ def localize_remote_data(rel_path, branch='main', quiet=False):
     with open(target_path, 'wb') as f:
         f.write(response.content)
     return target_path
-    
-def get_remote_archives_info(branch='main'):
+
+
+def get_remote_archives_info(branch: str='main') -> dict:
     url = 'https://api.github.com/repos/%s/%s/git/trees/%s' % (REMOTE_DATA_ORG, REMOTE_DATA_REPO, branch)
     response = requests.get(url)
     if response.status_code != 200:
@@ -111,7 +113,7 @@ def get_remote_archives_info(branch='main'):
     return info
 
     
-def list_archives(branch='main', remote=None):
+def list_archives(branch: str='main', remote: bool=None) -> List[str]:
     archives = []
     if remote:
         info = get_remote_archives_info(branch=branch)
@@ -131,12 +133,12 @@ def list_archives(branch='main', remote=None):
     return archives
     
     
-def load_manifest(archive_name, remote=None):
+def load_manifest(archive_name: str, remote: bool=None) -> dict:
     rel_path = archive_name + '/' + MANIFEST_NAME 
     return load_data(rel_path, remote=remote)
 
 
-def show_files(archive_name, remote=None, raw=False):
+def show_files(archive_name: str, remote: bool=None, raw: bool=False):
     manifest = load_manifest(archive_name, remote=remote)
     items = manifest['processed']
     if raw:
@@ -144,7 +146,19 @@ def show_files(archive_name, remote=None, raw=False):
     pprint(items)
     
     
-def load_data(rel_path, remote=None, cids=None, quiet=False, **kwargs):
+def resolve_lfs(df: pd.DataFrame) -> pd.DataFrame:
+    """Resolve the full dataframe if the current one is a git-LFS pointer files."""
+    if 'git-lfs' in (df.index.name or ''):
+        match = re.search('(?<=sha256:).*$', df.index[0])
+        if match:
+            sha = match.group(0)
+            lookup = load_data('lfs-cache.csv')
+            url = lookup.loc[sha, 'url']
+            df = pd.read_csv(url, index_col=0)
+    return df
+    
+    
+def load_data(rel_path: str, remote: str=None, cids: Iterable=None, quiet: bool=False, **kwargs) -> Union[pd.DataFrame, dict]:
     if remote:
         full_path = localize_remote_data(rel_path, quiet=quiet)
     else:
@@ -173,7 +187,7 @@ def load_data(rel_path, remote=None, cids=None, quiet=False, **kwargs):
             kwargs["index_col"] = 0
         if cids:
             # First check for a CIDs file specific to this dataset
-            cids_path = str(Path(rel_path).parent / 'cids.csv')
+            cids_path = str(Path(rel_path).parent / 'molecules.csv')
             cids_data = load_data(cids_path, remote=remote, quiet=True)
             if cids_data is not None:
                 all_cids_ = cids_data.index.tolist()
@@ -191,10 +205,17 @@ def load_data(rel_path, remote=None, cids=None, quiet=False, **kwargs):
             data = toml.load(f)
     else:
         raise LocalDataError("%s has an unknown data type" % rel_path)
+    if isinstance(data, pd.DataFrame):
+        # Check to see if this is an LFS pointer that needs to be resolved
+        data_resolved = resolve_lfs(data)
+        if remote and not data_resolved.equals(data):
+            # If it was, save the resolved data locally to avoid downloading a large file again
+            save_data(data_resolved, rel_path, create_archive=True)
+        data = data_resolved
     return data
 
 
-def save_data(data, rel_path, create_archive=True, **kwargs):
+def save_data(data: pd.DataFrame, rel_path: str, create_archive: bool=True, **kwargs):
     full_path = get_data_path() / rel_path
     is_pickle = any(str(full_path).endswith(x) for x in (".pkl", ".pickle", ".p"))
     is_csv = any(str(full_path).endswith(x) for x in (".csv"))
