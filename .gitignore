@@ -27,5 +27,5 @@ docs/Makefile
 docs/_build/
 docs/make.bat
 config.ini
-
+/.venv/
 /.idea/
