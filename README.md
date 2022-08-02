@@ -6,6 +6,8 @@
 [![Python package](https://github.com/pyrfume/pyrfume/actions/workflows/pythonpackage.yml/badge.svg)](https://github.com/pyrfume/pyrfume/actions/workflows/pythonpackage.yml)
 [![Travis](https://travis-ci.org/pyrfume/pyrfume.svg?branch=master)](https://travis-ci.org/pyrfume/pyrfume) 
 [![Coverage Status](https://coveralls.io/repos/github/pyrfume/pyrfume/badge.svg?branch=master)](https://coveralls.io/github/pyrfume/pyrfume?branch=master)
+![Zenodo](https://user-images.githubusercontent.com/549787/165869234-79bf95db-0b6c-495c-a1a8-b3db751f3352.png)
+
 
 ### Examples:
 ```
