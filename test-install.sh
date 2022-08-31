@@ -18,7 +18,15 @@ fi
 # Test import of installed pyrfume
 cd /tmp || exit
 python -c "import pyrfume"
-
+python -c "
+    import sys
+    try:
+        from pyrfume import optimization
+        sys.exit(2)
+    except ImportError:
+        pass
+"
 # Cleanup environment
 cd "$dir_root" || exit
 rm -rf "$dir_root/.venv"
+
