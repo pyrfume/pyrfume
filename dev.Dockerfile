@@ -8,6 +8,7 @@ ARG PROJECT_NAME="pyrfume"
 ARG PYTHON_VERSION_BASE
 
 ENTRYPOINT [ "bash" ]
+CMD [ "poetry", "shell" ]
 SHELL ["/bin/bash", "-eux", "-o", "pipefail", "-c"]
 WORKDIR "/workspace/$PROJECT_NAME"
 
