@@ -9,6 +9,7 @@ import warnings
 from collections import OrderedDict
 from datetime import datetime
 from urllib.parse import quote
+from pathlib import Path
 
 from datetime import datetime
 import numpy as np
@@ -19,7 +20,7 @@ from IPython.display import display
 from PIL import Image
 
 import quantities as pq
-from pyrfume import load_data, logger, tqdm, trange
+from pyrfume import load_data, logger, tqdm, trange, read_config
 from pyrfume.physics import mackay
 from quantities.constants.statisticalmechanics import R
 from typing import Dict
@@ -503,11 +504,14 @@ def from_cids(cids: list, property_list: bool = None) -> list:
         )
         url = synonyms_template % (cid_subset)
         json_data = url_to_json(url)
-        information = json_data["InformationList"]["Information"]
+        if json_data is not None:
+            information = json_data["InformationList"]["Information"]
+        else:
+            information = []
         for i, d in enumerate(data):
             try:
                 synonyms = information[i]["Synonym"]
-            except KeyError:
+            except (IndexError, KeyError):
                 try:
                     d["name"] = d["IUPACName"]
                 except KeyError:
