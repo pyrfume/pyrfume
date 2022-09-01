@@ -23,6 +23,10 @@ molecules = pyrfume.load_data('bushdid_2014/molecules.csv')
 mixtures = pyrfume.load_data('bushdid_2014/behavior.csv')
 ```
 
+### Contributing
+
+Just run `./develop.sh` to get started with developing `pyrfume`.
+
 ### [Website](http://pyrfume.org)
 
 ### [Data Repository](https://github.com/pyrfume/pyrfume-data)
