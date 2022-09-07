@@ -14,9 +14,11 @@
 # ---
 
 import os
+
 import pandas as pd
+
 import pyrfume
-from pyrfume import sigma_ff, odorants
+from pyrfume import odorants, sigma_ff
 
 # Load raw Sigma FF data
 descriptors, data = sigma_ff.get_data()

@@ -1,6 +1,7 @@
+from typing import Any
+
 import numpy as np
 from scipy.stats import geom
-from typing import Any
 
 
 class TriangleTest(object):

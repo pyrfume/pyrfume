@@ -13,12 +13,14 @@
 #     name: python3
 # ---
 
+import re
+
 import pandas as pd
-import pyrfume
-from pyrfume.odorants import get_cids
 import rdkit
 from rdkit import Chem
-import re
+
+import pyrfume
+from pyrfume.odorants import get_cids
 
 re.sub("l-(?![0-9])", "l ", "amyl-2-acetate")
 

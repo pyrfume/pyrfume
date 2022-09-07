@@ -1,32 +1,32 @@
 import json
-import unittest
 import random
 import time
+import unittest
 
 import quantities as pq
 from quantities.units.velocity import speed_of_light
-from pyrfume import save_data, set_data_path, get_data_path
+
+from pyrfume import get_data_path, save_data, set_data_path
 from pyrfume.odorants import (
-    url_to_json,
     Solution,
-    get_cid,
-    get_cids,
-    from_cids,
-    cids_to_cas,
-    cids_to_smiles,
+    _parse_other_info,
+    all_cids,
+    all_odorants,
+    all_smiles,
+    all_sources,
     cactus,
     cactus_image,
-    get_compound_summary,
-    get_compound_odor,
-    _parse_other_info,
-    smiles_to_image,
+    cids_to_cas,
+    cids_to_smiles,
     crop_image,
-    all_odorants,
-    all_sources,
-    all_cids,
-    all_smiles,
+    from_cids,
+    get_cid,
+    get_cids,
+    get_compound_odor,
+    get_compound_summary,
+    smiles_to_image,
+    url_to_json,
 )
-
 
 from . import unittest_utils
 

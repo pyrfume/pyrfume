@@ -1,9 +1,9 @@
 import unittest
-
-from pyrfume.odorants import Compound, ChemicalOrder, Vendor, Molecule
-from pyrfume.experiments import TriangleTest, Result
-from pyrfume.objects import Component, Mixture
 from datetime import datetime
+
+from pyrfume.experiments import Result, TriangleTest
+from pyrfume.objects import Component, Mixture
+from pyrfume.odorants import ChemicalOrder, Compound, Molecule, Vendor
 
 from .unittest_utils import get_substances
 

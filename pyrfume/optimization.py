@@ -4,11 +4,10 @@ import math
 import random
 import sys
 
+import dask.bag as db
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-
-import dask.bag as db
 from deap import algorithms, base, creator, tools
 
 

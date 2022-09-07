@@ -1,8 +1,10 @@
 import unittest
-import quantities as pq
 from datetime import datetime
-from pyrfume.objects import Mixture, Component
-from pyrfume.odorants import Compound, ChemicalOrder, Vendor, Molecule
+
+import quantities as pq
+
+from pyrfume.objects import Component, Mixture
+from pyrfume.odorants import ChemicalOrder, Compound, Molecule, Vendor
 
 
 class MixtureTestCase(unittest.TestCase):

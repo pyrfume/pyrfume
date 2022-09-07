@@ -21,16 +21,18 @@
 # - Maybe we could pull the slight/bland/mild odors and do some more visual inspection.-
 # - If the majority are improbable odors we can drop the set.
 
-# %matplotlib inline
-from IPython.display import HTML, display
+import re
+
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+import requests
+# %matplotlib inline
+from IPython.display import HTML, display
+from tqdm.auto import tqdm
+
 import pyrfume
 from pyrfume import pubchem
-import re
-import requests
-from tqdm.auto import tqdm
 
 
 def update_results(records, results):

@@ -20,6 +20,7 @@
 # %autoreload 2
 
 import pandas as pd
+
 import pyrfume
 from pyrfume.odorants import from_cids
 

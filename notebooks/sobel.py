@@ -14,9 +14,11 @@
 # ---
 
 import os
+
 import pandas as pd
+
 import pyrfume
-from pyrfume import snitz, odorants
+from pyrfume import odorants, snitz
 
 file_path = os.path.join(pyrfume.DATA, "snitz", "Snitz144.csv")
 snitz_data_raw = pd.read_csv(file_path)

@@ -1,5 +1,6 @@
 import pandas as pd
 
+
 # Load data about the odorants (names and PubChem IDs)
 def get_translater():
     rosetta = pd.read_excel("SmilesInfo2.xlsx")

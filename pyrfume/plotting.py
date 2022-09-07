@@ -6,12 +6,11 @@ import numpy as np
 import pandas as pd
 import plotly.graph_objs as go
 from ipywidgets import Image, Layout, VBox
+from rdkit import Chem
+from rdkit.Chem import Draw
 
 import pyrfume
 from pyrfume.odorants import smiles_to_image
-
-from rdkit import Chem
-from rdkit.Chem import Draw
 
 
 def mpl_embedding(

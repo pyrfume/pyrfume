@@ -1,15 +1,16 @@
 from collections import OrderedDict
-import dash
+
 import dash_core_components as dcc
 import dash_html_components as html
+import flask
+import plotly.graph_objs as go
 from dash.dependencies import Input, Output
 from dash_table import DataTable
-import plotly.graph_objs as go
-import flask
-import pyrfume
-from pyrfume.odorants import smiles_to_image
-from pyrfume import snitz, haddad
 
+import dash
+import pyrfume
+from pyrfume import haddad, snitz
+from pyrfume.odorants import smiles_to_image
 
 ##### Initialize app #####
 

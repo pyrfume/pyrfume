@@ -1,8 +1,10 @@
-from pyrfume.odorants import Compound, ChemicalOrder, Vendor, Molecule
+from datetime import datetime
+
+import quantities as pq
+
 from pyrfume.experiments import TriangleTest
 from pyrfume.objects import Component, Mixture
-from datetime import datetime
-import quantities as pq
+from pyrfume.odorants import ChemicalOrder, Compound, Molecule, Vendor
 
 DELAY = 5  # Delay for URL requests to avoid getting throttled by PubChem
 

@@ -15,10 +15,12 @@
 
 # ### Clean the extracted FIG pdf data
 
+import re
+
 import pandas as pd
+
 import pyrfume
 from pyrfume.odorants import get_cids
-import re
 
 # Load the data extracted by Tabula using the "Stream" method
 df = pyrfume.load_data("IFRA_FIG/ifra-fragrance-ingredient-glossary---oct-2019.csv")

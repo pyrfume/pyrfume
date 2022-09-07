@@ -17,11 +17,12 @@
 # %load_ext autoreload
 # %autoreload 2
 import re
+
+import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
-import matplotlib.pyplot as plt
-from rickpy import get_sheet, ProgressBar
 from olfactometer import odorants as o
+from rickpy import ProgressBar, get_sheet
 
 sns.set(font_scale=1.5)
 

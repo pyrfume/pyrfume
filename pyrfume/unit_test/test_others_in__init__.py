@@ -1,13 +1,16 @@
 import unittest
+
 import numpy as np
+
 from pyrfume.experiments import (
+    ROC,
     Distance,
     Result,
-    odorant_distances,
-    ROC,
-    correct_matrix,
     TriangleTest,
+    correct_matrix,
+    odorant_distances,
 )
+
 from .unittest_utils import get_substances
 
 

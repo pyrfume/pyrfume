@@ -13,15 +13,17 @@
 #     name: python3
 # ---
 
-# %matplotlib inline
-from IPython.display import HTML, display
+import re
+
 import matplotlib.pyplot as plt
 import numpy as np
+import requests
+# %matplotlib inline
+from IPython.display import HTML, display
+from tqdm.auto import tqdm
+
 import pyrfume
 from pyrfume import pubchem
-import re
-import requests
-from tqdm.auto import tqdm
 
 
 def update_results(records, results):

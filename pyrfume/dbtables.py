@@ -1,12 +1,14 @@
 """ Definitions of datajoint tables and functions for operating the datajoint schema."""
 
-import datajoint as dj
-from datajoint.user_tables import UserTable
-import quantities as pq
-from pyrfume import read_config, write_config, init_config
 import inspect
 import warnings
 from typing import Dict
+
+import datajoint as dj
+import quantities as pq
+from datajoint.user_tables import UserTable
+
+from pyrfume import init_config, read_config, write_config
 
 dj.errors._switch_adapted_types(True)
 schema = None

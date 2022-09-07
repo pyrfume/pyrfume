@@ -1,6 +1,8 @@
-from pyrfume.odorants import Solution, Compound, ChemicalOrder, Vendor, Molecule
-import quantities as pq
 import unittest
+
+import quantities as pq
+
+from pyrfume.odorants import ChemicalOrder, Compound, Molecule, Solution, Vendor
 
 
 class MakeSolutionTestCase(unittest.TestCase):

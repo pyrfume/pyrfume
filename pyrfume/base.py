@@ -1,19 +1,19 @@
 import configparser
 import json
 import logging
+import pickle
+import re
+import tempfile
+import urllib
+from pathlib import Path
+from pprint import pprint
+from typing import Any, Dict, Iterable, List, Union
+
 import numpy as np
 import pandas as pd
-from pathlib import Path
-import pickle
-from pprint import pprint
-import re
 import requests
-import tempfile
 import toml
 from tqdm.auto import tqdm, trange
-from typing import Any, Iterable, List, Dict, Union
-import urllib
-
 
 PACKAGE_DIR = Path(__file__).resolve().parent
 CONFIG_PATH = PACKAGE_DIR / "config.ini"

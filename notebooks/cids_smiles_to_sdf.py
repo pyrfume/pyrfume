@@ -20,10 +20,10 @@ import pandas as pd
 from rdkit import Chem
 from rdkit.Chem import AllChem
 from rdkit.Chem.SaltRemover import SaltRemover
+from rickpy import ProgressBar
 
 import pyrfume
 from pyrfume import odorants
-from rickpy import ProgressBar
 
 # -
 

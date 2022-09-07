@@ -8,27 +8,25 @@ import time
 import warnings
 from collections import OrderedDict
 from datetime import datetime
-from urllib.parse import quote
 from pathlib import Path
+from typing import Dict
+from urllib.parse import quote
 
-from datetime import datetime
 import numpy as np
 import pandas as pd
 import pubchempy as pcp
+import quantities as pq
 import requests
 from IPython.display import display
 from PIL import Image
-
-import quantities as pq
-from pyrfume import load_data, logger, tqdm, trange, read_config
-from pyrfume.physics import mackay
 from quantities.constants.statisticalmechanics import R
-from typing import Dict
+
+from pyrfume import load_data, logger, read_config, tqdm, trange
+from pyrfume.physics import mackay
 
 try:
-    from rdkit import Chem
-    from rdkit.Chem import Draw, AllChem, SaltRemover
-    from rdkit import RDLogger
+    from rdkit import Chem, RDLogger
+    from rdkit.Chem import AllChem, Draw, SaltRemover
 
     rdkit_logger = RDLogger.logger()
     RDKIT = True

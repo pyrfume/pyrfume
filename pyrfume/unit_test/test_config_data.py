@@ -1,5 +1,5 @@
-from pathlib import Path
 import unittest
+from pathlib import Path
 
 
 class DataAndConfigTestCase(unittest.TestCase):
@@ -17,9 +17,10 @@ class DataAndConfigTestCase(unittest.TestCase):
         self.assertEqual(read_config("PATHS", "a"), "b")
 
     def test_data_path(self):
-        from pyrfume import set_data_path, get_data_path
-        from pyrfume.base import PACKAGE_DIR, DEFAULT_DATA_PATH
         import os
+
+        from pyrfume import get_data_path, set_data_path
+        from pyrfume.base import DEFAULT_DATA_PATH, PACKAGE_DIR
 
         curr_data_path = get_data_path()
 
@@ -40,10 +41,13 @@ class DataAndConfigTestCase(unittest.TestCase):
         set_data_path(curr_data_path)
 
     def test_load_data(self):
-        import pickle, os
-        from pyrfume.base import DEFAULT_DATA_PATH
-        from pyrfume import load_data, save_data
+        import os
+        import pickle
+
         import pandas as pd
+
+        from pyrfume import load_data, save_data
+        from pyrfume.base import DEFAULT_DATA_PATH
 
         data = {"col1": [1, 2], "col2": [3, 4]}
         file_path = DEFAULT_DATA_PATH / "data.pkl"

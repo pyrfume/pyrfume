@@ -14,10 +14,11 @@
 # ---
 
 import re
-import requests
 from urllib.request import quote
-import pandas as pd
+
 import bs4
+import pandas as pd
+import requests
 
 df = pd.read_excel("data/vcd_database.xlsx")
 

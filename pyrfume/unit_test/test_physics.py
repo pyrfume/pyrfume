@@ -1,6 +1,8 @@
 import unittest
-from pyrfume.physics import *
+
 import quantities as pq
+
+from pyrfume.physics import *
 
 
 class PhysicsTestCase(unittest.TestCase):

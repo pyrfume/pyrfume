@@ -1,16 +1,17 @@
+import pickle
 from collections import OrderedDict
-import dash
+
 import dash_core_components as dcc
 import dash_html_components as html
-from dash.dependencies import Input, Output, State
-import plotly.graph_objs as go
 import flask
 import numpy as np
 import pandas as pd
-import pickle
-import pyrfume
-from pyrfume.odorants import smiles_to_image, all_odorants, all_sources
+import plotly.graph_objs as go
+from dash.dependencies import Input, Output, State
 
+import dash
+import pyrfume
+from pyrfume.odorants import all_odorants, all_sources, smiles_to_image
 
 ##### Initialize app #####
 external_stylesheets = ["https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"]

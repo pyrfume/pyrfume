@@ -17,8 +17,9 @@
 # %autoreload 2
 # #%load_ext line_profiler
 
-from pyrfume.odorants import Solution, Compound, ChemicalOrder, Vendor, Molecule
 import quantities as pq
+
+from pyrfume.odorants import ChemicalOrder, Compound, Molecule, Solution, Vendor
 
 # +
 # Instantiate two molecules by CID number

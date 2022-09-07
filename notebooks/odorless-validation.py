@@ -14,9 +14,11 @@
 # ---
 
 import json
-import pandas as pd
-import pyrfume
 import re
+
+import pandas as pd
+
+import pyrfume
 
 all_statements = pyrfume.load_data("pubchem_scrape_100000.pkl")
 

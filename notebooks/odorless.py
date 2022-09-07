@@ -15,6 +15,7 @@
 
 # +
 import pandas as pd
+
 import pyrfume
 
 # Read file sent by Emily Mayhew on Sept. 23, 2019

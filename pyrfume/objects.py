@@ -1,6 +1,7 @@
 import json
-import numpy as np
 import urllib
+
+import numpy as np
 
 
 class Mixture(object):

@@ -170,7 +170,7 @@ plt.plot(1 + np.arange(len(model.coef_)), sorted(np.abs(model.coef_))[::-1])
 plt.xscale("log")
 
 # +
-from sklearn.model_selection import cross_validate, ShuffleSplit
+from sklearn.model_selection import ShuffleSplit, cross_validate
 
 
 def r_score(model, X, y_true):

@@ -1,7 +1,9 @@
 import unittest
+
 import numpy as np
+
+from pyrfume.features import get_maximum_tanimoto_similarity, tanimoto_sim
 from pyrfume.odorants import all_smiles, smiles_to_mol
-from pyrfume.features import tanimoto_sim, get_maximum_tanimoto_similarity
 
 
 class TanimotoTestCase(unittest.TestCase):

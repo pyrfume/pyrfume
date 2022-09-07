@@ -13,14 +13,14 @@
 #     name: python3
 # ---
 
+import holoviews as hv
+import hvplot.pandas
 # +
 import numpy as np
 import pandas as pd
-import holoviews as hv
-import hvplot.pandas
+import panel as pn
 import param
 from holoviews.selection import link_selections
-import panel as pn
 
 n = 25
 data = {

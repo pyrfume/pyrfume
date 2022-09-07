@@ -14,9 +14,10 @@
 # ---
 
 import pandas as pd
+from mordred import Calculator
+from mordred import descriptors as all_descriptors
 from rdkit import Chem
 from rdkit.Chem import AllChem, SaltRemover, rdmolfiles
-from mordred import Calculator, descriptors as all_descriptors
 
 smiles = pd.read_csv("data/cids-names-smiles.csv").set_index("CID")["IsomericSMILES"]
 

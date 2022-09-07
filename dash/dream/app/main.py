@@ -1,15 +1,17 @@
-import dash
+import pathlib
+
 import dash_core_components as dcc
 import dash_html_components as html
+import flask
+import numpy as np
 from dash.dependencies import Input, Output
 from dash_table import DataTable
-import flask
 from flask import send_file
-import numpy as np
+
+import dash
 import pyrfume
-from pyrfume.odorants import smiles_to_image, from_cids, cids_to_smiles
-from pyrfume.predictions import load_dream_model, smiles_to_features, predict
-import pathlib
+from pyrfume.odorants import cids_to_smiles, from_cids, smiles_to_image
+from pyrfume.predictions import load_dream_model, predict, smiles_to_features
 
 OUTPUT_DIR = pathlib.Path(__file__).parent / "data"
 

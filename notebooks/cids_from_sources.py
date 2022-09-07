@@ -16,11 +16,13 @@
 # %load_ext autoreload
 # %autoreload 2
 import os
-from pathlib import Path
 import pickle
+from pathlib import Path
+
 import numpy as np
 import pandas as pd
 from rickpy import ProgressBar
+
 import pyrfume
 
 cids = {}

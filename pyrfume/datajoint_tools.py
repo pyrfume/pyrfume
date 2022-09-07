@@ -4,7 +4,9 @@ import re
 from importlib import import_module
 from inspect import isclass
 from typing import Any, ForwardRef, _GenericAlias
+
 import datajoint as dj
+
 from .dbtables import QuantityAdapter
 
 dj.errors._switch_adapted_types(True)
@@ -198,7 +200,7 @@ if __name__ == "__main__":
     set_dj_definition(Stuff)
 
     # Schematize each of these classes (will include foreign keys)
-    from pyrfume.odorants import Molecule, Vendor, ChemicalOrder
+    from pyrfume.odorants import ChemicalOrder, Molecule, Vendor
 
     schema = dj.schema("u_%s_odorants" % dj.config["database.user"], locals())
 

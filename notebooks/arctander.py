@@ -24,6 +24,7 @@ df["InChiKey"] = df["InChiKey"].apply(
 )
 
 from tqdm.auto import tqdm
+
 from pyrfume.odorants import get_cid, get_cids
 
 for index, row in tqdm(df.iterrows(), total=df.shape[0]):

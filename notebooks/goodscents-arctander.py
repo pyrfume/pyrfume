@@ -16,7 +16,9 @@
 # #### Basically, I just started from the mergedOdorants file that Joel sent me, and converted SMILES strings to CIDs
 
 import os
+
 import pandas as pd
+
 import pyrfume
 from pyrfume import odorants
 

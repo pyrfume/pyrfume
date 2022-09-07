@@ -13,11 +13,12 @@
 #     name: python3
 # ---
 
+import os
+from urllib.request import urlopen
+
 # +
 import bs4
-import os
 import pandas as pd
-from urllib.request import urlopen
 
 import pyrfume
 from pyrfume import odorants

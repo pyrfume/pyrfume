@@ -1,4 +1,5 @@
 import unittest
+
 import datajoint as dj
 import pandas as pd
 
@@ -14,8 +15,8 @@ class DataJointTestCase(unittest.TestCase):
         and inserting sample data into datajoint table.
         """
 
-        from pyrfume.odorants import Molecule, Vendor, ChemicalOrder, Compound, Solution
         from pyrfume import datajoint_tools as djt
+        from pyrfume.odorants import ChemicalOrder, Compound, Molecule, Solution, Vendor
 
         schematized_classes = {}
         schema = dj.schema("test_schema")

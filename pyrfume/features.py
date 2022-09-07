@@ -1,21 +1,21 @@
 import functools
-from typing import Iterable, Iterator, Optional, Callable
 import warnings
+from typing import Callable, Iterable, Iterator, Optional
 
 import numpy as np
 import pandas as pd
-from sklearn.preprocessing import MinMaxScaler, Normalizer, StandardScaler
-
 from eden.graph import Vectorizer
-from pyrfume import load_data, save_data, logger, odorants
-from pyrfume.mol2networx import smiles_to_eden
+from sklearn.preprocessing import MinMaxScaler, Normalizer, StandardScaler
 from tqdm.auto import tqdm, trange
 
+from pyrfume import load_data, logger, odorants, save_data
+from pyrfume.mol2networx import smiles_to_eden
+
 try:
-    from mordred import Calculator, descriptors as all_descriptors
-    from rdkit import Chem
+    from mordred import Calculator
+    from mordred import descriptors as all_descriptors
+    from rdkit import Chem, DataStructs
     from rdkit.Chem import AllChem, SaltRemover
-    from rdkit import DataStructs
 except (ImportError, ModuleNotFoundError):
     warnings.warn(
         "Parts of mordred and/or rdkit could not be imported; try installing rdkit via conda",

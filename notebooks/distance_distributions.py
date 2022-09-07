@@ -17,8 +17,9 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+
 import pyrfume
-from pyrfume import features, snitz, haddad
+from pyrfume import features, haddad, snitz
 
 distances = {}
 

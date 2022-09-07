@@ -1,8 +1,9 @@
-from nbconvert.preprocessors import ExecutePreprocessor
-import nbformat
-from pathlib import Path
 import platform
 import unittest
+from pathlib import Path
+
+import nbformat
+from nbconvert.preprocessors import ExecutePreprocessor
 
 
 class DocsTest(unittest.TestCase):

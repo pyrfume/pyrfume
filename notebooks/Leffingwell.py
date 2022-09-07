@@ -14,10 +14,12 @@
 # ---
 
 import os
+
 import pandas as pd
+from rdkit import Chem
+
 import pyrfume
 from pyrfume import odorants
-from rdkit import Chem
 
 file_path = os.path.join(pyrfume.DATA, "westeros", "molecules.csv")
 leffingwell_data_raw = pd.read_csv(file_path, sep="\t")

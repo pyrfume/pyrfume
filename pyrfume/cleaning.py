@@ -1,9 +1,8 @@
 import os
 
 import pandas as pd
-from sklearn.preprocessing import StandardScaler
-
 from missingpy import KNNImputer
+from sklearn.preprocessing import StandardScaler
 
 from .base import DATA_DIR
 
