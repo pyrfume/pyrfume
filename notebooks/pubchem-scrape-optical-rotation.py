@@ -18,5 +18,5 @@ from pyrfume import pubchem
 
 results = pubchem.get_results("Optical+Rotation")
 
-path = 'pubchem_optical_rotation/physics.pkl'
+path = "pubchem_optical_rotation/physics.pkl"
 pyrfume.save_data(results, path)

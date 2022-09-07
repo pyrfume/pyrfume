@@ -78,7 +78,7 @@ class OdorantSetOptimizer:
             # Get library integer indices of the CIDs to keep
             is_kept = self.library.index.isin(self.keep)
             self.keep_ix = set(np.flatnonzero(is_kept))
-            self.explore_ix = set(np.flatnonzero(1-is_kept))
+            self.explore_ix = set(np.flatnonzero(1 - is_kept))
             self.n_needed = self.n_desired - len(self.keep_ix)
 
         # Setup DEAP fundamentals
@@ -91,8 +91,10 @@ class OdorantSetOptimizer:
             f_keep = lambda explore, needed: self.keep_ix | set(random.sample(explore, needed))
             self.toolbox.register("random_set", f_keep, self.explore_ix, self.n_needed)
         else:
-            self.toolbox.register("random_set", random.sample, range(self.library_size), self.n_desired)
-        
+            self.toolbox.register(
+                "random_set", random.sample, range(self.library_size), self.n_desired
+            )
+
         # Describe the process for creating a single set
         self.toolbox.register(
             "individual", tools.initIterate, creator.Individual, self.toolbox.random_set
@@ -138,8 +140,8 @@ class OdorantSetOptimizer:
         Returns:
             A fitness score.
         """
-        
-        #print(len(ind - self.keep_ix))
+
+        # print(len(ind - self.keep_ix))
         fitness = []
         for weight_name, func_name, value in self.weights:
             if isinstance(func_name, str):
@@ -253,7 +255,7 @@ class OdorantSetOptimizer:
         self.stats.register("best", best)
 
         f = algorithms.eaMuPlusLambda
-        #with suppress_stdout(quiet):
+        # with suppress_stdout(quiet):
         self.pop, self.logbook = f(
             self.pop,
             self.toolbox,
@@ -323,40 +325,39 @@ class OdorantSetOptimizer:
             ax.set_title(feature)
         axes[0, 0].set_xlabel("Generation")
         plt.tight_layout()
-        
+
     def summarize_gene(self, gene=None, n_cols=4):
-        gene = gene or self.hof[0] 
+        gene = gene or self.hof[0]
         assert gene
         attributes = self.library.iloc[list(gene)]
         n_attributes = attributes.shape[1]
-        n_rows = math.ceil(n_attributes/n_cols)
+        n_rows = math.ceil(n_attributes / n_cols)
         n_cols = min(n_attributes, n_cols)
-        fig, axes = plt.subplots(n_rows, n_cols, figsize=(n_cols*2, n_rows*2))
+        fig, axes = plt.subplots(n_rows, n_cols, figsize=(n_cols * 2, n_rows * 2))
         for col, ax in zip(attributes, axes.flat):
             counts = attributes[col].value_counts().sort_index()
-            if len(counts)<=2:
+            if len(counts) <= 2:
                 counts.plot.bar(ax=ax)
             else:
                 attributes[col].hist(ax=ax)
             ax.set_title(col)
         plt.tight_layout()
-        
+
     def embed_gene_2d(self, emb, gene=None, size_col=None, size=(0, 5)):
         """
         size: a tuple of base size and a multiplier for values in the size column
         """
-        gene = gene or self.hof[0] 
+        gene = gene or self.hof[0]
         assert gene
         x, y = emb.columns[:2]
         if size_col is None:
             size_series = pd.Series(1, index=self.library.index)
         else:
             size_series = self.library[size_col]
-        size_series = size[0] + size[1]*size_series.copy()
+        size_series = size[0] + size[1] * size_series.copy()
         ix = list(gene)
         ax = emb.plot.scatter(x=x, y=y, s=size_series, alpha=0.5)
-        emb.iloc[ix].plot.scatter(x=x, y=y, s=size_series.iloc[ix],
-                                  alpha=0.5, color='r', ax=ax)
+        emb.iloc[ix].plot.scatter(x=x, y=y, s=size_series.iloc[ix], alpha=0.5, color="r", ax=ax)
 
 
 class BetterFitness(base.Fitness):

@@ -13,19 +13,19 @@ def get_water(substance_type: str = "mixtures"):
     cid_H2O = 962
     cas_H2O = "7732-18-5"
     molecule_H2O = Molecule(cid_H2O, "Water", True, delay=DELAY)
-    molecule_H2O.density = 	0.902 * pq.g / pq.mL
-    molecule_H2O.molecular_weight = 	88.106 * pq.g / pq.mol
+    molecule_H2O.density = 0.902 * pq.g / pq.mL
+    molecule_H2O.molecular_weight = 88.106 * pq.g / pq.mol
     molecule_H2O.cas = cas_H2O
     chemical_order_molecule_H2O = ChemicalOrder(molecule_H2O, vendor, "part 0", 0.5, None)
     compound_H2O = Compound(chemical_order_molecule_H2O, "TEST", datetime.now, datetime.now, True)
     component_H2O = Component(cid_H2O, "H2O", cas_H2O, 0.5, compound_H2O)
     mixture_H2O = Mixture(2, [component_H2O])
     descriptors = {
-        cas_H2O : ["H2O unique descriptor", "common descriptor"],
-        "dravnieks" : ["H2O dravnieks descriptor", "common dravnieks descriptor"],
-        "sigma_ff" : ["H2O sigma_ff descriptor", "common sigma_ff descriptor"]
+        cas_H2O: ["H2O unique descriptor", "common descriptor"],
+        "dravnieks": ["H2O dravnieks descriptor", "common dravnieks descriptor"],
+        "sigma_ff": ["H2O sigma_ff descriptor", "common sigma_ff descriptor"],
     }
-    component_H2O.set_descriptors('unittest source', descriptors)
+    component_H2O.set_descriptors("unittest source", descriptors)
 
     if substance_type == "mixtures":
         return mixture_H2O
@@ -45,20 +45,22 @@ def get_substances(substance_type: str = "mixtures"):
     cid_C4H8O2 = 8857
     cas_C4H8O2 = "141-78-6"
     molecule_C4H8O2 = Molecule(cid_C4H8O2, "Ethyl acetate", True, delay=DELAY)
-    molecule_C4H8O2.density = 	0.902 * pq.g / pq.mL
-    molecule_C4H8O2.molecular_weight = 	88.106 * pq.g / pq.mol
+    molecule_C4H8O2.density = 0.902 * pq.g / pq.mL
+    molecule_C4H8O2.molecular_weight = 88.106 * pq.g / pq.mol
     molecule_C4H8O2.vapor_pressure = 12.425 * pq.kPa
     molecule_C4H8O2.cas = cas_C4H8O2
     chemical_order_molecule_C4H8O2 = ChemicalOrder(molecule_C4H8O2, vendor, "part 0", 0.5, None)
-    compound_C4H8O2 = Compound(chemical_order_molecule_C4H8O2, "TEST", datetime.now, datetime.now, False)
+    compound_C4H8O2 = Compound(
+        chemical_order_molecule_C4H8O2, "TEST", datetime.now, datetime.now, False
+    )
     component_C4H8O2 = Component(cid_C4H8O2, "C4H8O2", cas_C4H8O2, 0.5, compound_C4H8O2)
     mixture_C4H8O2 = Mixture(2, [component_C4H8O2])
     descriptors = {
-        cas_C4H8O2 : ["C4H8O2 unique descriptor", "common descriptor"],
-        "dravnieks" : ["C4H8O2 dravnieks descriptor", "common dravnieks descriptor"],
-        "sigma_ff" : ["C4H8O2 sigma_ff descriptor", "common sigma_ff descriptor"]
+        cas_C4H8O2: ["C4H8O2 unique descriptor", "common descriptor"],
+        "dravnieks": ["C4H8O2 dravnieks descriptor", "common dravnieks descriptor"],
+        "sigma_ff": ["C4H8O2 sigma_ff descriptor", "common sigma_ff descriptor"],
     }
-    component_C4H8O2.set_descriptors('unittest source', descriptors)
+    component_C4H8O2.set_descriptors("unittest source", descriptors)
 
     cid_C2H6O = 702
     cas_C2H6O = "64-17-5"
@@ -72,11 +74,11 @@ def get_substances(substance_type: str = "mixtures"):
     component_C2H6O = Component(cid_C2H6O, "C2H6O", cas_C2H6O, 0.5, compound_C2H6O)
     mixture_C2H6O = Mixture(2, [component_C2H6O])
     descriptors = {
-        cas_C2H6O : ["C2H6O unique descriptor", "common descriptor"],
-        "dravnieks" : ["C2H6O dravnieks descriptor", "common dravnieks descriptor"],
-        "sigma_ff" : ["C2H6O sigma_ff descriptor", "common sigma_ff descriptor"]
+        cas_C2H6O: ["C2H6O unique descriptor", "common descriptor"],
+        "dravnieks": ["C2H6O dravnieks descriptor", "common dravnieks descriptor"],
+        "sigma_ff": ["C2H6O sigma_ff descriptor", "common sigma_ff descriptor"],
     }
-    component_C2H6O.set_descriptors('unittest source', descriptors)
+    component_C2H6O.set_descriptors("unittest source", descriptors)
 
     cid_C4H8S = 1127
     cas_C4H8S = "110-01-0"
@@ -90,11 +92,11 @@ def get_substances(substance_type: str = "mixtures"):
     mixture_C4H8S = Mixture(2, [component_C4H8S])
 
     descriptors = {
-        cas_C4H8S : ["C4H8S unique descriptor", "common descriptor"],
-        "dravnieks" : ["C4H8S dravnieks descriptor", "common dravnieks descriptor"],
-        "sigma_ff" : ["C4H8S sigma_ff descriptor", "common sigma_ff descriptor"]
+        cas_C4H8S: ["C4H8S unique descriptor", "common descriptor"],
+        "dravnieks": ["C4H8S dravnieks descriptor", "common dravnieks descriptor"],
+        "sigma_ff": ["C4H8S sigma_ff descriptor", "common sigma_ff descriptor"],
     }
-    component_C4H8S.set_descriptors('unittest source', descriptors)
+    component_C4H8S.set_descriptors("unittest source", descriptors)
 
     if substance_type == "mixtures":
         return (mixture_C4H8O2, mixture_C4H8S, mixture_C2H6O)

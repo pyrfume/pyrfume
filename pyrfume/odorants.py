@@ -24,10 +24,12 @@ from pyrfume import load_data, logger, tqdm, trange, read_config
 from pyrfume.physics import mackay
 from quantities.constants.statisticalmechanics import R
 from typing import Dict
+
 try:
     from rdkit import Chem
     from rdkit.Chem import Draw, AllChem, SaltRemover
     from rdkit import RDLogger
+
     rdkit_logger = RDLogger.logger()
     RDKIT = True
 except ImportError:
@@ -44,14 +46,14 @@ GAS_MOLAR_DENSITY = ROOM_PRESSURE / (R * ROOM_TEMP)
 ODORANTS_BASIC_INFO_PATH = "molecules/molecules.csv"
 ODORANT_SOURCES_PATH = "molecules/usage.csv"
 
-PUBCHEM_KINDS = ['name', 'smiles', 'inchi', 'inchikey', 'formula', 'sdf', None]
+PUBCHEM_KINDS = ["name", "smiles", "inchi", "inchikey", "formula", "sdf", None]
 
 
 class Solution:
     components: Dict["Compound", pq.quantity.Quantity] = None
     date_created: datetime = None
 
-    def __init__(self, components: dict, date_created: datetime=None):
+    def __init__(self, components: dict, date_created: datetime = None):
         self.total_volume = 0 * pq.mL
         assert isinstance(components, dict), "Components must be a dict"
         for component, volume in components.items():
@@ -142,7 +144,9 @@ class Solution:
     def total_pressure(self):
         """Computes total pressure of the vapor using Dalton's law"""
         preferred_units = pq.Pa
-        partial_pressures = [pressure.rescale(preferred_units) for pressure in self.partial_pressures.values()]
+        partial_pressures = [
+            pressure.rescale(preferred_units) for pressure in self.partial_pressures.values()
+        ]
         return preferred_units * np.sum(partial_pressures)
 
     @property
@@ -174,7 +178,7 @@ class Solution:
 
 
 class Molecule:
-    def __init__(self, cid: int, name: str=None, fill: bool=False, delay=0):
+    def __init__(self, cid: int, name: str = None, fill: bool = False, delay=0):
         self.cid = cid
 
         if fill:
@@ -296,7 +300,14 @@ class Vendor:
 
 
 class ChemicalOrder:
-    def __init__(self, molecule: "Molecule", vendor: "Vendor", part_id: str, purity: float=1, known_impurities: list=None):
+    def __init__(
+        self,
+        molecule: "Molecule",
+        vendor: "Vendor",
+        part_id: str,
+        purity: float = 1,
+        known_impurities: list = None,
+    ):
         self.molecule = molecule
         self.vendor = vendor
         self.part_id = part_id
@@ -317,8 +328,12 @@ class ChemicalOrder:
 
 class Compound:
     def __init__(
-        self, chemical_order: ChemicalOrder, stock: str="", date_arrived: datetime=None, 
-        date_opened: datetime=None, is_solvent: bool=False
+        self,
+        chemical_order: ChemicalOrder,
+        stock: str = "",
+        date_arrived: datetime = None,
+        date_opened: datetime = None,
+        is_solvent: bool = False,
     ):
 
         self.chemical_order = chemical_order
@@ -362,38 +377,38 @@ def url_to_json(url, verbose=True, delay=0) -> str:
 
 
 def is_kind(identifier: str, kind: str) -> bool:
-    if kind == 'smiles':
+    if kind == "smiles":
         if RDKIT:
             rdkit_logger.setLevel(RDLogger.CRITICAL)
             result = Chem.MolFromSmiles(identifier) is not None
             rdkit_logger.setLevel(RDLogger.WARNING)
         else:
             result = None
-    elif kind == 'inchikey':
-        result = len(identifier) == 27 and identifier[14]=='-' and identifier[25]=='-'
-    elif kind == 'inchi':
+    elif kind == "inchikey":
+        result = len(identifier) == 27 and identifier[14] == "-" and identifier[25] == "-"
+    elif kind == "inchi":
         if RDKIT:
             result = Chem.inchi.MolFromInchi(identifier, logLevel=None) is not None
         else:
             result = None
-    elif kind == 'name':
+    elif kind == "name":
         result = True
     else:
         result = False
     return result
 
-    
+
 def get_kind(identifier: str):
     kinds = [kind for kind in PUBCHEM_KINDS if is_kind(identifier, kind)]
     return kinds[-1]  # Return most sophisticated kind ('name' will always be in the list)
-        
+
 
 def deisomerize_smiles(smiles: str) -> str:
     mol = Chem.MolFromSmiles(smiles)
     if mol:  # If a mol object was successfully create (i.e. not `None`)
         smiles = Chem.MolToSmiles(mol, isomericSmiles=False)
     else:
-        smiles = smiles.replace('@','').replace('@@','').replace('/','').replace('\\','')
+        smiles = smiles.replace("@", "").replace("@@", "").replace("/", "").replace("\\", "")
     return smiles
 
 
@@ -425,7 +440,7 @@ def get_cids(
         results = {}
     p = tqdm(identifiers)
     for identifier in p:
-        #if not isinstance(identifier, str):
+        # if not isinstance(identifier, str):
         #    logger.warning("%s is not a string" % identifier)
         #    continue
         p.set_description(str(identifier))
@@ -439,7 +454,11 @@ def get_cids(
 
 
 def get_cid(
-    identifier: str, kind: str = None, verbose: bool = True, fix_smiles_on_error: bool = True, attempt=0
+    identifier: str,
+    kind: str = None,
+    verbose: bool = True,
+    fix_smiles_on_error: bool = True,
+    attempt=0,
 ) -> int:
     """
     Return data about a molecule from any synonym,
@@ -447,7 +466,7 @@ def get_cid(
     """
     if isinstance(identifier, float) and np.isnan(identifier):
         return 0
-    replace = [('α', 'alpha'), ('β', 'beta'), ('γ', 'gamma'), ('δ', 'delta')]
+    replace = [("α", "alpha"), ("β", "beta"), ("γ", "gamma"), ("δ", "delta")]
     for a, b in replace:
         identifier = identifier.replace(a, b)
     if kind is None:
@@ -462,8 +481,9 @@ def get_cid(
     except pcp.PubChemHTTPError as e:
         if attempt == 0:
             import time
+
             time.sleep(10)
-            return get_cid(identifier,kind,verbose, fix_smiles_on_error, 1)
+            return get_cid(identifier, kind, verbose, fix_smiles_on_error, 1)
         else:
             raise e
     if not len(result):
@@ -565,7 +585,7 @@ def cas_from_synonyms(synonyms: list) -> list:
 
 def cactus(identifier: str, output: str = "cas") -> str:
     url_template = "https://cactus.nci.nih.gov/chemical/structure/%s/%s"
-    identifier = identifier.replace(' ', '%20')
+    identifier = identifier.replace(" ", "%20")
     url = url_template % (identifier, output)
     response = requests.get(url)
     if response.status_code == 200:
@@ -578,7 +598,7 @@ def cactus(identifier: str, output: str = "cas") -> str:
 
 def cactus_image(smiles: str) -> None:
     url_template = "https://cactus.nci.nih.gov/chemical/structure/%s/image"
-    smiles = smiles.replace(' ', '%20')
+    smiles = smiles.replace(" ", "%20")
     url = url_template % smiles
     response = requests.get(url)
     if response.status_code == 200:
@@ -649,33 +669,34 @@ def _parse_other_info(info, records=None):
 def display_molecules(molecules: pd.DataFrame, no_of_columns=5, figsize=(15, 15)):
     import matplotlib.pyplot as plt
     from IPython.display import display
+
     fig = plt.figure(figsize=figsize)
     column = 0
     for i, (cid, info) in enumerate(molecules.iterrows()):
         column += 1
         #  check for end of column and create a new figure
-        if column == no_of_columns+1:
+        if column == no_of_columns + 1:
             fig = plt.figure(figsize=figsize)
             column = 1
         fig.add_subplot(1, no_of_columns, column)
-        image = smiles_to_image(info['IsomericSMILES'], png=False)
+        image = smiles_to_image(info["IsomericSMILES"], png=False)
         plt.imshow(image)
-        plt.axis('off')
-        plt.title("%d: %s" % (cid, info['name']))
-        
-        
+        plt.axis("off")
+        plt.title("%d: %s" % (cid, info["name"]))
+
+
 def embed_molecules(molecules: pd.DataFrame):
     import matplotlib.pyplot as plt
+
     plt.figure(figsize=(6, 6))
     ax = plt.gca()
-    embedding = load_data('embedding/pf_umap.pkl')
-    ax = embedding.plot.scatter(x=0, y=1, alpha=0.05, c='k', ax=ax)
-    smiles = molecules['IsomericSMILES']
+    embedding = load_data("embedding/pf_umap.pkl")
+    ax = embedding.plot.scatter(x=0, y=1, alpha=0.05, c="k", ax=ax)
+    smiles = molecules["IsomericSMILES"]
     embedding_ = embedding.loc[smiles]
-    embedding_.plot.scatter(x=0, y=1, alpha=1, c='r', s=100, ax=ax)
-    ax.set_xlabel('Dimension 1')
-    ax.set_ylabel('Dimension 2')
-    
+    embedding_.plot.scatter(x=0, y=1, alpha=1, c="r", s=100, ax=ax)
+    ax.set_xlabel("Dimension 1")
+    ax.set_ylabel("Dimension 2")
 
 
 def smiles_to_image(smiles, png=True, b64=False, crop=True, padding=10, size=300):
@@ -697,7 +718,9 @@ def smiles_to_image(smiles, png=True, b64=False, crop=True, padding=10, size=300
     return image
 
 
-def smiles_to_mol(smiles: list, max_attempts: int=10, use_random_coords: bool=False, deisomerize=False) -> dict:
+def smiles_to_mol(
+    smiles: list, max_attempts: int = 10, use_random_coords: bool = False, deisomerize=False
+) -> dict:
     if deisomerize:
         f = deisomerize_smiles
     else:

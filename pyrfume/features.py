@@ -181,20 +181,20 @@ def smiles_to_morgan(smiles, radius=5, features=None):
 
 def mol_to_morgan(mols, radius=5, features=None):
     fps = []
-    for index, mol in tqdm(mols.items(), desc='Computing Morgan Fingerprints'):
+    for index, mol in tqdm(mols.items(), desc="Computing Morgan Fingerprints"):
         fp = AllChem.GetMorganFingerprint(mol, radius)
         fp = pd.Series(fp.GetNonzeroElements(), name=index)
         fps.append(fp)
-    
+
     batch_size = 100
     if len(mols) < batch_size:
-        morgan = pd.DataFrame().join(fps, how='outer')
+        morgan = pd.DataFrame().join(fps, how="outer")
     else:
         morgans = []
-        for start in trange(0, len(mols), batch_size, desc='Joining DataFrames'):
-            morgan = pd.DataFrame().join(fps[start:start+batch_size], how='outer')
+        for start in trange(0, len(mols), batch_size, desc="Joining DataFrames"):
+            morgan = pd.DataFrame().join(fps[start : start + batch_size], how="outer")
             morgans.append(morgan)
-        morgan = pd.DataFrame().join(morgans, how='outer')
+        morgan = pd.DataFrame().join(morgans, how="outer")
     morgan = morgan.fillna(0).T
     if features is not None:
         morgan = morgan[features]  # Retain only the specified features
@@ -213,30 +213,34 @@ def mol_to_morgan_sim(mols, ref_mols, radius=5, features=None):
     fps = all_mols.apply(lambda x: AllChem.GetMorganFingerprint(x, radius))
     fps = fps[~fps.index.duplicated()]
     morgan_sim = pd.DataFrame(index=mols.keys(), columns=ref_mols.keys())
+
     def dice(col):
         return np.array([DataStructs.DiceSimilarity(fps[col.name], fps[key]) for key in col.index])
+
     for ref in tqdm(ref_mols):
         morgan_sim[ref] = dice(morgan_sim[ref])
     return morgan_sim
-    
-    #print("%d similarity features for %d molecules" % morgan.shape[::-1])
-    #return morgan
-   
+
+    # print("%d similarity features for %d molecules" % morgan.shape[::-1])
+    # return morgan
+
 
 # rdkit's DataStructs.ExplicitBitVect is more efficient for rdkit-internal use.
 get_morgan_fp: Callable[[Chem.Mol], DataStructs.ExplicitBitVect] = functools.partial(
-    Chem.rdMolDescriptors.GetMorganFingerprintAsBitVect,
-    radius=2, nBits=2048)
+    Chem.rdMolDescriptors.GetMorganFingerprintAsBitVect, radius=2, nBits=2048
+)
+
 
 def tanimoto_sim(mol1: Chem.Mol, mol2: Chem.Mol) -> float:
     """Compute Tanimoto similarity for just two molecules."""
     return DataStructs.FingerprintSimilarity(
-        get_morgan_fp(mol1), get_morgan_fp(mol2), metric=DataStructs.TanimotoSimilarity)
+        get_morgan_fp(mol1), get_morgan_fp(mol2), metric=DataStructs.TanimotoSimilarity
+    )
 
 
 def _bulk_similarity(
-    mols1: Iterable[Chem.Mol],
-    mols2: Optional[Iterable[Chem.Mol]] = None) -> Iterator[np.ndarray]:
+    mols1: Iterable[Chem.Mol], mols2: Optional[Iterable[Chem.Mol]] = None
+) -> Iterator[np.ndarray]:
     if mols2 is None:
         mols2 = mols1
     mol1_fps = map(get_morgan_fp, mols1)
@@ -246,8 +250,8 @@ def _bulk_similarity(
 
 
 def get_maximum_tanimoto_similarity(
-    molecules: Iterable[Chem.Mol],
-    reference_set: Optional[Iterable[Chem.Mol]] = None) -> np.ndarray:
+    molecules: Iterable[Chem.Mol], reference_set: Optional[Iterable[Chem.Mol]] = None
+) -> np.ndarray:
     """Compute maximal Tanimoto similarity to `reference_set` for all given molecules."""
     computing_self_similarity = reference_set is None
 
@@ -257,6 +261,7 @@ def get_maximum_tanimoto_similarity(
             similarities[i] = 0
         result.append(max(similarities))
     return np.array(result)
+
 
 def mol_file_to_smiles(mol_file_path):
     # Takes a path to a .mol file and returns a SMILES string

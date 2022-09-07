@@ -18,18 +18,19 @@ from IPython.display import display, Javascript, HTML
 # Load the Kekule JS file and CSS style
 # These can be downloaded from:
 # http://partridgejiang.github.io/Kekule.js/download/files/kekule.js.zip
-Javascript(filename='kekule/kekule.min.js',
-           css='kekule/themes/default/kekule.css')
+Javascript(filename="kekule/kekule.min.js", css="kekule/themes/default/kekule.css")
 
 # Make sure the mol file we want to show exists
 import os
-assert os.path.isfile('../data/random.mol')
+
+assert os.path.isfile("../data/random.mol")
 
 # Create a canvas on which to show the molecule
 HTML('<div id="div1"></div>')
 
 # Show the molecule
-Javascript("""
+Javascript(
+    """
 // read the file
 fetch('../data/random.mol')
   .then(function(response) {
@@ -45,4 +46,5 @@ fetch('../data/random.mol')
     // Put the molecule in the viewer
     chemViewer.setChemObj(mol);
   });
-""")
+"""
+)

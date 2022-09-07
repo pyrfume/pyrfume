@@ -25,17 +25,17 @@ from tqdm.auto import tqdm
 
 
 def update_results(records, results):
-    keywords = ('odor', 'odour', 'smell', 'aroma ', 'aroma,', 'aroma.', 'fragrance')
-    for annotation in records['Annotations']['Annotation']:
+    keywords = ("odor", "odour", "smell", "aroma ", "aroma,", "aroma.", "fragrance")
+    for annotation in records["Annotations"]["Annotation"]:
         try:
-            cids = annotation['LinkedRecords']['CID']
+            cids = annotation["LinkedRecords"]["CID"]
         except:
             pass
         else:
-            strings = [] 
-            for x in annotation['Data']:
-                for y in x['Value']['StringWithMarkup']:
-                    strings.append(y['String'])
+            strings = []
+            for x in annotation["Data"]:
+                for y in x["Value"]["StringWithMarkup"]:
+                    strings.append(y["String"])
             for cid in cids:
                 if cid in results:
                     results[cid] += strings
@@ -48,13 +48,15 @@ def get_results(heading):
     results = {}
     with tqdm(total=100) as pbar:
         while True:
-            url = (f"https://pubchem.ncbi.nlm.nih.gov/rest/pug_view/annotations/heading/"
-                   f"JSON?heading_type=Compound&heading={heading}&page={page}")
+            url = (
+                f"https://pubchem.ncbi.nlm.nih.gov/rest/pug_view/annotations/heading/"
+                f"JSON?heading_type=Compound&heading={heading}&page={page}"
+            )
             response = requests.get(url)
             records = response.json()
             update_results(records, results)
-            totalPages = records['Annotations']['TotalPages']
-            if page==1:
+            totalPages = records["Annotations"]["TotalPages"]
+            if page == 1:
                 pbar.reset(total=totalPages)
             pbar.set_description("%d CIDs described" % len(results))
             pbar.update()
@@ -69,12 +71,13 @@ pd_results = get_results("Vapor+Pressure")
 
 # +
 def make_hist(results):
-    plt.hist(np.log10(list(results.keys())), bins=np.arange(10));
+    plt.hist(np.log10(list(results.keys())), bins=np.arange(10))
     xticks = np.arange(10)
-    plt.xticks(xticks, ['$10^%d$' % x for x in xticks]);
-    plt.xlabel('PubChem ID')
-    plt.ylabel('Entry Count')
-    
+    plt.xticks(xticks, ["$10^%d$" % x for x in xticks])
+    plt.xlabel("PubChem ID")
+    plt.ylabel("Entry Count")
+
+
 make_hist(pd_results)
 # -
 
@@ -89,5 +92,6 @@ for cid in cids:
 len(all_statements)
 
 import json
-with open('pubchem-vapor-pressure.json', 'w') as f:
+
+with open("pubchem-vapor-pressure.json", "w") as f:
     json.dump(all_statements, f)

@@ -12,15 +12,17 @@ from .test_physics import *
 from .test_odorants import *
 from .test_datajoint_tools import DataJointTestCase
 
+
 def main():
-    buffer = 'buffer' in sys.argv
-    database = 'database' in sys.argv
+    buffer = "buffer" in sys.argv
+    database = "database" in sys.argv
     sys.argv = sys.argv[:1]
 
     if not database:
-        globals().pop('DataJointTestCase')
+        globals().pop("DataJointTestCase")
 
     unittest.main(buffer=buffer)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()

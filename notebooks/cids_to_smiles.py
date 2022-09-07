@@ -18,25 +18,23 @@ import pyrfume
 from pyrfume import odorants
 
 # Load the table of CIDs by sources
-file_path = pyrfume.DATA_DIR / 'odorants' / 'all_cids.csv'
-all_cids = pd.read_csv(file_path).set_index('CID')
+file_path = pyrfume.DATA_DIR / "odorants" / "all_cids.csv"
+all_cids = pd.read_csv(file_path).set_index("CID")
 
 # +
 # Get info from PubChem
 info = odorants.from_cids(all_cids.index)
 
 # Turn the info into a dataframe
-info = pd.DataFrame.from_records(info).set_index('CID')
+info = pd.DataFrame.from_records(info).set_index("CID")
 info.head()
 # -
 
-# Join the CIDs and sources with the PubCheminfo 
+# Join the CIDs and sources with the PubCheminfo
 df = info.join(all_cids)
-df = df.rename(columns={'MolecularWeight': 'MW',
-                        'IsomericSMILES': 'SMILES',
-                        'name': 'Name'})
-df = df[['Name', 'MW', 'SMILES', 'IUPACName'] + list(df.columns[4:])]
+df = df.rename(columns={"MolecularWeight": "MW", "IsomericSMILES": "SMILES", "name": "Name"})
+df = df[["Name", "MW", "SMILES", "IUPACName"] + list(df.columns[4:])]
 df.head()
 
-file_path = pyrfume.DATA_DIR / 'odorants' / 'all_cids_properties.csv'
+file_path = pyrfume.DATA_DIR / "odorants" / "all_cids_properties.csv"
 df.to_csv(file_path)

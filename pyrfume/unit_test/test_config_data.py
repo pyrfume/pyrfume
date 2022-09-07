@@ -1,16 +1,18 @@
 from pathlib import Path
 import unittest
 
-class DataAndConfigTestCase(unittest.TestCase):
 
+class DataAndConfigTestCase(unittest.TestCase):
     def test_init_reset_config(self):
         from pyrfume import init_config, reset_config
+
         init_config(False)
         reset_config()
         init_config(True)
-        
+
     def test_read_write_config(self):
         from pyrfume import read_config, write_config
+
         write_config("PATHS", "a", "b")
         self.assertEqual(read_config("PATHS", "a"), "b")
 
@@ -20,7 +22,7 @@ class DataAndConfigTestCase(unittest.TestCase):
         import os
 
         curr_data_path = get_data_path()
-        
+
         path_not_exists = PACKAGE_DIR / "THIS_IS_AN_INVALID_PATH"
         self.assertRaises(Exception, set_data_path, path_not_exists, create=False)
         self.assertRaises(Exception, get_data_path, path_not_exists, create=False)
@@ -43,10 +45,10 @@ class DataAndConfigTestCase(unittest.TestCase):
         from pyrfume import load_data, save_data
         import pandas as pd
 
-        data = {'col1': [1, 2], 'col2': [3, 4]}
+        data = {"col1": [1, 2], "col2": [3, 4]}
         file_path = DEFAULT_DATA_PATH / "data.pkl"
         path_not_exists = DEFAULT_DATA_PATH / "THIS_IS_AN_INVALID_PATH"
-        
+
         self.assertRaises(Exception, save_data, data, path_not_exists)
         save_data(data, file_path)
 
@@ -58,7 +60,7 @@ class DataAndConfigTestCase(unittest.TestCase):
 
         df = pd.DataFrame(data)
         save_data(df, file_path)
-        #with open(file_path, "w") as f:
+        # with open(file_path, "w") as f:
         #    f.write("0,1,2,3\n0,1,2,3")
 
         data_gain = load_data(file_path)
@@ -66,12 +68,12 @@ class DataAndConfigTestCase(unittest.TestCase):
         for index1 in range(len(data_gain.values)):
             for index2 in range(len(data_gain.values[index1])):
                 self.assertEqual(data_gain.values[index1][index2], df.values[index1][index2])
-                
+
         os.remove(file_path)
 
     def test_save_data(self):
         from pyrfume.base import DEFAULT_DATA_PATH
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

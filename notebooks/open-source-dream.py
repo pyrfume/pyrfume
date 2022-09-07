@@ -39,18 +39,20 @@ from sklearn.multioutput import MultiOutputRegressor
 # ### Load the perceptual data from Keller and Vosshall, 2016
 
 kv2016_perceptual_data = dream_loading.load_raw_bmc_data()
-kv2016_perceptual_data = dream_loading.format_bmc_data(kv2016_perceptual_data,
-                                                       only_dream_subjects=False, # Whether to only keep DREAM subjects
-                                                       only_dream_descriptors=True, # Whether to only keep DREAM descriptors
-                                                       only_dream_molecules=True) # Whether to only keep DREAM molecules)
+kv2016_perceptual_data = dream_loading.format_bmc_data(
+    kv2016_perceptual_data,
+    only_dream_subjects=False,  # Whether to only keep DREAM subjects
+    only_dream_descriptors=True,  # Whether to only keep DREAM descriptors
+    only_dream_molecules=True,
+)  # Whether to only keep DREAM molecules)
 
 # Get the list of PubChem IDs from this data
-kv_cids = list(kv2016_perceptual_data.index.get_level_values('CID').unique())
+kv_cids = list(kv2016_perceptual_data.index.get_level_values("CID").unique())
 
 # Get information from PubChem about these molecules
 info = from_cids(kv_cids)
 # Make a Pandas series relating PubChem IDs to SMILES strings
-smiles = pd.Series(index=kv_cids, data=[x['IsomericSMILES'] for x in info])
+smiles = pd.Series(index=kv_cids, data=[x["IsomericSMILES"] for x in info])
 smiles.head()
 
 # ### Compute physicochemical features for the DREAM data (and some other molecules)
@@ -77,7 +79,7 @@ good_cols = is_good_col[is_good_col].index
 # Impute the missing (NaN) values
 X[:] = imputer_knn.fit_transform(X)
 # Restrict Mordred features to those from the good columns, even after imputation
-X = X[good_cols] 
+X = X[good_cols]
 # Put back into a dataframe
 mordred_features_knn = pd.DataFrame(index=mordred_features.index, columns=good_cols, data=X)
 
@@ -93,7 +95,7 @@ all_features = mordred_features_knn.join(morgan_sim_features, lsuffix="mordred_"
 assert len(all_features.index) == len(all_features.index.unique())
 assert list(all_features.index) == list(smiles.values)
 all_features.index = smiles.index
-all_features.index.name = 'PubChem CID'
+all_features.index.name = "PubChem CID"
 all_features.head()
 
 len(list(all_features)), len(set(all_features))
@@ -103,18 +105,20 @@ len(list(all_features)), len(set(all_features))
 # Compute the descriptor mean across subjects
 data_mean = kv2016_perceptual_data.mean(axis=1)
 # Compute the subject-averaged descriptor mean across replicates
-data_mean = data_mean.unstack('Descriptor').reset_index().groupby(['CID', 'Dilution']).mean().iloc[:, 1:]
+data_mean = (
+    data_mean.unstack("Descriptor").reset_index().groupby(["CID", "Dilution"]).mean().iloc[:, 1:]
+)
 # Fix the index for joining
-data_mean.index = data_mean.index.rename(['PubChem CID', 'Dilution'])
+data_mean.index = data_mean.index.rename(["PubChem CID", "Dilution"])
 # Show the dataframe
 data_mean.head()
 
 # ### Join the features and the descriptors and split again for prediction
 
 # Create a joined data frame with perceptual descriptors and physicochemical features
-df = data_mean.join(all_features, how='inner')
+df = data_mean.join(all_features, how="inner")
 # Add a column for dilution (used in prediction)
-df['Dilution'] = df.index.get_level_values('Dilution')
+df["Dilution"] = df.index.get_level_values("Dilution")
 # Make a list of all the columns that will be used in prediction
 predictor_columns = [col for col in list(df) if col not in list(data_mean)]
 # Make a list of all the columns that must be predicted
@@ -124,7 +128,7 @@ X = df[predictor_columns]
 Y = df[data_columns]
 
 # Each feature name is only used once
-assert pd.Series(predictor_columns).value_counts().max()==1
+assert pd.Series(predictor_columns).value_counts().max() == 1
 
 
 # ### Verify that this model gets reasonable out-of-sample performance
@@ -136,6 +140,7 @@ def get_r(Y, Y_pred, col=0):
     pred = Y_pred[:, col]
     obs = Y.iloc[:, col]
     return np.corrcoef(pred, obs)[0, 1]
+
 
 # A series of scorers, one for each descriptor
 scorers = {desc: make_scorer(get_r, col=i) for i, desc in enumerate(Y.columns)}
@@ -155,8 +160,8 @@ cv_scores = cross_validate(mor, X, Y, scoring=scorers, cv=n_splits)
 # An empty dataframe to hold the cross-validation summary
 rs = pd.DataFrame(index=list(Y))
 # Compute the mean and standard deviation across cross-validation splits
-rs['Mean'] = [cv_scores['test_%s' % desc].mean() for desc in list(Y)]
-rs['StDev'] = [cv_scores['test_%s' % desc].std() for desc in list(Y)]
+rs["Mean"] = [cv_scores["test_%s" % desc].mean() for desc in list(Y)]
+rs["StDev"] = [cv_scores["test_%s" % desc].std() for desc in list(Y)]
 # Show the results
 rs
 
@@ -172,17 +177,18 @@ mor = MultiOutputRegressor(rfr, n_jobs=n_descriptors)
 len(list(X)), len(set(list(X)))
 
 # Save the fitted model
-path = pyrfume.DATA_DIR / 'keller_2017' / 'open-source-dream.pkl'
-with open(path, 'wb') as f:
+path = pyrfume.DATA_DIR / "keller_2017" / "open-source-dream.pkl"
+with open(path, "wb") as f:
     pickle.dump([mor, list(X), list(Y), imputer_knn], f)
 
 # ### Demonstration: using the fitted model (can be run independently if the above has been run at some point)
 
 from pyrfume.odorants import from_cids
 from pyrfume.predictions import load_dream_model, smiles_to_features, predict
-novel_cids = [14896, 228583] # Beta-pinene and 2-Furylacetone
+
+novel_cids = [14896, 228583]  # Beta-pinene and 2-Furylacetone
 novel_info = from_cids(novel_cids)
-novel_smiles = [x['IsomericSMILES'] for x in novel_info]
+novel_smiles = [x["IsomericSMILES"] for x in novel_info]
 model_, use_features_, descriptors_, imputer_ = load_dream_model()
 features_ = smiles_to_features(novel_smiles, use_features_, imputer_)
 predict(model_, features_, descriptors_)

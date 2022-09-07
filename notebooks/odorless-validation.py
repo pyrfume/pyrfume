@@ -18,53 +18,53 @@ import pandas as pd
 import pyrfume
 import re
 
-all_statements = pyrfume.load_data('pubchem_scrape_100000.pkl')
+all_statements = pyrfume.load_data("pubchem_scrape_100000.pkl")
 
 import json
-with open('pubchem_100000.json', 'w') as f:
+
+with open("pubchem_100000.json", "w") as f:
     json.dump(all_statements, f)
 
-df = pd.DataFrame(index=sorted(all_statements),
-                  columns=['Odor', 'Odorless', 'Statements'])
-df.index.name = 'CID'
+df = pd.DataFrame(index=sorted(all_statements), columns=["Odor", "Odorless", "Statements"])
+df.index.name = "CID"
 for cid in sorted(all_statements):
     statements = all_statements[cid]
     odor = False
     odorless = False
     for statement in statements:
         statement = statement.lower()
-        if re.findall('no odor', statement):
+        if re.findall("no odor", statement):
             odorless = True
-        elif re.findall('no odour', statement):
+        elif re.findall("no odour", statement):
             odorless = True
-        elif re.findall('no smell', statement):
+        elif re.findall("no smell", statement):
             odorless = True
-        elif re.findall('no fragrance', statement):
+        elif re.findall("no fragrance", statement):
             odorless = True
-        elif re.findall('odorless', statement):
+        elif re.findall("odorless", statement):
             odorless = True
-        elif re.findall('odourless', statement):
+        elif re.findall("odourless", statement):
             odorless = True
-        elif re.findall('odoratus', statement):
+        elif re.findall("odoratus", statement):
             pass
-        elif re.findall('sense of smell', statement):
+        elif re.findall("sense of smell", statement):
             odor = True
-        elif re.findall('odor', statement):
+        elif re.findall("odor", statement):
             odor = True
-        elif re.findall('odour', statement):
+        elif re.findall("odour", statement):
             odor = True
-        elif re.findall('smell', statement):
+        elif re.findall("smell", statement):
             odor = True
-        elif re.findall('fragrance', statement):
+        elif re.findall("fragrance", statement):
             odor = True
-        elif re.findall('aroma ', statement):
+        elif re.findall("aroma ", statement):
             odor = True
         else:
             pass
     if odor and odorless:
-        pass#print(statements)
+        pass  # print(statements)
     df.loc[cid, :] = [odor, odorless, statements]
 
 df.head()
 
-pyrfume.save_data(df, 'pubchem_scrape_100000.csv')
+pyrfume.save_data(df, "pubchem_scrape_100000.csv")
