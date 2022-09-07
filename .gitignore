@@ -29,3 +29,5 @@ docs/make.bat
 config.ini
 /.venv/
 /.idea/
+*.swp
+
