@@ -3,7 +3,7 @@ ARG os_release="bullseye"
 
 
 FROM python:$python_version_base-$os_release
-ARG poetry_version="1.2.0b3"
+ARG poetry_version="1.2.0"
 ARG project="pyrfume"
 ARG username="$project"
 ARG workdir="/workspace/$project"
