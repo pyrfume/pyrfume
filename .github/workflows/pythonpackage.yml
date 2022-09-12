@@ -45,6 +45,7 @@ jobs:
     - name: Install pyrfume
       run: poetry install --no-interaction
     - name: Run linting
+      shell: poetry shell
       run: |
         # stop the build if there are python syntax errors or undefined names
         flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
@@ -53,5 +54,6 @@ jobs:
         black . --check
         isort .
     - name: Run tests
+      shell: poetry shell
       run: python -m pyrfume.unit_test 
 
