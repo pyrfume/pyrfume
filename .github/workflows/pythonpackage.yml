@@ -23,7 +23,11 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
     - name: Add to system path
-      run: echo "/home/runner/.local/bin" >> $GITHUB_PATH
+      run: |
+        echo "$PATH"
+        echo "$HOME/.local/bin" >> $GITHUB_PATH
+    - name: Check path...
+      run: echo "$PATH"
     - name: Install and configure poetry
       uses: snok/install-poetry@v1
       with:
