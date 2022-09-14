@@ -16,7 +16,6 @@
 import pickle
 
 import matplotlib.pyplot as plt
-# %matplotlib inline
 import numpy as np
 import pandas as pd
 from fancyimpute import KNN
@@ -24,7 +23,7 @@ from sklearn.linear_model import Lasso
 from sklearn.model_selection import ShuffleSplit, cross_validate
 from sklearn.preprocessing import MinMaxScaler, Normalizer
 
-# ### Load Snitz Dataset #1
+# Load Snitz Dataset #1
 
 df1 = pd.read_csv(
     "data/snitz/experiment1_comparisons.csv", header=0, index_col=0, names=["A", "B", "Similarity"]
@@ -41,7 +40,7 @@ df1.shape[0], len(set(df1[["A", "B"]].values.ravel()))
 
 df1.hist("Similarity")
 
-# ### Load Snitz Dataset #2
+# Load Snitz Dataset #2
 
 df2 = pd.read_csv(
     "data/snitz/experiment2_comparisons.csv", header=0, index_col=0, names=["A", "B", "Similarity"]
