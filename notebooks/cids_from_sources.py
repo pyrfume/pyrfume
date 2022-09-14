@@ -16,9 +16,11 @@
 # %load_ext autoreload
 # %autoreload 2
 import pickle
+
 import pandas as pd
-import pyrfume
 from rickpy import get_sheet
+
+import pyrfume
 
 cids = {}
 DATA = pyrfume.DATA_DIR

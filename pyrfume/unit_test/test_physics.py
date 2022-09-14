@@ -2,7 +2,7 @@ import unittest
 
 import quantities as pq
 
-from pyrfume.physics import bernoulli, mackay, Symbol, venturi
+from pyrfume.physics import Symbol, bernoulli, mackay, venturi
 
 
 class PhysicsTestCase(unittest.TestCase):

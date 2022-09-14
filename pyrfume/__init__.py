@@ -1,3 +1,2 @@
-from .base import *  # noqa: F401
-from .odorants import from_cids, get_cids  # noqa: F401
-
+from .base import *
+from .odorants import from_cids, get_cids

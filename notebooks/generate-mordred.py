@@ -14,11 +14,11 @@
 # ---
 
 import pandas as pd
+from fancyimpute import KNN
 from mordred import Calculator
 from mordred import descriptors as all_descriptors
 from rdkit import Chem
 from rdkit.Chem import AllChem, SaltRemover
-from fancyimpute import KNN
 
 smiles = pd.read_csv("data/snitz-odorant-info.csv").set_index("CID")["IsomericSMILES"]
 
@@ -37,7 +37,7 @@ for i, (cid, mol) in enumerate(mols.items()):
         AllChem.Compute2DCoords(mol)
         AllChem.EmbedMolecule(mol)
         AllChem.UFFOptimizeMolecule(mol)  # Is this deterministic?
-    except Exception as e:
+    except Exception:
         print("Exception for %d" % cid)
         mols[cid] = None
     else:
@@ -52,12 +52,14 @@ results.head()
 
 results.shape
 
+
 def fix(x):
     try:
         x = float(x)
     except Exception:
         x = None
     return x
+
 
 results = results.applymap(fix)
 
@@ -71,4 +73,3 @@ results[:] = knn.fit_transform(results.values)
 results.to_csv("data/snitz-mordred.csv")
 
 results.shape
-

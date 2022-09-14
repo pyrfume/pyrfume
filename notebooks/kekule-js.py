@@ -13,8 +13,9 @@
 #     name: python3
 # ---
 
-from IPython.display import HTML, Javascript
 import os
+
+from IPython.display import HTML, Javascript
 
 # Load the Kekule JS file and CSS style
 # These can be downloaded from:

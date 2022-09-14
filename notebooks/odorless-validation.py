@@ -27,7 +27,7 @@ with open("pubchem_100000.json", "w") as f:
 
 df = pd.DataFrame(index=sorted(all_statements), columns=["Odor", "Odorless", "Statements"])
 df.index.name = "CID"
-for cid in sorted(all_statements):
+for cid in sorted(all_statements):  # noqa: C901 (too complex -- TODO)
     statements = all_statements[cid]
     odor = False
     odorless = False

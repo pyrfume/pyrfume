@@ -24,7 +24,9 @@ from pyrfume.odorants import (
 from . import unittest_utils
 
 unittest_utils.DELAY = 5
-from .unittest_utils import get_substances  # noqa: E402 (TODO: this should be designed differently in my opinion)
+from .unittest_utils import (  # noqa: E402 (TODO: this should be designed differently in my opinion)
+    get_substances,
+)
 
 
 class OdorantsTestCase(unittest.TestCase):

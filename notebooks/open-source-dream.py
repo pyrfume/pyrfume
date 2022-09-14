@@ -33,10 +33,8 @@ from sklearn.multioutput import MultiOutputRegressor
 
 import pyrfume
 from pyrfume.features import smiles_to_mordred, smiles_to_morgan_sim
-from pyrfume.odorants import from_cids
-from pyrfume.predictions import load_dream_model, predict, smiles_to_features
-
 from pyrfume.odorants import all_smiles, from_cids
+from pyrfume.predictions import load_dream_model, predict, smiles_to_features
 
 # ### Load the perceptual data from Keller and Vosshall, 2016
 

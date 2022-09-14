@@ -73,7 +73,9 @@ class DataAndConfigTestCase(unittest.TestCase):
         os.remove(file_path)
 
     def test_save_data(self):
-        from pyrfume.base import DEFAULT_DATA_PATH  # noqa: F401 (not sure what this is for? -- TODO)
+        from pyrfume.base import (  # noqa: F401 (not sure what this is for? -- TODO)
+            DEFAULT_DATA_PATH,
+        )
 
 
 if __name__ == "__main__":

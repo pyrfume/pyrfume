@@ -47,4 +47,3 @@ class MakeSolutionTestCase(unittest.TestCase):
         solutions.append(Solution({compounds[0]: 0.01 * pq.mL, solvent: 24 * pq.mL}))
         solutions.append(Solution({compounds[1]: 0.01 * pq.mL, solvent: 24.9 * pq.mL}))
         solutions.append(Solution({compounds[2]: 0.01 * pq.mL, solvent: 24.9 * pq.mL}))
-

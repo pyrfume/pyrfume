@@ -16,11 +16,11 @@
 # # Add CIDS to parsed_threshold_data_in_air.csv
 
 import pandas as pd
+from rdkit.Chem import MolFromSmiles, MolToSmiles
 from rickpy import ProgressBar
 
 import pyrfume
 from pyrfume.odorants import get_cid, get_cids
-from rdkit.Chem import MolFromSmiles, MolToSmiles
 
 df = pyrfume.load_data("thresholds/parsed_threshold_data_in_air.csv")
 df = df.set_index("canonical SMILES")

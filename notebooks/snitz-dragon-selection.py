@@ -13,15 +13,16 @@
 #     name: python3
 # ---
 
+import pickle
+
+import matplotlib.pyplot as plt
 # %matplotlib inline
 import numpy as np
 import pandas as pd
 from fancyimpute import KNN
-from sklearn.preprocessing import MinMaxScaler, Normalizer
-import pickle
 from sklearn.linear_model import Lasso
-import matplotlib.pyplot as plt
 from sklearn.model_selection import ShuffleSplit, cross_validate
+from sklearn.preprocessing import MinMaxScaler, Normalizer
 
 # ### Load Snitz Dataset #1
 

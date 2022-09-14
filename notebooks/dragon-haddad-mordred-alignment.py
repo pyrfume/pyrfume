@@ -13,12 +13,12 @@
 #     name: python3
 # ---
 
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-from sklearn.preprocessing import StandardScaler
 from fancyimpute import KNN
 from sklearn.linear_model import Lasso
-import matplotlib.pyplot as plt
+from sklearn.preprocessing import StandardScaler
 
 # Fix the file that Emily sent me
 """

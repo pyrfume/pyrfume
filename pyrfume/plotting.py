@@ -1,4 +1,3 @@
-
 import matplotlib.pyplot as plt
 import plotly.graph_objs as go
 from ipywidgets import Image, Layout, VBox

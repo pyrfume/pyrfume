@@ -18,8 +18,8 @@
 import re
 
 import pyrfume
-from pyrfume.odorants import get_cids
 from pyrfume.cabinets import get_mainland
+from pyrfume.odorants import get_cids
 
 # Load the data extracted by Tabula using the "Stream" method
 df = pyrfume.load_data("IFRA_FIG/ifra-fragrance-ingredient-glossary---oct-2019.csv")

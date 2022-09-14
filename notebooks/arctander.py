@@ -13,11 +13,12 @@
 #     name: python3
 # ---
 
-import pyrfume
-
-from tqdm.auto import tqdm
-from pyrfume.odorants import get_cid
 from rdkit.Chem.rdinchi import InchiToInchiKey
+from tqdm.auto import tqdm
+
+import pyrfume
+from pyrfume.odorants import get_cid
+
 df = pyrfume.load_data("arctander_1960/Arctander Master.xlsx")
 
 df["InChiKey"] = df["InChiKey"].apply(

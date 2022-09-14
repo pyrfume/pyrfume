@@ -16,11 +16,11 @@
 # +
 # Needed for all table stuff
 import pandas as pd
+import plotly
 # Needed for all plotting
 import plotly.graph_objs as go
 # Needed for offline stuff in the notebook
 from plotly.offline import init_notebook_mode, iplot
-import plotly
 from plotly.plotly import plot
 
 init_notebook_mode()

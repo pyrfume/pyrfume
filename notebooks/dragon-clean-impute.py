@@ -17,6 +17,7 @@
 
 # +
 import warnings
+
 from pyrfume import features
 
 warnings.filterwarnings("ignore", category=FutureWarning)
