@@ -22,20 +22,20 @@
 
 import pickle
 
-import mordred
 import numpy as np
 import opc_python.utils.loading as dream_loading
 import pandas as pd
-import rdkit
 from missingpy import KNNImputer
-from rickpy import ProgressBar
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import make_scorer
-from sklearn.model_selection import cross_val_score, cross_validate
+from sklearn.model_selection import cross_validate
 from sklearn.multioutput import MultiOutputRegressor
 
 import pyrfume
-from pyrfume.features import smiles_to_mordred, smiles_to_morgan, smiles_to_morgan_sim
+from pyrfume.features import smiles_to_mordred, smiles_to_morgan_sim
+from pyrfume.odorants import from_cids
+from pyrfume.predictions import load_dream_model, predict, smiles_to_features
+
 from pyrfume.odorants import all_smiles, from_cids
 
 # ### Load the perceptual data from Keller and Vosshall, 2016
@@ -184,9 +184,6 @@ with open(path, "wb") as f:
     pickle.dump([mor, list(X), list(Y), imputer_knn], f)
 
 # ### Demonstration: using the fitted model (can be run independently if the above has been run at some point)
-
-from pyrfume.odorants import from_cids
-from pyrfume.predictions import load_dream_model, predict, smiles_to_features
 
 novel_cids = [14896, 228583]  # Beta-pinene and 2-Furylacetone
 novel_info = from_cids(novel_cids)

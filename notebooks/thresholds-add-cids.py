@@ -20,6 +20,7 @@ from rickpy import ProgressBar
 
 import pyrfume
 from pyrfume.odorants import get_cid, get_cids
+from rdkit.Chem import MolFromSmiles, MolToSmiles
 
 df = pyrfume.load_data("thresholds/parsed_threshold_data_in_air.csv")
 df = df.set_index("canonical SMILES")
@@ -28,8 +29,6 @@ smiles_cids = get_cids(df.index, kind="SMILES")
 
 df = df.join(pd.Series(smiles_cids, name="CID"))
 df.head()
-
-from rdkit.Chem import MolFromSmiles, MolToSmiles
 
 df["SMILES"] = df.index
 p = ProgressBar(len(smiles_cids))

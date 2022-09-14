@@ -23,7 +23,6 @@ from rdkit.Chem.SaltRemover import SaltRemover
 from rickpy import ProgressBar
 
 import pyrfume
-from pyrfume import odorants
 
 # -
 

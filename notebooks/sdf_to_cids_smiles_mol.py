@@ -16,12 +16,9 @@
 # +
 import os
 
-import pandas as pd
 from rdkit import Chem
-from rickpy import ProgressBar
 
 import pyrfume
-from pyrfume import odorants
 
 # -
 

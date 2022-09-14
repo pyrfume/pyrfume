@@ -8,7 +8,6 @@ import time
 import warnings
 from collections import OrderedDict
 from datetime import datetime
-from pathlib import Path
 from typing import Dict
 from urllib.parse import quote
 
@@ -21,7 +20,7 @@ from IPython.display import display
 from PIL import Image
 from quantities.constants.statisticalmechanics import R
 
-from pyrfume import load_data, logger, read_config, tqdm, trange
+from pyrfume import load_data, logger, tqdm, trange
 from pyrfume.physics import mackay
 
 try:
@@ -451,7 +450,7 @@ def get_cids(
     return results
 
 
-def get_cid(
+def get_cid(  # noqa: C901 (too complex -- TODO)
     identifier: str,
     kind: str = None,
     verbose: bool = True,
@@ -666,7 +665,6 @@ def _parse_other_info(info, records=None):
 
 def display_molecules(molecules: pd.DataFrame, no_of_columns=5, figsize=(15, 15)):
     import matplotlib.pyplot as plt
-    from IPython.display import display
 
     fig = plt.figure(figsize=figsize)
     column = 0
@@ -722,7 +720,7 @@ def smiles_to_mol(
     if deisomerize:
         f = deisomerize_smiles
     else:
-        f = lambda x: x
+        f = lambda x: x  # noqa: E731 (don't assign lambda -- TODO)
     mols_raw = [Chem.MolFromSmiles(f(smi)) for smi in smiles]
     logger.info("Computing 3D coordinates...")
     s = SaltRemover.SaltRemover()

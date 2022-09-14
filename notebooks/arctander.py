@@ -15,17 +15,14 @@
 
 import pyrfume
 
-df = pyrfume.load_data("arctander_1960/Arctander Master.xlsx")
-
+from tqdm.auto import tqdm
+from pyrfume.odorants import get_cid
 from rdkit.Chem.rdinchi import InchiToInchiKey
+df = pyrfume.load_data("arctander_1960/Arctander Master.xlsx")
 
 df["InChiKey"] = df["InChiKey"].apply(
     lambda x: InchiToInchiKey(x) if "InChI=" in str(x) and str(x) != "nan" else x
 )
-
-from tqdm.auto import tqdm
-
-from pyrfume.odorants import get_cid, get_cids
 
 for index, row in tqdm(df.iterrows(), total=df.shape[0]):
     # if index < 215:

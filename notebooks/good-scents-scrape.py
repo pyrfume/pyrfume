@@ -96,7 +96,7 @@ for i, s in enumerate(cas_cid_smiles["SMILES"]):
     if not any([x in s for x in ["@", "@@", "/", "\\"]]):
         print(
             "This SMILES string has no stereomeric information: CAS=%s; CID=%d; SMILES=%s"
-            % (cas_cid_smiles["Type"][i], cas_cid_smiles.index[i], cas_cid_smiles["CID"][i], s)
+            % (cas_cid_smiles["Type"][i], cas_cid_smiles.index[i], cas_cid_smiles["CID"][i])
         )
 
 pairs = cas_cid_smiles[cas_cid_smiles["Enantiomer"] != ""]

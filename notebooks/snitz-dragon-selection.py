@@ -18,6 +18,10 @@ import numpy as np
 import pandas as pd
 from fancyimpute import KNN
 from sklearn.preprocessing import MinMaxScaler, Normalizer
+import pickle
+from sklearn.linear_model import Lasso
+import matplotlib.pyplot as plt
+from sklearn.model_selection import ShuffleSplit, cross_validate
 
 # ### Load Snitz Dataset #1
 
@@ -86,7 +90,6 @@ df_dragon = df_dragon.iloc[:, 1:]  # Remove SMILES column
 # Normalize every feature to [0, 1]
 mms = MinMaxScaler()
 df_dragon[:] = mms.fit_transform(df_dragon)
-import pickle
 
 with open("data/dragon-minmaxscaler.pickle", "wb") as f:
     pickle.dump(mms, f)
@@ -158,19 +161,16 @@ df_distance.loc[:, "Similarity"] /= 100
 df_distance.head()
 
 # %matplotlib inline
-from sklearn.linear_model import Lasso
 
 model = Lasso(alpha=1e-4, max_iter=1e5)
 X = df_distance[features]
 y = df_distance["Similarity"]
 model.fit(X, y)
-import matplotlib.pyplot as plt
 
 plt.plot(1 + np.arange(len(model.coef_)), sorted(np.abs(model.coef_))[::-1])
 plt.xscale("log")
 
 # +
-from sklearn.model_selection import ShuffleSplit, cross_validate
 
 
 def r_score(model, X, y_true):

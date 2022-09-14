@@ -4,23 +4,21 @@ from collections import OrderedDict
 import dash_core_components as dcc
 import dash_html_components as html
 import flask
-import numpy as np
-import pandas as pd
 import plotly.graph_objs as go
-from dash.dependencies import Input, Output, State
+from dash.dependencies import Input, Output
 
 import dash
 import pyrfume
 from pyrfume.odorants import all_odorants, all_sources, smiles_to_image
 
-##### Initialize app #####
+### Initialize app ###
 external_stylesheets = ["https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"]
 app = flask.Flask(__name__)
 dapp = dash.Dash(
     __name__, server=app, url_base_pathname="/", external_stylesheets=external_stylesheets
 )
 
-##### Load data #####
+### Load data ###
 details = all_odorants()
 sources = all_sources()
 
@@ -77,19 +75,18 @@ def make_figure(embedding, title):
                 "showline": False,
                 "showticklabels": False,
             },
-            "margin": {"l": 40, "b": 40, "t": 10, "r": 10},
+            "margin": {"l": 40, "b": 40, "t": 50, "r": 10},
             "legend": {"x": 0, "y": 1},
             "hovermode": "closest",
             "paper_bgcolor": "rgba(0,0,0,0)",
             "plot_bgcolor": "rgba(0,0,0,0)",
             "width": 700,
             "height": 500,
-            "margin": {"t": 50},
         },
     }
 
 
-###### App layout ######
+### App layout ###
 dapp.layout = html.Div(
     className="container-fluid",
     children=[
@@ -152,7 +149,7 @@ def get_index(*hoverData):
     return index
 
 
-##### App callbacks #####
+### App callbacks ###
 @dapp.callback(
     [
         Output("cid", "children"),
@@ -195,6 +192,6 @@ def display_hover_image(index):
     return src
 
 
-##### Run app #####
+### Run app ###
 if __name__ == "__main__":
     app.run(host="0.0.0.0", debug=True, port=80)

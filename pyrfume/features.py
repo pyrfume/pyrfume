@@ -8,14 +8,14 @@ from eden.graph import Vectorizer
 from sklearn.preprocessing import MinMaxScaler, Normalizer, StandardScaler
 from tqdm.auto import tqdm, trange
 
-from pyrfume import load_data, logger, odorants, save_data
+from pyrfume import load_data, odorants, save_data
 from pyrfume.mol2networx import smiles_to_eden
 
 try:
     from mordred import Calculator
     from mordred import descriptors as all_descriptors
     from rdkit import Chem, DataStructs
-    from rdkit.Chem import AllChem, SaltRemover
+    from rdkit.Chem import AllChem
 except (ImportError, ModuleNotFoundError):
     warnings.warn(
         "Parts of mordred and/or rdkit could not be imported; try installing rdkit via conda",

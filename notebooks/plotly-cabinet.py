@@ -20,17 +20,15 @@ import pandas as pd
 import plotly.graph_objs as go
 # Needed for offline stuff in the notebook
 from plotly.offline import init_notebook_mode, iplot
+import plotly
+from plotly.plotly import plot
 
 init_notebook_mode()
 
 # Needed to make figures on the web
-import plotly
-
 plotly.tools.set_credentials_file(username="rgerkin", api_key="DdQKMmvH8CMKvgNpBccy")
 plotly.tools.set_config_file(world_readable=True, sharing="public")
-from plotly.plotly import plot
 
-# +
 # Load the data
 df = pd.read_csv("data/Mainland Odor Cabinet with CIDs.csv").groupby("CID").first()
 

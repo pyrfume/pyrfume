@@ -150,7 +150,7 @@ def update_results(records, results):
         try:
             # Get CIDs for the current record
             cids = annotation["LinkedRecords"]["CID"]
-        except:
+        except Exception:
             # If they are none then just move to the next annoation
             pass
         else:

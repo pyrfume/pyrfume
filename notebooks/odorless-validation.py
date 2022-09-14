@@ -22,8 +22,6 @@ import pyrfume
 
 all_statements = pyrfume.load_data("pubchem_scrape_100000.pkl")
 
-import json
-
 with open("pubchem_100000.json", "w") as f:
     json.dump(all_statements, f)
 

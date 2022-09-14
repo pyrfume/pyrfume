@@ -40,8 +40,6 @@ class MakeSolutionTestCase(unittest.TestCase):
 
         solvent = Compound(solvent_order, is_solvent=True)
         compounds = [Compound(chemical_order) for chemical_order in chemical_orders]
-        n_odorants = len(compounds)
-
         solutions = []
         solutions.append(Solution({compounds[0]: 1 * pq.mL, solvent: 24 * pq.mL}))
         solutions.append(Solution({compounds[1]: 1 * pq.mL, solvent: 24 * pq.mL}))
@@ -49,4 +47,4 @@ class MakeSolutionTestCase(unittest.TestCase):
         solutions.append(Solution({compounds[0]: 0.01 * pq.mL, solvent: 24 * pq.mL}))
         solutions.append(Solution({compounds[1]: 0.01 * pq.mL, solvent: 24.9 * pq.mL}))
         solutions.append(Solution({compounds[2]: 0.01 * pq.mL, solvent: 24.9 * pq.mL}))
-        n_solutions = len(solutions)
+

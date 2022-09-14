@@ -1,12 +1,7 @@
-import json
-import random
-import time
 import unittest
 
 import quantities as pq
-from quantities.units.velocity import speed_of_light
 
-from pyrfume import get_data_path, save_data, set_data_path
 from pyrfume.odorants import (
     Solution,
     _parse_other_info,
@@ -18,20 +13,18 @@ from pyrfume.odorants import (
     cactus_image,
     cids_to_cas,
     cids_to_smiles,
-    crop_image,
     from_cids,
     get_cid,
     get_cids,
     get_compound_odor,
     get_compound_summary,
-    smiles_to_image,
     url_to_json,
 )
 
 from . import unittest_utils
 
 unittest_utils.DELAY = 5
-from .unittest_utils import get_substances
+from .unittest_utils import get_substances  # noqa: E402 (TODO: this should be designed differently in my opinion)
 
 
 class OdorantsTestCase(unittest.TestCase):

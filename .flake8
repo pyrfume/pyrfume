@@ -2,5 +2,9 @@
 max-line-length = 100
 inline-quotes = "
 multiline-quotes = "
-ignore = E203,W503
-exclude = build, _build, .ipynb_checkpoints
+ignore = E203,W503,F403
+exclude = build, _build, .ipynb_checkpoints, .git, .venv
+per-file-ignores = 
+    __init__.py,__main__.py: F401  # imported but unused
+    test_datajoint_tools.py: F811  # redefinition of imports
+

@@ -36,7 +36,7 @@ for i, (cid, mol) in enumerate(mols.items()):
         AllChem.Compute2DCoords(mol)
         AllChem.EmbedMolecule(mol)
         AllChem.UFFOptimizeMolecule(mol)  # Is this deterministic?
-    except Exception as e:
+    except Exception:
         print("Exception for %d" % cid)
         mols[cid] = None
     else:

@@ -17,12 +17,9 @@
 
 # +
 import warnings
-
-warnings.filterwarnings("ignore", category=FutureWarning)
-
 from pyrfume import features
 
-# -
+warnings.filterwarnings("ignore", category=FutureWarning)
 
 df = features.load_dragon()
 df.shape

@@ -15,6 +15,10 @@
 
 import numpy as np
 import pandas as pd
+from sklearn.preprocessing import StandardScaler
+from fancyimpute import KNN
+from sklearn.linear_model import Lasso
+import matplotlib.pyplot as plt
 
 # Fix the file that Emily sent me
 """
@@ -46,8 +50,6 @@ dfs["mordred"].head()
 dfs["dragon"] = dfs["dragon"].iloc[:, 1:]
 dfs["dragon"].head()
 
-from sklearn.preprocessing import StandardScaler
-
 ss = {}
 for kind in ["dragon", "mordred"]:
     ss[kind] = StandardScaler()
@@ -56,16 +58,12 @@ for kind in ["dragon", "mordred"]:
     scaled = ss[kind].fit_transform(df.astype("float"))
     dfs[kind + "_good"] = pd.DataFrame(scaled, index=df.index, columns=df.columns)
 
-from fancyimpute import KNN
-
 knns = {}
 for kind in ["dragon", "mordred"]:
     knns[kind] = KNN(k=5)
     df = dfs[kind + "_good"]
     imputed = knns[kind].fit_transform(df.values)
     dfs[kind + "_imputed"] = pd.DataFrame(imputed, index=df.index, columns=df.columns)
-
-from sklearn.linear_model import Lasso
 
 lasso = Lasso(alpha=0.1)
 lasso.fit(dfs["dragon_imputed"].values, dfs["mordred_imputed"].values[:, :])
@@ -77,7 +75,6 @@ for i, col in enumerate(observed):
     rs[i] = np.corrcoef(observed[col], predicted[:, i])[0, 1]
 
 # %matplotlib inline
-import matplotlib.pyplot as plt
 
 plt.plot(sorted(sorted(rs)))
 

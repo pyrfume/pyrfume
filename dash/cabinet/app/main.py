@@ -1,17 +1,15 @@
 # -*- coding: utf-8 -*-
-import sys
 
 import dash_core_components as dcc
 import dash_html_components as html
 import flask
 import pandas as pd
 import plotly.graph_objs as go
-from dash.dependencies import Input, Output, State
 
 import dash
 import pyrfume
 
-##### Initialize app #####
+### Initialize app ###
 external_stylesheets = ["https://codepen.io/chriddyp/pen/bWLwgP.css"]
 app = flask.Flask(__name__)
 dapp = dash.Dash(
@@ -19,12 +17,12 @@ dapp = dash.Dash(
 )
 
 
-##### Load data #####
+### Load data ###
 file_path = pyrfume.DATA_DIR / "cabinets" / "Mainland Odor Cabinet with CIDs.csv"
 df = pd.read_csv(file_path).reset_index().groupby("CID").first()
 
 
-###### App layout ######
+### App layout ###
 dapp.layout = html.Div(
     [
         dcc.Graph(
@@ -55,6 +53,6 @@ dapp.layout = html.Div(
 )
 
 
-##### Run app #####
+### Run app ###
 if __name__ == "__main__":
     app.run(host="0.0.0.0", debug=True, port=80)

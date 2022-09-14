@@ -4,16 +4,13 @@ import logging
 import pickle
 import re
 import tempfile
-import urllib
 from pathlib import Path
 from pprint import pprint
-from typing import Any, Dict, Iterable, List, Union
+from typing import Any, Iterable, List, Union
 
-import numpy as np
 import pandas as pd
 import requests
 import toml
-from tqdm.auto import tqdm, trange
 
 PACKAGE_DIR = Path(__file__).resolve().parent
 CONFIG_PATH = PACKAGE_DIR / "config.ini"
@@ -162,7 +159,7 @@ def resolve_lfs(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-def load_data(
+def load_data(  # noqa: C901 (too complex -- TODO)
     rel_path: str, remote: str = None, cids: Iterable = None, quiet: bool = False, **kwargs
 ) -> Union[pd.DataFrame, dict]:
     if remote:
@@ -202,7 +199,7 @@ def load_data(
                 from pyrfume.odorants import all_cids
 
                 all_cids_ = all_cids()  # Thousands of CIDs to choose from.
-            skip_f = lambda line_num: False if not line_num else all_cids_[line_num - 1] not in cids
+            skip_f = lambda line_num: False if not line_num else all_cids_[line_num - 1] not in cids  # noqa: E731 (don't assign lambda -- TODO)
             kwargs["skiprows"] = skip_f
         data = pd.read_csv(full_path, **kwargs)
         if cids and sorted(data.index.tolist()) != sorted(cids):

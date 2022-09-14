@@ -13,25 +13,18 @@
 #     name: python3
 # ---
 
-import re
-
+import json
 import matplotlib.pyplot as plt
 import numpy as np
 import requests
 # %matplotlib inline
-from IPython.display import HTML, display
 from tqdm.auto import tqdm
 
-import pyrfume
-from pyrfume import pubchem
-
-
 def update_results(records, results):
-    keywords = ("odor", "odour", "smell", "aroma ", "aroma,", "aroma.", "fragrance")
     for annotation in records["Annotations"]["Annotation"]:
         try:
             cids = annotation["LinkedRecords"]["CID"]
-        except:
+        except Exception:
             pass
         else:
             strings = []
@@ -93,7 +86,6 @@ for cid in cids:
     all_statements[cid] = ps
 len(all_statements)
 
-import json
 
 with open("pubchem-vapor-pressure.json", "w") as f:
     json.dump(all_statements, f)

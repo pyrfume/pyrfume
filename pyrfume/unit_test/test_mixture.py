@@ -70,7 +70,6 @@ class MixtureTestCase(unittest.TestCase):
         self.assertTrue("cas descriptor" in descriptors_list)
 
         all_descriptors = {
-            "unittest source": "cas descriptor 1",
             "unittest source": "cas descriptor",
         }
         self.assertEqual(mixture.descriptor_vector("unittest source", all_descriptors).size, 14)

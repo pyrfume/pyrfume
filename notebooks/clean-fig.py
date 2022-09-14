@@ -17,10 +17,9 @@
 
 import re
 
-import pandas as pd
-
 import pyrfume
 from pyrfume.odorants import get_cids
+from pyrfume.cabinets import get_mainland
 
 # Load the data extracted by Tabula using the "Stream" method
 df = pyrfume.load_data("IFRA_FIG/ifra-fragrance-ingredient-glossary---oct-2019.csv")
@@ -44,10 +43,10 @@ df = df.loc[~df.index.isin(overflow_indices)]
 
 # Fix problematic CAS numbers
 for index, cas in df["CAS number"].items():
-    if not re.match("[0-9]+\-[0-9]+\-[0-9]+", cas):
+    if not re.match(r"[0-9]+-[0-9]+-[0-9]+", cas):
         print("Fixing %s" % cas)
         cas = cas.replace("(", "").replace(")", "")
-        assert re.match("[0-9]+\-[0-9]+\-[0-9]+", cas)
+        assert re.match(r"[0-9]+-[0-9]+-[0-9]+", cas)
         df.loc[index, "CAS number"] = cas
 
 # + jupyter={"outputs_hidden": true}
@@ -71,7 +70,6 @@ pyrfume.save_data(df, "IFRA_FIG/ifra_fig.csv")
 
 pyrfume.load_data("IFRA_FIG/ifra_fig.csv")
 
-from pyrfume.cabinets import get_mainland
 
 df_mainland = get_mainland()
 len(set(df_mainland["CAS"]).intersection(df["CAS number"]))

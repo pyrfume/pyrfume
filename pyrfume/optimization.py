@@ -87,7 +87,7 @@ class OdorantSetOptimizer:
 
         # Describe the process for selecting a random set of items
         if self.keep is not None:
-            f_keep = lambda explore, needed: self.keep_ix | set(random.sample(explore, needed))
+            f_keep = lambda explore, needed: self.keep_ix | set(random.sample(explore, needed))  # noqa: E731 (don't assign lambda -- TODO)
             self.toolbox.register("random_set", f_keep, self.explore_ix, self.n_needed)
         else:
             self.toolbox.register(

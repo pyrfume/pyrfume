@@ -2,7 +2,6 @@ from datetime import datetime
 
 import quantities as pq
 
-from pyrfume.experiments import TriangleTest
 from pyrfume.objects import Component, Mixture
 from pyrfume.odorants import ChemicalOrder, Compound, Molecule, Vendor
 

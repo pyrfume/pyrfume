@@ -15,15 +15,10 @@
 
 # %load_ext autoreload
 # %autoreload 2
-import os
 import pickle
-from pathlib import Path
-
-import numpy as np
 import pandas as pd
-from rickpy import ProgressBar
-
 import pyrfume
+from rickpy import get_sheet
 
 cids = {}
 DATA = pyrfume.DATA_DIR
@@ -126,7 +121,6 @@ cids["haddad-2008"] = set(df["CID"]) - {0}
 
 # ## U19 PIs
 
-from rickpy import get_sheet
 
 gerkin_sheet = "1PlU4zHyRXtcI7Y-O6xYtlIyKoKk8hX1I9zfx8KFELdc"
 u19_sheet = "1B2sEj9pCk2_zS1X1Cg2ulAB4E_BWPboJBSvH4Gwc8fs"

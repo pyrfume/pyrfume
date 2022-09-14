@@ -13,7 +13,8 @@
 #     name: python3
 # ---
 
-from IPython.display import HTML, Javascript, display
+from IPython.display import HTML, Javascript
+import os
 
 # Load the Kekule JS file and CSS style
 # These can be downloaded from:
@@ -21,8 +22,6 @@ from IPython.display import HTML, Javascript, display
 Javascript(filename="kekule/kekule.min.js", css="kekule/themes/default/kekule.css")
 
 # Make sure the mol file we want to show exists
-import os
-
 assert os.path.isfile("../data/random.mol")
 
 # Create a canvas on which to show the molecule

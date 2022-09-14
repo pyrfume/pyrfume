@@ -17,8 +17,6 @@ class DataAndConfigTestCase(unittest.TestCase):
         self.assertEqual(read_config("PATHS", "a"), "b")
 
     def test_data_path(self):
-        import os
-
         from pyrfume import get_data_path, set_data_path
         from pyrfume.base import DEFAULT_DATA_PATH, PACKAGE_DIR
 
@@ -42,7 +40,6 @@ class DataAndConfigTestCase(unittest.TestCase):
 
     def test_load_data(self):
         import os
-        import pickle
 
         import pandas as pd
 
@@ -76,7 +73,7 @@ class DataAndConfigTestCase(unittest.TestCase):
         os.remove(file_path)
 
     def test_save_data(self):
-        from pyrfume.base import DEFAULT_DATA_PATH
+        from pyrfume.base import DEFAULT_DATA_PATH  # noqa: F401 (not sure what this is for? -- TODO)
 
 
 if __name__ == "__main__":

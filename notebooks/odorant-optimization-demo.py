@@ -28,7 +28,7 @@ from rdkit import Chem
 from rdkit.DataStructs import FingerprintSimilarity
 
 from pyrfume.cabinets import get_mainland
-from pyrfume.optimization import OdorantSetOptimizer, get_coverage, get_entropy, get_spacing
+from pyrfume.optimization import OdorantSetOptimizer
 
 # Get contents of Mainland cabinet (any dataframe could do)
 cabinet = get_mainland()

@@ -137,7 +137,7 @@ class Vendor(dj.Manual):
 
 class Product(dj.Manual):
     definition = """
-    -> Vendor 
+    -> Vendor
     catalog = 0 : int
     ---
     -> Molecule
@@ -289,7 +289,6 @@ class Report(dj.Manual):
     year : smallint
     -> Publication
     doi : varchar(128)
-    
     last_name : varchar(64)
     -> Investigator
     """

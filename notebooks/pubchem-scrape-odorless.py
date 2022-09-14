@@ -28,11 +28,9 @@ import numpy as np
 import pandas as pd
 import requests
 # %matplotlib inline
-from IPython.display import HTML, display
 from tqdm.auto import tqdm
 
 import pyrfume
-from pyrfume import pubchem
 
 
 def update_results(records, results):
@@ -41,7 +39,7 @@ def update_results(records, results):
     for annotation in records["Annotations"]["Annotation"]:
         try:
             cids = annotation["LinkedRecords"]["CID"]
-        except:
+        except Exception:
             pass
         else:
             strings = []
@@ -134,7 +132,7 @@ ambiguous_phrases = ["odoratus"]
 
 
 def make_html(all_statements):
-    ### Make an HTML file with the statements and their encoding.
+    """Make an HTML file with the statements and their encoding."""
     html = ""
     for cid, statements in all_statements.items():
         for statement in statements:
@@ -169,7 +167,7 @@ df.index.name = "CID"
 
 # Fill this dataframe with the assignment (odor, odorless, or (!!) both),
 # and the corresponding statements supporting that assignment
-for cid in sorted(all_statements):
+for cid in sorted(all_statements):  # noqa: C901 (too complex -- TODO)
     statements = all_statements[cid]
     odor = False
     odorless = False

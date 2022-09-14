@@ -10,7 +10,7 @@ import pyrfume
 CATALOG_PATH = pyrfume.DEFAULT_DATA_PATH / "sigma" / "sigma_ff_catalog.txt"
 
 
-def get_data():
+def get_data():  # noqa: C901 (too complex -- TODO)
     with open(CATALOG_PATH, "r") as f:
         text = f.read()
         lines = text.split("\n")

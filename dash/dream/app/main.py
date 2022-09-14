@@ -3,19 +3,17 @@ import pathlib
 import dash_core_components as dcc
 import dash_html_components as html
 import flask
-import numpy as np
 from dash.dependencies import Input, Output
 from dash_table import DataTable
 from flask import send_file
 
 import dash
-import pyrfume
-from pyrfume.odorants import cids_to_smiles, from_cids, smiles_to_image
+from pyrfume.odorants import cids_to_smiles, smiles_to_image
 from pyrfume.predictions import load_dream_model, predict, smiles_to_features
 
 OUTPUT_DIR = pathlib.Path(__file__).parent / "data"
 
-##### Initialize app #####
+### Initialize app ###
 
 bootstrap = "https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
 external_stylesheets = [bootstrap]
@@ -24,7 +22,7 @@ dapp = dash.Dash(
     __name__, server=app, url_base_pathname="/", external_stylesheets=external_stylesheets
 )
 
-##### Load model #####
+### Load model ###
 
 model, use_features, descriptors, imputer = load_dream_model()
 
@@ -85,7 +83,7 @@ def get_model_output(smiles):
     return predictions
 
 
-###### App layout ######
+### App layout ###
 
 dapp.layout = html.Div(
     className="container-fluid",
@@ -125,7 +123,7 @@ def download_csv():
     )
 
 
-##### App callbacks #####
+### App callbacks ###
 
 outputs = []
 # outputs.append(Output('name', 'children'))
@@ -154,7 +152,7 @@ def get_image_src(smiles):
     return src
 
 
-##### Run app #####
+### Run app ###
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", debug=True, port=8000)

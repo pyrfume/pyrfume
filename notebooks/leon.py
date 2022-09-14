@@ -16,15 +16,12 @@
 import re
 
 import pandas as pd
-import rdkit
-from rdkit import Chem
 
 import pyrfume
 from pyrfume.odorants import get_cids
+from pathlib import Path
 
 re.sub("l-(?![0-9])", "l ", "amyl-2-acetate")
-
-from pathlib import Path
 
 p = Path(pyrfume.DATA)
 old_names = []
@@ -35,7 +32,7 @@ for file in (p / "leon" / "3D_mol_files").glob("*.mol"):
     # Replace underscore with hyphen
     name = name.replace("_", "-")
     # Remove extraneous hyphens
-    name = re.sub("(?<![0-9\(])-(?![0-9])", " ", name)
+    name = re.sub(r"(?<![0-9\(])-(?![0-9])", " ", name)
     # Add back hyphens after prefixes
     for x in [
         "alpha",

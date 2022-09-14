@@ -16,6 +16,7 @@
 import pandas as pd
 
 import pyrfume
+from pyrfume import odorants
 
 original = pyrfume.load_data("physicochemical/AllDragon-20190730-mayhew.csv")
 original.head()
@@ -24,8 +25,6 @@ new = pyrfume.load_data("physicochemical/ExtraEight.txt", delimiter="\t")
 new = new.set_index("NAME").sort_index()
 new.index.name = "PubChemID"
 new.index
-
-from pyrfume import odorants
 
 infos = odorants.from_cids(new.index)
 for info in infos:

@@ -17,7 +17,8 @@ import pandas as pd
 from mordred import Calculator
 from mordred import descriptors as all_descriptors
 from rdkit import Chem
-from rdkit.Chem import AllChem, SaltRemover, rdmolfiles
+from rdkit.Chem import AllChem, SaltRemover
+from fancyimpute import KNN
 
 smiles = pd.read_csv("data/snitz-odorant-info.csv").set_index("CID")["IsomericSMILES"]
 
@@ -51,24 +52,18 @@ results.head()
 
 results.shape
 
-
-# +
 def fix(x):
     try:
         x = float(x)
-    except:
+    except Exception:
         x = None
     return x
 
-
 results = results.applymap(fix)
-# -
 
 frac_bad = results.isnull().mean()
 good = frac_bad[frac_bad < 0.3].index
 results = results.loc[:, good]
-
-from fancyimpute import KNN
 
 knn = KNN(k=5)
 results[:] = knn.fit_transform(results.values)
@@ -76,3 +71,4 @@ results[:] = knn.fit_transform(results.values)
 results.to_csv("data/snitz-mordred.csv")
 
 results.shape
+

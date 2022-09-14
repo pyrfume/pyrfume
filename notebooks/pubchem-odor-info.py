@@ -105,7 +105,7 @@ for i, cid in enumerate(x.index):
 # Parse this into boiling points in Celsius
 for cid, bp_raw in x["BP"].iteritems():
     if isinstance(bp_raw, str):  # math.isnan(bp_raw):
-        num = re.findall("[-+]?[0-9]*\.?[0-9]+", bp_raw)[0]
+        num = re.findall(r"[-+]?[0-9]*\.?[0-9]+", bp_raw)[0]
         units = None
         if any([s in bp_raw for s in ["° F", "°F", "deg F", "DEG F"]]):
             units = "F"

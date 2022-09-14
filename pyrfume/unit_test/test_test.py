@@ -1,9 +1,6 @@
 import unittest
-from datetime import datetime
 
 from pyrfume.experiments import Result, TriangleTest
-from pyrfume.objects import Component, Mixture
-from pyrfume.odorants import ChemicalOrder, Compound, Molecule, Vendor
 
 from .unittest_utils import get_substances
 
@@ -11,7 +8,7 @@ from .unittest_utils import get_substances
 class TriangleTestTestCase(unittest.TestCase):
     def test_test(self):
 
-        mixture_C4H8O2, mixture_C4H8S, mixture_C2H6O = get_substances("mixtures")
+        mixture_C4H8O2, _, mixture_C2H6O = get_substances("mixtures")
         component_C4H8O2, component_C4H8S, component_C2H6O = get_substances("components")
 
         odorants = [mixture_C4H8O2]

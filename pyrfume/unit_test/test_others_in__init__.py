@@ -1,6 +1,5 @@
 import unittest
 
-import numpy as np
 
 from pyrfume.experiments import (
     ROC,
@@ -22,7 +21,7 @@ class OthersTestCase(unittest.TestCase):
         self.component_C4H8O2, self.component_C4H8S, self.component_C2H6O = self.components
 
     def test_Distance(self):
-        distance = Distance(self.mixture_C4H8O2, self.mixture_C2H6O, 1.0)
+        Distance(self.mixture_C4H8O2, self.mixture_C2H6O, 1.0)
 
     def test_odorant_distances_ROC_correct_matrix(self):
         test1 = TriangleTest(0, list(self.mixtures), 0.5, True)
@@ -44,7 +43,7 @@ class OthersTestCase(unittest.TestCase):
         roc = ROC(results, 1)
         self.assertEqual(roc[0][0], 1)
         self.assertEqual(roc[1][0], 1)
-        matrix = correct_matrix(results, 1, None)
+        correct_matrix(results, 1, None)
 
 
 if __name__ == "__main__":

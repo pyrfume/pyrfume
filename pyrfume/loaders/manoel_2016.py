@@ -21,5 +21,5 @@ def get_raw():
 
 
 def main():
-    translater = get_translater()
-    raw = get_raw()
+    get_translater()
+    get_raw()

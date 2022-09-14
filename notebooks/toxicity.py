@@ -19,7 +19,7 @@ import pandas as pd
 from rickpy import ProgressBar
 
 import pyrfume
-from pyrfume.pubchem import GHS_CODES, get_ghs_classification, parse_ghs_classification_for_odor
+from pyrfume.pubchem import get_ghs_classification, parse_ghs_classification_for_odor
 
 path = "odorants/all_cids_properties.csv"
 details = pyrfume.load_data(path, usecols=range(5))

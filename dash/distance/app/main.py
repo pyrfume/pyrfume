@@ -12,7 +12,7 @@ import pyrfume
 from pyrfume import haddad, snitz
 from pyrfume.odorants import smiles_to_image
 
-##### Initialize app #####
+### Initialize app ###
 
 bootstrap = "https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
 external_stylesheets = [bootstrap]
@@ -21,7 +21,7 @@ dapp = dash.Dash(
     __name__, server=app, url_base_pathname="/", external_stylesheets=external_stylesheets
 )
 
-##### Load data #####
+### Load data ###
 
 # Pyrfume-data-relative file path
 file_path = "odorants/all_cids_properties.csv"
@@ -115,7 +115,7 @@ def show_histogram(space, distance):
     }
 
 
-###### App layout ######
+### App layout ###
 
 dapp.layout = html.Div(
     className="container-fluid",
@@ -161,7 +161,7 @@ dapp.layout = html.Div(
     + make_space_elements("haddad"),
 )
 
-##### App callbacks #####
+### App callbacks ###
 
 outputs = []
 for x in ("A", "B"):
@@ -216,7 +216,7 @@ def get_image_src(cid):
     return src
 
 
-##### Run app #####
+### Run app ###
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", debug=True, port=80)

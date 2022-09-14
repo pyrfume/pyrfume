@@ -13,11 +13,7 @@
 #     name: python3
 # ---
 
-import re
-from urllib.request import quote
-
 import bs4
-import pandas as pd
 import requests
 
 
