@@ -19,8 +19,9 @@ import requests
 from IPython.display import display
 from PIL import Image
 from quantities.constants.statisticalmechanics import R
+from tqdm.auto import tqdm, trange
 
-from pyrfume import load_data, logger, tqdm, trange
+from pyrfume import load_data, logger
 from pyrfume.physics import mackay
 
 try:
