@@ -15,7 +15,10 @@ RUN apt-get update --yes && \
     apt-get install --yes --no-install-recommends sudo && \
     apt-get clean && \
     useradd --user-group --create-home --groups users "$username" && \
-    echo "$username ALL=(ALL:ALL) NOPASSWD: ALL" | tee "/etc/sudoers.d/$username"
+    echo "$username ALL=(ALL:ALL) NOPASSWD: ALL" | tee "/etc/sudoers.d/$username" && \
+    parent_dir=$(dirname "$workdir") && \
+    mkdir "$parent_dir" && \
+    chown -R "$username" "$parent_dir"
 
 USER "$username"
 WORKDIR "$workdir"
