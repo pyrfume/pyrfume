@@ -2,6 +2,7 @@ import sys
 import unittest
 
 from .test_config_data import *
+from .test_datajoint_tools import DataJointTestCase
 from .test_docs import *
 from .test_load_data import *
 from .test_make_solutions import *
