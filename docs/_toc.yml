@@ -1,14 +1,13 @@
-# In _toc.yml
 format: jb-book
-root: README
+root: README.md
 parts:
   - caption: Tutorial
     numbered: True
     chapters:
-      - file: your-data
-      - file: featurization
-      - file: visualization
-      - file: published-data
+    - file: your-data.ipynb
+    - file: featurization.ipynb
+    - file: visualization.ipynb
+    - file: published-data.ipynb
   - caption: API Docs
     chapters:
-      - url: https://pyrfume.readthedocs.io/en/latest/py-modindex.html
+    - url: https://pyrfume.readthedocs.io/en/latest/py-modindex.html
