@@ -4,6 +4,7 @@ parts:
   - caption: Tutorial
     numbered: True
     chapters:
+    - file: design-scheme.ipynb
     - file: your-data.ipynb
     - file: featurization.ipynb
     - file: visualization.ipynb
