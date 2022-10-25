@@ -1,3 +1,3 @@
 import setuptools
 
-setuptools.setup(name='pyrfume')
+setuptools.setup(name="pyrfume")

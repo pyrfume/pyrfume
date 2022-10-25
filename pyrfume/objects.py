@@ -1,6 +1,7 @@
 import json
-import numpy as np
 import urllib
+
+import numpy as np
 
 
 class Mixture(object):
@@ -9,7 +10,7 @@ class Mixture(object):
     candidate molecules in the mixture.
     """
 
-    def __init__(self, C: int, components: list=None):
+    def __init__(self, C: int, components: list = None):
         """
         Builds odorant from a list of components.
         """
@@ -20,7 +21,7 @@ class Mixture(object):
 
     C = None  # Number of components from which to choose.
 
-    def components_vector(self, all_components: list=None, normalize: float=0):
+    def components_vector(self, all_components: list = None, normalize: float = 0):
 
         vector = np.zeros(self.C)
         for component in self.components:
@@ -202,7 +203,9 @@ class Component(object):
     A single molecule, which may or may not be present in an odorant.
     """
 
-    def __init__(self, component_id: int, name: str, cas: str, percent: float, solvent: "Component"):
+    def __init__(
+        self, component_id: int, name: str, cas: str, percent: float, solvent: "Component"
+    ):
         """
         Components are defined by a component_id from the Bushdid et al
         supplemental material, a name, a CAS number, a percent dilution,

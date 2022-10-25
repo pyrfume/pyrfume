@@ -14,51 +14,43 @@
 # ---
 
 # +
-# Needed for all table stuff
 import pandas as pd
-
-# Needed for all plotting
+import plotly
 import plotly.graph_objs as go
-
-# Needed for offline stuff in the notebook
 from plotly.offline import init_notebook_mode, iplot
+from plotly.plotly import plot
+
 init_notebook_mode()
 
 # Needed to make figures on the web
-import plotly
-plotly.tools.set_credentials_file(username='rgerkin', api_key='DdQKMmvH8CMKvgNpBccy')
-plotly.tools.set_config_file(world_readable=True,
-                             sharing='public')
-from plotly.plotly import plot
+plotly.tools.set_credentials_file(username="rgerkin", api_key="DdQKMmvH8CMKvgNpBccy")
+plotly.tools.set_config_file(world_readable=True, sharing="public")
 
-# +
 # Load the data
-df = pd.read_csv('data/Mainland Odor Cabinet with CIDs.csv').groupby('CID').first()
+df = pd.read_csv("data/Mainland Odor Cabinet with CIDs.csv").groupby("CID").first()
 
 # The scatter plots themselves
 data = [
     go.Scatter(
-                    x=df[df['SourcedFrom'] == i]['Price'],
-                    y=df[df['SourcedFrom'] == i]['MW'],
-                    text=df[df['SourcedFrom'] == i]['ChemicalName'],
-                    mode='markers',
-                    opacity=0.7,
-                    marker={
-                        'size': 15,
-                        'line': {'width': 0.5, 'color': 'white'}
-                    },
-                    name=i
-                ) for i in df['SourcedFrom'].unique()
+        x=df[df["SourcedFrom"] == i]["Price"],
+        y=df[df["SourcedFrom"] == i]["MW"],
+        text=df[df["SourcedFrom"] == i]["ChemicalName"],
+        mode="markers",
+        opacity=0.7,
+        marker={"size": 15, "line": {"width": 0.5, "color": "white"}},
+        name=i,
+    )
+    for i in df["SourcedFrom"].unique()
 ]
 
-# The axes, etc.  
+# The axes, etc.
 layout = go.Layout(
-                xaxis={'type': 'log', 'title': 'Price'},
-                yaxis={'type': 'log', 'title': 'Molecular Weight'},
-                margin={'l': 40, 'b': 40, 't': 10, 'r': 10},
-                legend={'x': 0, 'y': 1},
-                hovermode='closest'
-            )
+    xaxis={"type": "log", "title": "Price"},
+    yaxis={"type": "log", "title": "Molecular Weight"},
+    margin={"l": 40, "b": 40, "t": 10, "r": 10},
+    legend={"x": 0, "y": 1},
+    hovermode="closest",
+)
 # -
 
 # Make an interactive version in the notebook

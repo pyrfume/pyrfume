@@ -5,6 +5,7 @@ from scipy.spatial.distance import pdist, squareform
 from sklearn.preprocessing import StandardScaler
 
 import pyrfume
+
 from . import features
 from .base import DEFAULT_DATA_PATH
 

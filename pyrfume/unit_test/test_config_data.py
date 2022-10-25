@@ -1,26 +1,27 @@
-from pathlib import Path
 import unittest
+from pathlib import Path
+
 
 class DataAndConfigTestCase(unittest.TestCase):
-
     def test_init_reset_config(self):
         from pyrfume import init_config, reset_config
+
         init_config(False)
         reset_config()
         init_config(True)
-        
+
     def test_read_write_config(self):
         from pyrfume import read_config, write_config
+
         write_config("PATHS", "a", "b")
         self.assertEqual(read_config("PATHS", "a"), "b")
 
     def test_data_path(self):
-        from pyrfume import set_data_path, get_data_path
-        from pyrfume.base import PACKAGE_DIR, DEFAULT_DATA_PATH
-        import os
+        from pyrfume import get_data_path, set_data_path
+        from pyrfume.base import DEFAULT_DATA_PATH, PACKAGE_DIR
 
         curr_data_path = get_data_path()
-        
+
         path_not_exists = PACKAGE_DIR / "THIS_IS_AN_INVALID_PATH"
         self.assertRaises(Exception, set_data_path, path_not_exists, create=False)
         self.assertRaises(Exception, get_data_path, path_not_exists, create=False)
@@ -38,15 +39,17 @@ class DataAndConfigTestCase(unittest.TestCase):
         set_data_path(curr_data_path)
 
     def test_load_data(self):
-        import pickle, os
-        from pyrfume.base import DEFAULT_DATA_PATH
-        from pyrfume import load_data, save_data
+        import os
+
         import pandas as pd
 
-        data = {'col1': [1, 2], 'col2': [3, 4]}
+        from pyrfume import load_data, save_data
+        from pyrfume.base import DEFAULT_DATA_PATH
+
+        data = {"col1": [1, 2], "col2": [3, 4]}
         file_path = DEFAULT_DATA_PATH / "data.pkl"
         path_not_exists = DEFAULT_DATA_PATH / "THIS_IS_AN_INVALID_PATH"
-        
+
         self.assertRaises(Exception, save_data, data, path_not_exists)
         save_data(data, file_path)
 
@@ -58,7 +61,7 @@ class DataAndConfigTestCase(unittest.TestCase):
 
         df = pd.DataFrame(data)
         save_data(df, file_path)
-        #with open(file_path, "w") as f:
+        # with open(file_path, "w") as f:
         #    f.write("0,1,2,3\n0,1,2,3")
 
         data_gain = load_data(file_path)
@@ -66,12 +69,14 @@ class DataAndConfigTestCase(unittest.TestCase):
         for index1 in range(len(data_gain.values)):
             for index2 in range(len(data_gain.values[index1])):
                 self.assertEqual(data_gain.values[index1][index2], df.values[index1][index2])
-                
+
         os.remove(file_path)
 
     def test_save_data(self):
-        from pyrfume.base import DEFAULT_DATA_PATH
+        from pyrfume.base import (  # noqa: F401 (not sure what this is for? -- TODO)
+            DEFAULT_DATA_PATH,
+        )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

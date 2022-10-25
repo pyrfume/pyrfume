@@ -1,17 +1,9 @@
-import io
-import warnings
-
 import matplotlib.pyplot as plt
-import numpy as np
-import pandas as pd
 import plotly.graph_objs as go
 from ipywidgets import Image, Layout, VBox
 
 import pyrfume
 from pyrfume.odorants import smiles_to_image
-
-from rdkit import Chem
-from rdkit.Chem import Draw
 
 
 def mpl_embedding(
@@ -43,7 +35,9 @@ def mpl_embedding(
         ax.set_title(title)
 
 
-def plotly_embedding(embedding, features=None, show_features=None, colors=None, colorscale='rainbow'):
+def plotly_embedding(
+    embedding, features=None, show_features=None, colors=None, colorscale="rainbow"
+):
     """
     params:
         embedding: A dataframe wrapped around e.g. a fitted TSNE object, with an index of CIDs
@@ -56,10 +50,12 @@ def plotly_embedding(embedding, features=None, show_features=None, colors=None, 
         # Only retain those rows corresponding to odorants in the embedding
     features = features.loc[embedding.index]
     show_features = show_features or list(features)
+
     def format_features(col):
-        return "%s: %s" % (index_name, col.values.split('<br>'))
+        return "%s: %s" % (index_name, col.values.split("<br>"))
+
     try:
-        index_name = features.index.name or 'Index'
+        index_name = features.index.name or "Index"
         names = (
             features.loc[:, show_features]
             .reset_index()
@@ -85,7 +81,7 @@ def plotly_embedding(embedding, features=None, show_features=None, colors=None, 
             "colorscale": colorscale,
         },
     )
-    
+
     # The axes, etc.
     layout = go.Layout(
         xaxis={"type": "linear", "title": "", "showline": False, "showticklabels": False},
@@ -100,7 +96,7 @@ def plotly_embedding(embedding, features=None, show_features=None, colors=None, 
     )
 
     fig = go.FigureWidget(data=[scatter], layout=layout)
-    fig.layout.hovermode = 'closest'
+    fig.layout.hovermode = "closest"
 
     # The 2D drawing of the molecule
     image_widget = Image(

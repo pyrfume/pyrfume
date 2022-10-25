@@ -14,20 +14,22 @@
 # ---
 
 import pandas as pd
+
 import pyrfume
-original = pyrfume.load_data('physicochemical/AllDragon-20190730-mayhew.csv')
+from pyrfume import odorants
+
+original = pyrfume.load_data("physicochemical/AllDragon-20190730-mayhew.csv")
 original.head()
 
-new = pyrfume.load_data('physicochemical/ExtraEight.txt', delimiter='\t')
-new = new.set_index('NAME').sort_index()
-new.index.name = 'PubChemID'
+new = pyrfume.load_data("physicochemical/ExtraEight.txt", delimiter="\t")
+new = new.set_index("NAME").sort_index()
+new.index.name = "PubChemID"
 new.index
 
-from pyrfume import odorants
 infos = odorants.from_cids(new.index)
 for info in infos:
-    new.loc[info['CID'], 'SMILES'] = info['IsomericSMILES']
-new = new[['SMILES']+[x for x in list(original) if x != 'SMILES']]
+    new.loc[info["CID"], "SMILES"] = info["IsomericSMILES"]
+new = new[["SMILES"] + [x for x in list(original) if x != "SMILES"]]
 new.head()
 
 assert list(original) == list(new)
@@ -36,4 +38,4 @@ df = pd.concat([original, new])
 df = df.groupby(level=0).first()  # Drop duplicate PubChem IDs
 df.shape
 
-pyrfume.save_data(df, 'physicochemical/AllDragon.csv')
+pyrfume.save_data(df, "physicochemical/AllDragon.csv")

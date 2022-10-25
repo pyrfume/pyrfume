@@ -1,3 +1,2 @@
 from .base import *
-from .odorants import get_cids, from_cids
-
+from .odorants import from_cids, get_cids

@@ -14,17 +14,18 @@
 # ---
 
 import os
-import pandas as pd
-import pyrfume
-from pyrfume import snitz, odorants
 
-file_path = os.path.join(pyrfume.DATA, 'snitz', 'Snitz144.csv')
+import pandas as pd
+
+import pyrfume
+
+file_path = os.path.join(pyrfume.DATA, "snitz", "Snitz144.csv")
 snitz_data_raw = pd.read_csv(file_path)
 
-results = odorants.get_cids(snitz_data_raw['CAS'], kind='name', verbose=False)
+results = pyrfume.odorants.get_cids(snitz_data_raw["CAS"], kind="name", verbose=False)
 
-snitz_data = pd.Series(results, name='CID').to_frame().join(snitz_data_raw.set_index('CAS'))
+snitz_data = pd.Series(results, name="CID").to_frame().join(snitz_data_raw.set_index("CAS"))
 snitz_data.head()
 
-file_path = os.path.join(pyrfume.DATA, 'snitz', 'snitz.csv')
+file_path = os.path.join(pyrfume.DATA, "snitz", "snitz.csv")
 snitz_data.to_csv(file_path)

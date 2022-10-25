@@ -27,8 +27,7 @@ def parse_summary_for_odor(summary):
 def get_physical_description(cid):
     url = (
         "https://pubchem.ncbi.nlm.nih.gov/rest/pug_view/data/compound/%d/JSON?heading="
-        "Physical+Description"
-        % cid
+        "Physical+Description" % cid
     )
     result = requests.get(url)
     try:
@@ -63,8 +62,7 @@ def parse_physical_description_for_odor(physical_description):
 def get_ghs_classification(cid):
     url = (
         "https://pubchem.ncbi.nlm.nih.gov/rest/pug_view/data/compound/%d/JSON?heading=GHS"
-        "+Classification"
-        % cid
+        "+Classification" % cid
     )
     result = requests.get(url)
     try:
@@ -140,33 +138,36 @@ def parse_ghs_classification_for_odor(
 
 def get_strings(annotation):
     strings = []
-    for x in annotation['Data']:
-        for y in x['Value']['StringWithMarkup']:
-            strings.append(y['String'])
+    for x in annotation["Data"]:
+        for y in x["Value"]["StringWithMarkup"]:
+            strings.append(y["String"])
     return strings
+
 
 def update_results(records, results):
     # Iterate through the list of annotations
-    for annotation in tqdm(records['Annotations']['Annotation']):
+    for annotation in tqdm(records["Annotations"]["Annotation"]):
         try:
             # Get CIDs for the current record
-            cids = annotation['LinkedRecords']['CID']
-        except:
+            cids = annotation["LinkedRecords"]["CID"]
+        except Exception:
             # If they are none then just move to the next annoation
             pass
         else:
             # If there are CIDs then extract the corresponding record content
             # Iterate through the actual text of the data
             strings = get_strings(annotation)
-            
+
             # Associate with each of the associated CIDs
             for cid in cids:
                 results[cid] = (results.get(cid) or []) + strings
 
 
 def get_records(heading, page):
-    url = (f"https://pubchem.ncbi.nlm.nih.gov/rest/pug_view/annotations/heading/"
-           f"JSON?heading_type=Compound&heading={heading}&page={page}")
+    url = (
+        f"https://pubchem.ncbi.nlm.nih.gov/rest/pug_view/annotations/heading/"
+        f"JSON?heading_type=Compound&heading={heading}&page={page}"
+    )
     response = requests.get(url)
     records = response.json()
     return records
@@ -180,10 +181,10 @@ def get_results(heading):
     # Update results with the parsed output of the first page
     update_results(page_1_records, results)
     # Check how many total pages the response has
-    n_pages = page_1_records['Annotations']['TotalPages']
-    
+    n_pages = page_1_records["Annotations"]["TotalPages"]
+
     # Iterate through the remaining pages, if any
-    p_bar = trange(2, n_pages+1)
+    p_bar = trange(2, n_pages + 1)
     for page in p_bar:
         page_n_records = get_records(heading, page)
         update_results(page_n_records, results)

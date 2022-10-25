@@ -14,20 +14,22 @@
 # ---
 
 import os
+
 import pandas as pd
+
 import pyrfume
-from pyrfume import odorants, dravnieks
+from pyrfume import dravnieks, odorants
 
 cas, descriptors, data = dravnieks.get_data()
 drav = pd.DataFrame.from_dict(data).T.round(2)
 
 # Turn CAS into CIDs
 cas_list = list(data.keys())
-results = odorants.get_cids(cas_list, kind='name', verbose=False)
+results = odorants.get_cids(cas_list, kind="name", verbose=False)
 
-drav = pd.Series(results, name='CID').to_frame().join(drav)
+drav = pd.Series(results, name="CID").to_frame().join(drav)
 drav.head()
 
 # Create a new file with CIDs and store here in `cids` dictionary
-file_path = os.path.join(pyrfume.DATA, 'dravnieks', 'dravnieks.csv')
+file_path = os.path.join(pyrfume.DATA, "dravnieks", "dravnieks.csv")
 drav.to_csv(file_path)
