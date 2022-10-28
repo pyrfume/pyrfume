@@ -150,12 +150,13 @@ def show_files(archive_name: str, remote: bool = None, raw: bool = False):
 def resolve_lfs(df: pd.DataFrame) -> pd.DataFrame:
     """Resolve the full dataframe if the current one is a pointer to the real data."""
     if "redirect" in df.index.name.lower():
-        match = re.search("(?<=sha256:).*$", df.index[0])
-        if match:
-            sha = match.group(0)
-            lookup = load_data("lfs-cache.csv")
+        sha = df.index[0])
+        lookup = load_data("lfs-cache.csv")
+        try:
             url = lookup.loc[sha, "url"]
-            df = pd.read_csv(url, index_col=0)
+        except KeyError:
+            raise KeyError(f"Could not find {sha} in the large file cache.")
+        df = pd.read_csv(url, index_col=0)
     return df
 
 
