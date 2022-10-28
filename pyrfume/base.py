@@ -148,8 +148,8 @@ def show_files(archive_name: str, remote: bool = None, raw: bool = False):
 
 
 def resolve_lfs(df: pd.DataFrame) -> pd.DataFrame:
-    """Resolve the full dataframe if the current one is a git-LFS pointer files."""
-    if "git-lfs" in (df.index.name or ""):
+    """Resolve the full dataframe if the current one is a pointer to the real data."""
+    if "redirect" in df.index.name.lower():
         match = re.search("(?<=sha256:).*$", df.index[0])
         if match:
             sha = match.group(0)
