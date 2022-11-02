@@ -139,8 +139,11 @@ def parse_ghs_classification_for_odor(
 def get_strings(annotation):
     strings = []
     for x in annotation["Data"]:
-        for y in x["Value"]["StringWithMarkup"]:
-            strings.append(y["String"])
+        try:
+            for y in x["Value"]["StringWithMarkup"]:
+                strings.append(y["String"])
+        except KeyError:
+            print(x["Value"])
     return strings
 
 
