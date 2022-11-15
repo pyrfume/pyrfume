@@ -33,6 +33,6 @@ Just run `./develop.sh` to get started with developing `pyrfume`.
 
 ### [Data Curation Status](http://status.pyrfume.org)
 
-### [Docs](https://pyrfume.readthedocs.io/)
+### [Docs](http://docs.pyrfume.org)
 
 *Licensing/Copyright*: Data is provided as-is.  Licensing information for individual datasets is available in the data repository.  Takedown requests for datasets may be directed to admin at pyrfume dot org.  
