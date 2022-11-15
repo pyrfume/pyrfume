@@ -4,10 +4,12 @@ parts:
   - caption: Tutorial
     numbered: True
     chapters:
+    - file: design-scheme.ipynb
     - file: your-data.ipynb
     - file: featurization.ipynb
     - file: visualization.ipynb
     - file: published-data.ipynb
+    - file: case-study.ipynb
   - caption: API Docs
     chapters:
     - url: https://pyrfume.readthedocs.io/en/latest/py-modindex.html
