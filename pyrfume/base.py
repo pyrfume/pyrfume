@@ -149,7 +149,7 @@ def show_files(archive_name: str, remote: bool = None, raw: bool = False):
 
 def resolve_lfs(df: pd.DataFrame) -> pd.DataFrame:
     """Resolve the full dataframe if the current one is a pointer to the real data."""
-    if "redirect" in df.index.name.lower():
+    if df.index.name and "redirect" in df.index.name.lower():
         sha = df.index[0]
         lookup = load_data("lfs-cache.csv")
         try:

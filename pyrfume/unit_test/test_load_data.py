@@ -13,7 +13,7 @@ class DataLoadRemoteTestCase(unittest.TestCase):
         pyrfume.load_data("snitz_2013/molecules.csv")
 
     def test_load_ravia_2020(self):
-        pyrfume.load_data("ravia_2020/behavior1.csv")
+        pyrfume.load_data("ravia_2020/behavior_1.csv")
         pyrfume.load_manifest("ravia_2020")
 
     @unittest.skipIf("spike" not in platform.node(), "Only tested on Spike")

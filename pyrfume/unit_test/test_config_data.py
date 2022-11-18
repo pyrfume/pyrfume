@@ -61,14 +61,13 @@ class DataAndConfigTestCase(unittest.TestCase):
 
         df = pd.DataFrame(data)
         save_data(df, file_path)
-        # with open(file_path, "w") as f:
-        #    f.write("0,1,2,3\n0,1,2,3")
 
-        data_gain = load_data(file_path)
+        data_again = load_data(file_path)
 
-        for index1 in range(len(data_gain.values)):
-            for index2 in range(len(data_gain.values[index1])):
-                self.assertEqual(data_gain.values[index1][index2], df.values[index1][index2])
+        for index1 in range(len(data_again.values)):
+            for index2 in range(len(data_again.values[index1])):
+                self.assertEqual(data_again.values[index1][index2],
+                                 df.values[index1][index2])
 
         os.remove(file_path)
 
