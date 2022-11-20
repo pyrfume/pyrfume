@@ -2,7 +2,6 @@ import configparser
 import json
 import logging
 import pickle
-import re
 import tempfile
 from pathlib import Path
 from pprint import pprint
