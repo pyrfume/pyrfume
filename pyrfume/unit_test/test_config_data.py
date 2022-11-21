@@ -66,8 +66,7 @@ class DataAndConfigTestCase(unittest.TestCase):
 
         for index1 in range(len(data_again.values)):
             for index2 in range(len(data_again.values[index1])):
-                self.assertEqual(data_again.values[index1][index2],
-                                 df.values[index1][index2])
+                self.assertEqual(data_again.values[index1][index2], df.values[index1][index2])
 
         os.remove(file_path)
 

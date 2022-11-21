@@ -24,7 +24,7 @@ class MixtureTestCase(unittest.TestCase):
         molecule = Molecule(cid, "test_mol", True)
         self.assertIsNone(molecule.molarity)
         molecule.molecular_weight = pq.Quantity(502.1, pq.g / pq.mol)
-        molecule.density = pq.Quantity(501.9982, pq.g / pq.cm**3)
+        molecule.density = pq.Quantity(501.9982, pq.g / pq.cm ** 3)
         self.assertAlmostEqual(molecule.molarity.item(), 999.797251, 3)
 
         chemical_order = ChemicalOrder(molecule, vendor, "", 0.9, None)

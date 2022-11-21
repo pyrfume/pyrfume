@@ -23,7 +23,7 @@ def mackay(vp):
     else:
         er = 0
     # Attach units
-    er *= pq.mol / (pq.m**2 * pq.s)
+    er *= pq.mol / (pq.m ** 2 * pq.s)
     return er
 
 
@@ -42,20 +42,20 @@ def bernoulli(v=None, p=None, rho=None, g=9.8 * pq.m / (pq.s) ** 2, z=0, k=None)
     if rho is None:
         rho = Symbol("rho", real=True, positive=True)
     else:
-        rho = rho.rescale(pq.kg / (pq.m**3))
+        rho = rho.rescale(pq.kg / (pq.m ** 3))
         rho = float(rho.simplified)
     if k is None:
         k = Symbol("k", real=True, positive=True)
     else:
         k = k.rescale((pq.m / pq.s) ** 2)
         k = float(k.simplified)
-    result = solve((v**2) / 2 + g * z + p / rho - k, [v, p, rho], dict=True)
+    result = solve((v ** 2) / 2 + g * z + p / rho - k, [v, p, rho], dict=True)
     return result
 
 
 def venturi(rho=None, p1=None, p2=None, v1=None, v2=None):
     assert rho is not None
-    rho = rho.rescale(pq.kg / (pq.m**3))
+    rho = rho.rescale(pq.kg / (pq.m ** 3))
     rho = float(rho.simplified)
 
     if v1 is None:
@@ -79,12 +79,12 @@ def venturi(rho=None, p1=None, p2=None, v1=None, v2=None):
         p2 = p2.rescale(pq.Pa)
         p2 = float(p2.simplified)
 
-    result = solve(rho * (v2**2 - v1**2) / 2 - p1 + p2, [v1, v2, p1, p2], dict=True)
+    result = solve(rho * (v2 ** 2 - v1 ** 2) / 2 - p1 + p2, [v1, v2, p1, p2], dict=True)
     return result
 
 
 if __name__ == "__main__":
     # print(bernoulli(None, 10*pq.psi, 1.225*pq.kg/(pq.m**3)))
     print(
-        venturi(rho=1.225 * pq.kg / (pq.m**3), p1=10 * pq.psi, p2=1 * pq.psi, v1=10 * pq.m / pq.s)
+        venturi(rho=1.225 * pq.kg / (pq.m ** 3), p1=10 * pq.psi, p2=1 * pq.psi, v1=10 * pq.m / pq.s)
     )
