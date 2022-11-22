@@ -94,7 +94,7 @@ def localize_remote_data(rel_path: str, branch: str = "main", quiet: bool = Fals
             raise RemoteDataError("Could not get file at %s" % url)
         else:
             return None
-    target_path.parent.mkdir(exist_ok=True)
+    target_path.parent.mkdir(exist_ok=True, parents=True)
     with open(target_path, "wb") as f:
         f.write(response.content)
     return target_path
