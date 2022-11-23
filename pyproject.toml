@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pyrfume"
-version = "0.18.3"
+version = "0.18.4"
 description = "A validation library for human olfactory psychophysics research."
 authors = ["Rick Gerkin <rgerkin@asu.edu>"]
 license = "MIT"
