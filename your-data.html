@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>1. Standardizing your own data &#8212; Pyrfume: a python library for odorant-linked research</title>
+    <title>2. Standardizing Your Own Molecules &#8212; Pyrfume: a python library for odorant-linked research</title>
     
   <!-- Loaded before other Sphinx assets -->
   <link href="_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
@@ -52,8 +52,8 @@ const thebe_selector_output = ".output, .cell_output"
     <script async="async" src="_static/sphinx-thebe.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="2. Featurization for machine learning" href="featurization.html" />
-    <link rel="prev" title="Welcome to Pyrfume’s documentation!" href="README.html" />
+    <link rel="next" title="3. Featurization for Machine Learning" href="featurization.html" />
+    <link rel="prev" title="1. The Pyrfume-Data Design Scheme" href="design-scheme.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="None">
     
@@ -119,24 +119,34 @@ const thebe_selector_output = ".output, .cell_output"
  </span>
 </p>
 <ul class="current nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="design-scheme.html">
+   1. The Pyrfume-Data Design Scheme
+  </a>
+ </li>
  <li class="toctree-l1 current active">
   <a class="current reference internal" href="#">
-   1. Standardizing your own data
+   2. Standardizing Your Own Molecules
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="featurization.html">
-   2. Featurization for machine learning
+   3. Featurization for Machine Learning
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="visualization.html">
-   3. Visualization
+   4. Visualization
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="published-data.html">
-   4. Published Data: Working with the Pyrfume datasets
+   5. Published Data: Working with the Pyrfume Datasets
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="case-study.html">
+   6. Data Analysis with Pyrfume: A Case Study
   </a>
  </li>
 </ul>
@@ -302,7 +312,7 @@ title="Print to PDF"
         <div class="col pl-md-3 pl-lg-5 content-container">
             <!-- Table of contents that is only displayed when printing the page -->
             <div id="jb-print-docs-body" class="onlyprint">
-                <h1>Standardizing your own data</h1>
+                <h1>Standardizing Your Own Molecules</h1>
                 <!-- Table of contents -->
                 <div id="print-main-content">
                     <div id="jb-print-toc">
@@ -314,55 +324,45 @@ title="Print to PDF"
                 
               <div>
                 
-  <section class="tex2jax_ignore mathjax_ignore" id="standardizing-your-own-data">
-<h1><span class="section-number">1. </span>Standardizing your own data<a class="headerlink" href="#standardizing-your-own-data" title="Permalink to this headline">#</a></h1>
-<p>You may already have your own data, and you would like to link the odorants you’ve used in one dataset with those from other datasets, or simply be able to do analyses that require your odorants to be well-descibed of featurized.</p>
+  <section class="tex2jax_ignore mathjax_ignore" id="standardizing-your-own-molecules">
+<h1><span class="section-number">2. </span>Standardizing Your Own Molecules<a class="headerlink" href="#standardizing-your-own-molecules" title="Permalink to this headline">#</a></h1>
+<p>You may already have your own data, and you would like to link the odorants you’ve used in one dataset with those from other datasets, or simply be able to do analyses that require your odorants to be well-descibed or featurized. This section will walk you through the logic of standardizing odorant (molecule) identifiers. For researchers interested in contributing their data to the <code class="docutils literal notranslate"><span class="pre">Pyrfume-Data</span></code> repository, see <a class="reference internal" href="design-scheme.html"><span class="doc std std-doc">Part 1</span></a> for a comprehensive overivew of the arhive design standards.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>!pip install -q pyrfume  # Install pyrfume if it is not already installed
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">pyrfume</span>
 </pre></div>
 </div>
 </div>
 </div>
-<p><em>Pyrfume</em> operates under the principle that the proper identifier for a single odorant molecule (e.g. d-Limonene) is the PubChem compound ID (<a class="reference external" href="https://pubchem.ncbi.nlm.nih.gov/compound/440917">440917</a>), for a single (known) mixture (e.g. light mineral oil) is the PubChem substance ID (<a class="reference external" href="https://pubchem.ncbi.nlm.nih.gov/substance/402315722">402315722</a>).</p>
+<p><code class="docutils literal notranslate"><span class="pre">Pyrfume</span></code> operates under the principle that the proper identifier for a single odorant molecule (e.g. d-Limonene) is the PubChem compound ID (<a class="reference external" href="https://pubchem.ncbi.nlm.nih.gov/compound/440917">440917</a>), for a single (known) mixture (e.g. light mineral oil) is the PubChem substance ID (<a class="reference external" href="https://pubchem.ncbi.nlm.nih.gov/substance/402315722">402315722</a>).</p>
 <ul class="simple">
-<li><p>A PubChem compound ID uniquely identifiers a molecular structure (unlike a CAS registry number).</p></li>
+<li><p>A PubChem compound ID uniquely identifies a molecular structure (unlike a CAS registry number).</p></li>
 <li><p>A given structure resolves to only one PubChem ID (unlike a SMILES string which depends on implementation).</p></li>
 <li><p><a class="reference external" href="https://pubchem.ncbi.nlm.nih.gov/">PubChem</a> itself is indexed by these IDs and provides a wealth of additional records covering experimental data, computable properties, safety information, and other externally linked data.</p></li>
 </ul>
 <p>In order to get access to all of this information, and to link the <em>same molecule</em> across datasets, the first step is to obtain PubChem IDs (henceforth, CIDs) for the molecules in question.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;d-limonene&#39;</span><span class="p">,</span> <span class="s1">&#39;98-86-2&#39;</span><span class="p">,</span> <span class="s1">&#39;(+)-carvone&#39;</span><span class="p">,</span> <span class="s1">&#39;CCCCCC=O&#39;</span><span class="p">,</span> <span class="s1">&#39;GXANMBISFKBPEX-ARJAWSKDSA-N&#39;</span><span class="p">]</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;d-limonene&quot;</span><span class="p">,</span> <span class="s2">&quot;98-86-2&quot;</span><span class="p">,</span> <span class="s2">&quot;(+)-carvone&quot;</span><span class="p">,</span> <span class="s2">&quot;CCCCCC=O&quot;</span><span class="p">,</span> <span class="s2">&quot;GXANMBISFKBPEX-ARJAWSKDSA-N&quot;</span><span class="p">]</span>
 </pre></div>
 </div>
 </div>
 </div>
-<p>Above we have 5 different molecules, represented with a mix of names (with different annotations), CAS numbers, SMILES strings, and InChiKeys.  Your data may use one of these formats, or a mix of them, or some other format entirely.  The <a class="reference external" href="https://pubchem.ncbi.nlm.nih.gov/idexchange/idexchange.cgi">PubChem exchange identifier</a> service can do a good job of converting between (some of) these format, or identifying potential CIDs.  Pyrfume does the extra work of auto-identifying the current identifier, checking for alternative conversions, and providing information about names that did not match or had multiple matches.</p>
+<p>Above we have 5 different molecules, represented with a mix of names (with different annotations), CAS numbers, SMILES strings, and InChiKeys.  Your data may use one of these formats, or a mix of them, or some other format entirely.  The <a class="reference external" href="https://pubchem.ncbi.nlm.nih.gov/idexchange/idexchange.cgi">PubChem exchange identifier</a> service can do a good job of converting between (some of) these format, or identifying potential CIDs.  <code class="docutils literal notranslate"><span class="pre">Pyrfume</span></code> does the extra work of auto-identifying the current identifier, checking for alternative conversions, and providing information about names that did not match or had multiple matches.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pyrfume</span> <span class="kn">import</span> <span class="n">get_cids</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pyrfume</span> <span class="kn">import</span> <span class="n">get_cids</span>
+
 <span class="n">cids</span> <span class="o">=</span> <span class="n">get_cids</span><span class="p">(</span><span class="n">names</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
-<div class="cell_output docutils container">
-<script type="application/vnd.jupyter.widget-view+json">
-{"model_id": "e5575f4b17e6451eaeedb6ec472aa320", "version_major": 2, "version_minor": 0}
-</script></div>
 </div>
 <p>The process above can be a little bit slow (resolving only a few identifers per second) because the PubChem database itself is not indexed by most of these (only CIDs and InChiKeys).  Still, it returns a dictionary of unique identifiers (CIDs) for each original identifier:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cids</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cids</span>
 </pre></div>
 </div>
 </div>
@@ -376,10 +376,10 @@ title="Print to PDF"
 </div>
 </div>
 </div>
-<p>Which looks a bit nicer as a Pandas series</p>
+<p>Which looks a bit nicer as a Pandas series:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cids</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">cids</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cids</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">cids</span><span class="p">)</span>
 <span class="n">cids</span>
 </pre></div>
 </div>
@@ -398,23 +398,21 @@ dtype: int64
 <p>Now that you have unique identifiers, you can access a lot more information:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pyrfume</span> <span class="kn">import</span> <span class="n">from_cids</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pyrfume</span> <span class="kn">import</span> <span class="n">from_cids</span>
+
 <span class="n">info</span> <span class="o">=</span> <span class="n">from_cids</span><span class="p">(</span><span class="n">cids</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
 <script type="application/vnd.jupyter.widget-view+json">
-{"model_id": "81169c924ed648b3bfbbb07b5a91f0e0", "version_major": 2, "version_minor": 0}
-</script><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Retrieving 0 through 4
-</pre></div>
+{"model_id": "37f34a8bcedb46a7b7f8706aad745864", "version_major": 2, "version_minor": 0}
+</script></div>
 </div>
-</div>
-</div>
-<p>That part was quite fast and scales very well, because PubChem is indexed by CID.  Pyrfume runs this in batches of 100 CIDs, and each batch takes about 1 second.</p>
+<p>That part was quite fast and scales very well, because PubChem is indexed by CID.  <code class="docutils literal notranslate"><span class="pre">Pyrfume</span></code> runs this in batches of 100 CIDs, and each batch takes about 1 second.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">molecules</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">info</span><span class="p">)</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;CID&#39;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">molecules</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">info</span><span class="p">)</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">&quot;CID&quot;</span><span class="p">)</span>
 <span class="n">molecules</span>
 </pre></div>
 </div>
@@ -492,11 +490,11 @@ dtype: int64
 </div></div></div>
 </div>
 <p>The above contains the original set of molecules, indexed by CID, but also containing some other useful identifiers that (unlike CAS or InChiKey) actually tell you something about the molecule in question just by looking at them.  The “IsomericSMILES” columns is standardized SMILES string computed using the same software (on PubChem) for every molecule.  The “<a class="reference external" href="https://en.wikipedia.org/wiki/IUPAC_nomenclature_of_organic_chemistry">IUPACName</a>” is similarly, a standardized nomenclature for molecle names.  “name” is simply the most common name (sometimes a trade name) of the molecule, as you might see it in a publication.  CID, IsomericSMILES, and IUPACName, all uniquely describe the molecule.  If you have multiple datasets from multiple sources, and you want to integrate them together, you can use stock Pandas functions for merging and/or concatenating data.</p>
-<p>This representation for a set of molecules will recur again and again in Part 4, when looking at external datasets.</p>
+<p>This representation for a set of molecules will recur again and again in <a class="reference internal" href="published-data.html"><span class="doc std std-doc">Part 5</span></a>, when looking at external datasets.</p>
 <p>Now that you have the molecules from your data in a standard format, save them to disk for future use:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pyrfume</span><span class="o">.</span><span class="n">save_data</span><span class="p">(</span><span class="n">molecules</span><span class="p">,</span> <span class="s1">&#39;my_data/molecules.csv&#39;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pyrfume</span><span class="o">.</span><span class="n">save_data</span><span class="p">(</span><span class="n">molecules</span><span class="p">,</span> <span class="s2">&quot;my_data/molecules.csv&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -504,12 +502,12 @@ dtype: int64
 <p>You can load them back again with:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">molecules</span> <span class="o">=</span> <span class="n">pyrfume</span><span class="o">.</span><span class="n">load_data</span><span class="p">(</span><span class="s1">&#39;my_data/molecules.csv&#39;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">molecules</span> <span class="o">=</span> <span class="n">pyrfume</span><span class="o">.</span><span class="n">load_data</span><span class="p">(</span><span class="s2">&quot;my_data/molecules.csv&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 </div>
-<p>You can change the location that Pyrfume uses for its (local copy of) the data archives with <code class="docutils literal notranslate"><span class="pre">pyrfume.set_data_path</span></code>.</p>
+<p>You can change the location that <code class="docutils literal notranslate"><span class="pre">Pyrfume</span></code> uses for its (local copy of) the data archives with <code class="docutils literal notranslate"><span class="pre">pyrfume.set_data_path</span></code>.</p>
 </section>
 
     <script type="text/x-thebe-config">
@@ -539,17 +537,17 @@ dtype: int64
                 
     <!-- Previous / next buttons -->
 <div class='prev-next-area'>
-    <a class='left-prev' id="prev-link" href="README.html" title="previous page">
+    <a class='left-prev' id="prev-link" href="design-scheme.html" title="previous page">
         <i class="fas fa-angle-left"></i>
         <div class="prev-next-info">
             <p class="prev-next-subtitle">previous</p>
-            <p class="prev-next-title">Welcome to Pyrfume’s documentation!</p>
+            <p class="prev-next-title"><span class="section-number">1. </span>The Pyrfume-Data Design Scheme</p>
         </div>
     </a>
     <a class='right-next' id="next-link" href="featurization.html" title="next page">
     <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title"><span class="section-number">2. </span>Featurization for machine learning</p>
+        <p class="prev-next-title"><span class="section-number">3. </span>Featurization for Machine Learning</p>
     </div>
     <i class="fas fa-angle-right"></i>
     </a>

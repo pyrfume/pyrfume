@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>3. Visualization &#8212; Pyrfume: a python library for odorant-linked research</title>
+    <title>4. Visualization &#8212; Pyrfume: a python library for odorant-linked research</title>
     
   <!-- Loaded before other Sphinx assets -->
   <link href="_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
@@ -52,8 +52,8 @@ const thebe_selector_output = ".output, .cell_output"
     <script async="async" src="_static/sphinx-thebe.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="4. Published Data: Working with the Pyrfume datasets" href="published-data.html" />
-    <link rel="prev" title="2. Featurization for machine learning" href="featurization.html" />
+    <link rel="next" title="5. Published Data: Working with the Pyrfume Datasets" href="published-data.html" />
+    <link rel="prev" title="3. Featurization for Machine Learning" href="featurization.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="None">
     
@@ -120,23 +120,33 @@ const thebe_selector_output = ".output, .cell_output"
 </p>
 <ul class="current nav bd-sidenav">
  <li class="toctree-l1">
+  <a class="reference internal" href="design-scheme.html">
+   1. The Pyrfume-Data Design Scheme
+  </a>
+ </li>
+ <li class="toctree-l1">
   <a class="reference internal" href="your-data.html">
-   1. Standardizing your own data
+   2. Standardizing Your Own Molecules
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="featurization.html">
-   2. Featurization for machine learning
+   3. Featurization for Machine Learning
   </a>
  </li>
  <li class="toctree-l1 current active">
   <a class="current reference internal" href="#">
-   3. Visualization
+   4. Visualization
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="published-data.html">
-   4. Published Data: Working with the Pyrfume datasets
+   5. Published Data: Working with the Pyrfume Datasets
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="case-study.html">
+   6. Data Analysis with Pyrfume: A Case Study
   </a>
  </li>
 </ul>
@@ -315,26 +325,29 @@ title="Print to PDF"
               <div>
                 
   <section class="tex2jax_ignore mathjax_ignore" id="visualization">
-<h1><span class="section-number">3. </span>Visualization<a class="headerlink" href="#visualization" title="Permalink to this headline">#</a></h1>
+<h1><span class="section-number">4. </span>Visualization<a class="headerlink" href="#visualization" title="Permalink to this headline">#</a></h1>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pyrfume</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pyrfume</span>
+
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
+
     <span class="n">sns</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">font_scale</span><span class="o">=</span><span class="mf">1.5</span><span class="p">)</span>
-    <span class="n">sns</span><span class="o">.</span><span class="n">set_style</span><span class="p">(</span><span class="s1">&#39;whitegrid&#39;</span><span class="p">)</span>
+    <span class="n">sns</span><span class="o">.</span><span class="n">set_style</span><span class="p">(</span><span class="s2">&quot;whitegrid&quot;</span><span class="p">)</span>
 <span class="k">except</span><span class="p">:</span>
     <span class="k">pass</span>  <span class="c1"># Seaborn is not installed</span>
 
-<span class="n">molecules</span> <span class="o">=</span> <span class="n">pyrfume</span><span class="o">.</span><span class="n">load_data</span><span class="p">(</span><span class="s1">&#39;my_data/molecules.csv&#39;</span><span class="p">)</span>  <span class="c1"># Load the data from the last chapter</span>
+<span class="n">molecules</span> <span class="o">=</span> <span class="n">pyrfume</span><span class="o">.</span><span class="n">load_data</span><span class="p">(</span><span class="s2">&quot;my_data/molecules.csv&quot;</span><span class="p">)</span>  <span class="c1"># Load the data from the last chapter</span>
 </pre></div>
 </div>
 </div>
 </div>
-<p>Now that our molecules have standard representations (from Part 1), we can easily visualize them:</p>
+<p>Now that our molecules have standard representations (from Part 2), we can easily visualize them:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pyrfume.odorants</span> <span class="kn">import</span> <span class="n">display_molecules</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pyrfume.odorants</span> <span class="kn">import</span> <span class="n">display_molecules</span>
+
 <span class="n">display_molecules</span><span class="p">(</span><span class="n">molecules</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -346,7 +359,8 @@ title="Print to PDF"
 <p>Or we can ask where they live in low-dimensional spaces built from features, compared with other odorous molecules.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pyrfume.odorants</span> <span class="kn">import</span> <span class="n">embed_molecules</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pyrfume.odorants</span> <span class="kn">import</span> <span class="n">embed_molecules</span>
+
 <span class="n">acetophenone</span> <span class="o">=</span> <span class="n">molecules</span><span class="o">.</span><span class="n">loc</span><span class="p">[[</span><span class="mi">7410</span><span class="p">]]</span>
 <span class="n">embed_molecules</span><span class="p">(</span><span class="n">acetophenone</span><span class="p">)</span>
 </pre></div>
@@ -356,7 +370,7 @@ title="Print to PDF"
 <img alt="_images/visualization_5_0.png" src="_images/visualization_5_0.png" />
 </div>
 </div>
-<p>The above shows thousands of molecules from the Pyrfume database (black) and acetophenone in red, using a 2-dimensional <a class="reference external" href="https://umap-learn.readthedocs.io/en/latest/">UMAP embedding</a> built from those thousands of molecules.</p>
+<p>The above shows thousands of molecules from the <code class="docutils literal notranslate"><span class="pre">Pyrfume</span></code> database (black) and acetophenone in red, using a 2-dimensional <a class="reference external" href="https://umap-learn.readthedocs.io/en/latest/">UMAP embedding</a> built from those thousands of molecules.</p>
 </section>
 
     <script type="text/x-thebe-config">
@@ -390,13 +404,13 @@ title="Print to PDF"
         <i class="fas fa-angle-left"></i>
         <div class="prev-next-info">
             <p class="prev-next-subtitle">previous</p>
-            <p class="prev-next-title"><span class="section-number">2. </span>Featurization for machine learning</p>
+            <p class="prev-next-title"><span class="section-number">3. </span>Featurization for Machine Learning</p>
         </div>
     </a>
     <a class='right-next' id="next-link" href="published-data.html" title="next page">
     <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title"><span class="section-number">4. </span>Published Data: Working with the Pyrfume datasets</p>
+        <p class="prev-next-title"><span class="section-number">5. </span>Published Data: Working with the Pyrfume Datasets</p>
     </div>
     <i class="fas fa-angle-right"></i>
     </a>

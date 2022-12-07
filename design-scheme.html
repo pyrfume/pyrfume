@@ -1,0 +1,898 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>1. The Pyrfume-Data Design Scheme &#8212; Pyrfume: a python library for odorant-linked research</title>
+    
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" href="_static/styles/sphinx-book-theme.css?digest=5115cc725059bd94278eecd172e13a965bf8f5a9" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="_static/design-style.b7bb847fb20b106c3d81b95245e65545.min.css" />
+    
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/clipboard.min.js"></script>
+    <script src="_static/copybutton.js"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script src="_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="_static/sphinx-thebe.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="2. Standardizing Your Own Molecules" href="your-data.html" />
+    <link rel="prev" title="Welcome to Pyrfume’s documentation!" href="README.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+<!-- Checkboxes to toggle the left sidebar -->
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
+<label class="overlay overlay-navbar" for="__navigation">
+    <div class="visually-hidden">Toggle navigation sidebar</div>
+</label>
+<!-- Checkboxes to toggle the in-page toc -->
+<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
+<label class="overlay overlay-pagetoc" for="__page-toc">
+    <div class="visually-hidden">Toggle in-page Table of Contents</div>
+</label>
+<!-- Headers at the top -->
+<div class="announcement header-item noprint"></div>
+<div class="header header-item noprint"></div>
+
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<!-- Sidebar -->
+<div class="bd-sidebar noprint" id="site-navigation">
+    <div class="bd-sidebar__content">
+        <div class="bd-sidebar__top"><div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="index.html">
+      
+        <!-- `logo` is deprecated in Sphinx 4.0, so remove this when we stop supporting 3 -->
+        
+      
+      
+      <img src="_static/logo.png" class="logo" alt="logo">
+      
+      
+      <h1 class="site-logo" id="site-title">Pyrfume: a python library for odorant-linked research</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="README.html">
+                    Welcome to Pyrfume’s documentation!
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Tutorial
+ </span>
+</p>
+<ul class="current nav bd-sidenav">
+ <li class="toctree-l1 current active">
+  <a class="current reference internal" href="#">
+   1. The Pyrfume-Data Design Scheme
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="your-data.html">
+   2. Standardizing Your Own Molecules
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="featurization.html">
+   3. Featurization for Machine Learning
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="visualization.html">
+   4. Visualization
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="published-data.html">
+   5. Published Data: Working with the Pyrfume Datasets
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="case-study.html">
+   6. Data Analysis with Pyrfume: A Case Study
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  API Docs
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference external" href="https://pyrfume.readthedocs.io/en/latest/py-modindex.html">
+   https://pyrfume.readthedocs.io/en/latest/py-modindex.html
+  </a>
+ </li>
+</ul>
+
+    </div>
+</nav></div>
+        <div class="bd-sidebar__bottom">
+             <!-- To handle the deprecated key -->
+            
+            <div class="navbar_extra_footer">
+            Powered by <a href="https://jupyterbook.org">Jupyter Book</a>
+            </div>
+            
+        </div>
+    </div>
+    <div id="rtd-footer-container"></div>
+</div>
+
+
+          
+
+
+          
+<!-- A tiny helper pixel to detect if we've scrolled -->
+<div class="sbt-scroll-pixel-helper"></div>
+<!-- Main content -->
+<div class="col py-0 content-container">
+    
+    <div class="header-article row sticky-top noprint">
+        
+
+
+
+<div class="col py-1 d-flex header-article-main">
+    <div class="header-article__left">
+        
+        <label for="__navigation"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="right"
+title="Toggle navigation"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-bars"></i>
+  </span>
+
+</label>
+
+        
+    </div>
+    <div class="header-article__right">
+<div class="menu-dropdown menu-dropdown-launch-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Launch interactive content">
+      <i class="fas fa-rocket"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="https://mybinder.org/v2/gh/executablebooks/jupyter-book/master?urlpath=tree/design-scheme.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Launch on Binder"
+>
+  
+
+<span class="headerbtn__icon-container">
+  
+    <img src="_static/images/logo_binder.svg">
+  </span>
+<span class="headerbtn__text-container">Binder</span>
+</a>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+
+<button onclick="toggleFullScreen()"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="bottom"
+title="Fullscreen mode"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+<div class="menu-dropdown menu-dropdown-download-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Download this page">
+      <i class="fas fa-download"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="_sources/design-scheme.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Download source file"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="headerbtn__text-container">.ipynb</span>
+</a>
+
+      </li>
+      
+      <li>
+        
+<button onclick="printPdf(this)"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="left"
+title="Print to PDF"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="headerbtn__text-container">.pdf</span>
+</button>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+<label for="__page-toc"
+  class="headerbtn headerbtn-page-toc"
+  
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-list"></i>
+  </span>
+
+</label>
+
+    </div>
+</div>
+
+<!-- Table of contents -->
+<div class="col-md-3 bd-toc show noprint">
+    <div class="tocsection onthispage pt-5 pb-3">
+        <i class="fas fa-list"></i> Contents
+    </div>
+    <nav id="bd-toc-nav" aria-label="Page">
+        <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#manifest">
+   1.1. Manifest
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#code">
+   1.2. Code
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#raw-files">
+   1.3. Raw Files
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#processed-files">
+   1.4. Processed Files
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#object-files">
+     1.4.1. ‘Object’ Files
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#subject-files">
+     1.4.2. ‘Subject’ Files
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#summary">
+   1.5. Summary
+  </a>
+ </li>
+</ul>
+
+    </nav>
+</div>
+    </div>
+    <div class="article row">
+        <div class="col pl-md-3 pl-lg-5 content-container">
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1>The Pyrfume-Data Design Scheme</h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                        <div>
+                            <h2> Contents </h2>
+                        </div>
+                        <nav aria-label="Page">
+                            <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#manifest">
+   1.1. Manifest
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#code">
+   1.2. Code
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#raw-files">
+   1.3. Raw Files
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#processed-files">
+   1.4. Processed Files
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#object-files">
+     1.4.1. ‘Object’ Files
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#subject-files">
+     1.4.2. ‘Subject’ Files
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#summary">
+   1.5. Summary
+  </a>
+ </li>
+</ul>
+
+                        </nav>
+                    </div>
+                </div>
+            </div>
+            <main id="main-content" role="main">
+                
+              <div>
+                
+  <section class="tex2jax_ignore mathjax_ignore" id="the-pyrfume-data-design-scheme">
+<h1><span class="section-number">1. </span>The Pyrfume-Data Design Scheme<a class="headerlink" href="#the-pyrfume-data-design-scheme" title="Permalink to this headline">#</a></h1>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span>pip install -q pyrfume  # Install pyrfume <span class="k">if</span> it is not already installed
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pyrfume</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">pprint</span> <span class="kn">import</span> <span class="n">pprint</span>
+<span class="kn">from</span> <span class="nn">IPython.display</span> <span class="kn">import</span> <span class="n">Image</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">Pyrfume</span></code> data archives are maintained withing the <a class="reference external" href="https://github.com/pyrfume/pyrfume-data">Pyrfume-Data</a> repository.  Every curated archive in <code class="docutils literal notranslate"><span class="pre">Pyrfume-Data</span></code> conforms to a subject/object design framework, separating the odor objects from behavior of the subject(s) under study. Within this framework there are (up to) seven standard files that describe each data archive. However, the nuances of a particular experiment/dataset may occationally require deviating from these design standards by including other non-standard files. Each standard file is described below.</p>
+<section id="manifest">
+<h2><span class="section-number">1.1. </span>Manifest<a class="headerlink" href="#manifest" title="Permalink to this headline">#</a></h2>
+<p>Every <code class="docutils literal notranslate"><span class="pre">Pyrfume</span></code> data archive contains a a simple, standardized, machine-readable markup file called <span style="font-family: courier new">manifest.toml</span> that describes the data archive. Using the <a class="reference external" href="https://toml.io/en/">TOML</a> file format, archive manifests contain sections to cite and credit relevant sources (<span style="font-family: courier new">[source]</span>), list raw (<span style="font-family: courier new">[raw]</span>) and processed (<span style="font-family: courier new">[processed]</span>) data files included in the archive while also providing any important context or metadata for interpreting the data, and lists of any code used to obtain or process raw data (<span style="font-family: courier new">[code]</span>). In certain cases, intermediate data files may exist to simplify getting from the raw data to the final processed data. When applicable such files will be listed in the manifest under a <span style="font-family: courier new">[parsed]</span> section.</p>
+<p>As an example, the manifest for the <a class="reference external" href="https://academic.oup.com/chemse/article/44/3/173/5292343">Burton et al., 2022</a> archive is shown below.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">burton_manifest</span> <span class="o">=</span> <span class="n">pyrfume</span><span class="o">.</span><span class="n">load_manifest</span><span class="p">(</span><span class="s2">&quot;burton_2022&quot;</span><span class="p">)</span>
+<span class="n">pprint</span><span class="p">(</span><span class="n">burton_manifest</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">150</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{&#39;code&#39;: {&#39;main.py&#39;: &#39;Processing workflow&#39;},
+ &#39;parsed&#39;: {&#39;raw/XXXX_ROIPos.csv&#39;: &#39;X and Y coordinates for the centroids of each ROI (glom) in each experiment XXXX; exported from &#39;
+                                   &quot;odormappingdata_fullinfo_06_2021.mat file because Matlab &#39;table&#39; class is not Python readable&quot;},
+ &#39;processed&#39;: {&#39;behavior_1.csv&#39;: &#39;DeltaF response values of every ROI (glomerulus) for every odorant/mouse tested&#39;,
+               &#39;behavior_2.csv&#39;: &#39;Properties of diagnostic odorants with functionally-identified glomeruli. See main.py for full details&#39;,
+               &#39;behavior_3.csv&#39;: &#39;Properties of diagnostic odorants that consistently elicit sparse activation but did not meet the criteria for &#39;
+                                 &#39;functional identification. See main.py for full details&#39;,
+               &#39;behavior_4.csv&#39;: &#39;Paths to response maps saved in .csv form for every odorant/mouse combination tested&#39;,
+               &#39;molecules.csv&#39;: &#39;Information about odorant molecules used&#39;,
+               &#39;stimuli.csv&#39;: &#39;Maps stimuli to CID and odor concentrations used for each subject&#39;,
+               &#39;subjects.csv&#39;: &#39;Maps subject ID to mouse ID, olfactory bulb hemisphere, and ROI#&#39;},
+ &#39;raw&#39;: {&#39;raw/ID_glom_04_2022.mat&#39;: &#39;Data for functionally-identifiable glomeruli and diagnostic odorants. See main.py for full details&#39;,
+         &#39;raw/odormappingdata_fullinfo_06_2021.mat&#39;: &#39;All raw data except for odorant concentrations. See main.py for full details&#39;,
+         &#39;raw/odormappingdata_simple_05_2022.mat&#39;: &quot;Simplified version of &#39;fullinfo&#39; .mat file containig deltaF response matrices and odorant &quot;
+                                                   &#39;concentrations. See main.py for full details&#39;},
+ &#39;source&#39;: {&#39;authors&#39;: &#39;D Burton, M Wipfel, M Guo, TP Eiting, M Wachowiak&#39;,
+            &#39;doi&#39;: &#39;10.1093/chemse/bjz005&#39;,
+            &#39;tags&#39;: &#39;rodent;receptorResponse;academic&#39;,
+            &#39;title&#39;: &#39;A Novel Olfactometer for Efficient and Flexible Odorant Delivery&#39;}}
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="code">
+<h2><span class="section-number">1.2. </span>Code<a class="headerlink" href="#code" title="Permalink to this headline">#</a></h2>
+<p>Each archive also contains a a Python script of the data processing workflow called <span style="font-family: courier new">main.py</span>. In general, raw datasets will require some combination of wrangling, cleaning, and formatting to produce the standard processed files described below. Each <span style="font-family: courier new">main.py</span> file allows <code class="docutils literal notranslate"><span class="pre">Pyrfume</span></code> users to see exactly how raw data files have been processed or to reproduce/modify the processing pipeline.</p>
+<p>In certain cases, additional code may be included that was used to obtain raw data (e.g. when raw data was acquired by scraping a website).</p>
+</section>
+<section id="raw-files">
+<h2><span class="section-number">1.3. </span>Raw Files<a class="headerlink" href="#raw-files" title="Permalink to this headline">#</a></h2>
+<p>When availability and file sizes permit (i.e. files should be &lt;5 MB to be added directly), the raw data files associated with a dataset will be included in the <code class="docutils literal notranslate"><span class="pre">Pyrfume</span></code> archive.</p>
+<p>“Large” files (&gt;5 MB) can still be included for an archive by committing a representative file containing only a <a class="reference external" href="https://docs.python.org/3/library/hashlib.html">SHA256</a> hash of the real file and updating <span style="font-family: courier new">lfs-cache.csv</span> (located at the top level of the <code class="docutils literal notranslate"><span class="pre">Pyrfume-Data</span></code> repository) to have an additional row: that hash in the index and a URL to the actual file in the other column. The function <code class="docutils literal notranslate"><span class="pre">pyrfume.load_data</span></code> checks to see if the object that was loaded is a real file or a pointer to the real file.  If it is a pointer, it uses <span style="font-family: courier new">lfs-cache.csv</span> (which is just a table of such pointers and their respective URLs) and resolves to downloading whatever file it was pointing to. Using this approach, large files can be downloaded from an arbitrary URL (e.g. a Dropbox link or other GitHub repository) using <code class="docutils literal notranslate"><span class="pre">pyrfume.load_data</span></code> just as for files contained directly within an archive.</p>
+<p>File types for raw data will vary according to the nature of any given dataset, but typical file formats include CSV, Excel, PDF, TIFF (and other image file formats), and other common formats.</p>
+</section>
+<section id="processed-files">
+<h2><span class="section-number">1.4. </span>Processed Files<a class="headerlink" href="#processed-files" title="Permalink to this headline">#</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">Pyrfume</span></code> standard for generating the processed files for an archive is to save subject/object data as <a class="reference external" href="https://en.wikipedia.org/wiki/Comma-separated_values">CSV</a> text files. The purpose of each archive’s <span style="font-family: courier new"><a class="reference external" href="http://main.py">main.py</a></span> script is to start with the given raw data files and output the <span style="font-family: courier new">.csv</span> files described below, as appropriate. These files are the typical <code class="docutils literal notranslate"><span class="pre">Pyrfume</span></code> user’s resources for machine learning, modeling, and prediction.</p>
+<p>Several of these files are depicted in the figure below for a hypothetical (and simplified) experiment in which 2 odorants were tested on 2 animals, and data were collected across a total of 5 glomeruli.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">Image</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s2">&quot;schematic_2.png&quot;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">800</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/design-scheme_13_0.png" src="_images/design-scheme_13_0.png" />
+</div>
+</div>
+<section id="object-files">
+<h3><span class="section-number">1.4.1. </span>‘Object’ Files<a class="headerlink" href="#object-files" title="Permalink to this headline">#</a></h3>
+<p>At the object level, the most essential file, called <span style="font-family: courier new">stimuli.csv</span> is indexed on a stimulus ID and maps this ID to the chemical/molecular details of the odorants used. A stimulus could represent a single molecule, substance, or mixture, the applied concentration(s), and potentially other experimental conditions.</p>
+<p>In (typical) cases where at least one stimulus is a single molecule with known structure, the Pyrfume archive will also contain a file, <span style="font-family: courier new">molecules.csv</span>, that lists all molecules used in that dataset, with columns providing PubChem Compound IDs (CIDs), SMILES, common names, and IUPAC names. This file is useful for indexing the usage of each kind of molecule across datasets, and also for computing physicochemical features for each such molecule (software packages such as RDKit and Mordred compute these directly from a SMILES). When stimuli correspond to mixtures of unknown provenance, e.g. “cloves”, a unique stimulus ID is generated but in such cases it may not be possible to link it back to specific compounds in <span style="font-family: courier new">molecules.csv</span>.</p>
+<p>In cases where a dataset includes calculated or experimentally measured physicochemical properties of molecules (e.g. boiling point, vapor pressure, LogP, etc.), these may be included in <span style="font-family: courier new">physics.csv</span>, typically indexed on CID.  Collectively these files describe the odorant “object”.</p>
+<p>As an example, the first 5 rows of <span style="font-family: courier new">stimuli.csv</span> and <span style="font-family: courier new">molecules.csv</span> for the <a class="reference external" href="https://academic.oup.com/chemse/article/44/3/173/5292343">Burton et al., 2022</a> archive are shown below. In this case, each stimulus is an odorant (identified by CID) applied at a specified concentration.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">burton_stimuli</span> <span class="o">=</span> <span class="n">pyrfume</span><span class="o">.</span><span class="n">load_data</span><span class="p">(</span><span class="s2">&quot;burton_2022/stimuli.csv&quot;</span><span class="p">)</span>
+<span class="n">burton_stimuli</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>CID</th>
+      <th>Conc. (mols/L)</th>
+    </tr>
+    <tr>
+      <th>Stimulus</th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>-1_0</th>
+      <td>-1</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>1001_3.12e-13</th>
+      <td>1001</td>
+      <td>3.120000e-13</td>
+    </tr>
+    <tr>
+      <th>101010_9.38e-11</th>
+      <td>101010</td>
+      <td>9.384700e-11</td>
+    </tr>
+    <tr>
+      <th>10248_5.34e-12</th>
+      <td>10248</td>
+      <td>5.341713e-12</td>
+    </tr>
+    <tr>
+      <th>10315_5.57e-11</th>
+      <td>10315</td>
+      <td>5.570500e-11</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">burton_molecules</span> <span class="o">=</span> <span class="n">pyrfume</span><span class="o">.</span><span class="n">load_data</span><span class="p">(</span><span class="s2">&quot;burton_2022/molecules.csv&quot;</span><span class="p">)</span>
+<span class="n">burton_molecules</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>MolecularWeight</th>
+      <th>IsomericSMILES</th>
+      <th>IUPACName</th>
+      <th>name</th>
+    </tr>
+    <tr>
+      <th>CID</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>240</th>
+      <td>106.12</td>
+      <td>C1=CC=C(C=C1)C=O</td>
+      <td>benzaldehyde</td>
+      <td>benzaldehyde</td>
+    </tr>
+    <tr>
+      <th>261</th>
+      <td>72.11</td>
+      <td>CCCC=O</td>
+      <td>butanal</td>
+      <td>butyraldehyde</td>
+    </tr>
+    <tr>
+      <th>264</th>
+      <td>88.11</td>
+      <td>CCCC(=O)O</td>
+      <td>butanoic acid</td>
+      <td>butyric acid</td>
+    </tr>
+    <tr>
+      <th>273</th>
+      <td>102.18</td>
+      <td>C(CCN)CCN</td>
+      <td>pentane-1,5-diamine</td>
+      <td>pentane-1,5-diamine</td>
+    </tr>
+    <tr>
+      <th>323</th>
+      <td>146.14</td>
+      <td>C1=CC=C2C(=C1)C=CC(=O)O2</td>
+      <td>chromen-2-one</td>
+      <td>coumarin</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+</section>
+<section id="subject-files">
+<h3><span class="section-number">1.4.2. </span>‘Subject’ Files<a class="headerlink" href="#subject-files" title="Permalink to this headline">#</a></h3>
+<p>The subject side of the data is principally described in <span style="font-family: courier new">behavior.csv</span>, a long-format dataframe, indexed on stimulus ID. Note that within <code class="docutils literal notranslate"><span class="pre">Pyrfume</span></code>, “behavior” refers to any experimental (or computational) measurement/result. In cases where a study contains multiple experiments with distinct results, the archive will contain multiple behavior files, named <span style="font-family: courier new">behavior_1.csv</span>, <span style="font-family: courier new">behavior_2.csv</span>, etc. as needed. The contents of each behavior file will be specified in <span style="font-family: courier new">manifest.toml</span>.  For example, the (first 5 rows of the) a behavior file from the <a class="reference external" href="https://academic.oup.com/chemse/article/44/3/173/5292343">Burton et al., 2022</a> archive is shown below. In this example, the behavior is the DeltaF/F response ilicited by each stimulus for each subject tested.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">burton_behavior</span> <span class="o">=</span> <span class="n">pyrfume</span><span class="o">.</span><span class="n">load_data</span><span class="p">(</span><span class="s2">&quot;burton_2022/behavior_1.csv&quot;</span><span class="p">)</span>
+<span class="n">burton_behavior</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Subject</th>
+      <th>DeltaF</th>
+    </tr>
+    <tr>
+      <th>Stimulus</th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>-1_0</th>
+      <td>111L_001</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>-1_0</th>
+      <td>111L_002</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>-1_0</th>
+      <td>111L_003</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>-1_0</th>
+      <td>111L_004</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>-1_0</th>
+      <td>111L_005</td>
+      <td>0.0</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<p>This format, widely referred to as <a class="reference external" href="https://www.jstatsoft.org/article/view/v059i10">‘Tidy’</a>, or sometimes ‘Third normal form’,  can easily accommodate more complex, multi-level designs, and reduces both redundancy in data representation, as well as the unnecessary proliferation of files and tables. Conversion to formats that feel more natural for many experimentalists (i.e. tables of odorants x glomerular responses, with one table per condition) is accomplished easily with standard aggregation and pivoting steps, 1-2 lines of code in Python (via <a class="reference external" href="https://pandas.pydata.org/">Pandas</a>) or in R (via <a class="reference external" href="https://dplyr.tidyverse.org/">dplyr</a>).</p>
+<p>In cases where stimuli are administered to distinct subjects, a <span style="font-family: courier new">subjects.csv</span> file provides a mapping between a subject ID and that subject’s distinguishing features. A ‘subject’ could be a human (e.g. identified by age, gender, region, etc.) participating in an odor perception study or a glomerulus (e.g. identified by mouse, olfactory bulb hemisphere, etc.) being studied in a physiological experiment. Collectively <span style="font-family: courier new">subjects.csv</span> and <span style="font-family: courier new">behavior.csv</span> describe the “subject” of the experiment and its behavior(s).</p>
+<p>The (first 5 rows of) <span style="font-family: courier new">subjects.csv</span> for the <a class="reference external" href="https://academic.oup.com/chemse/article/44/3/173/5292343">Burton et al., 2022</a> archive are show below. In this example each subject is a glomerulus, identfied by as an ROI (with X and Y coordinates) within the left or right olfactory hemibulb of a particular mouse, tested in a particular experiment.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">burton_subjects</span> <span class="o">=</span> <span class="n">pyrfume</span><span class="o">.</span><span class="n">load_data</span><span class="p">(</span><span class="s2">&quot;burton_2022/subjects.csv&quot;</span><span class="p">)</span>
+<span class="n">burton_subjects</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Experiment</th>
+      <th>Mouse ID</th>
+      <th>Hemisphere</th>
+      <th>ROI#</th>
+      <th>Xpos</th>
+      <th>Ypos</th>
+    </tr>
+    <tr>
+      <th>Subject</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>111L_001</th>
+      <td>111L</td>
+      <td>111</td>
+      <td>L</td>
+      <td>1</td>
+      <td>-1561.389231</td>
+      <td>1328.850769</td>
+    </tr>
+    <tr>
+      <th>111L_002</th>
+      <td>111L</td>
+      <td>111</td>
+      <td>L</td>
+      <td>2</td>
+      <td>-1437.154286</td>
+      <td>858.602857</td>
+    </tr>
+    <tr>
+      <th>111L_003</th>
+      <td>111L</td>
+      <td>111</td>
+      <td>L</td>
+      <td>3</td>
+      <td>-1429.500000</td>
+      <td>1463.487692</td>
+    </tr>
+    <tr>
+      <th>111L_004</th>
+      <td>111L</td>
+      <td>111</td>
+      <td>L</td>
+      <td>4</td>
+      <td>-1349.130000</td>
+      <td>460.580000</td>
+    </tr>
+    <tr>
+      <th>111L_005</th>
+      <td>111L</td>
+      <td>111</td>
+      <td>L</td>
+      <td>5</td>
+      <td>-1207.525714</td>
+      <td>1703.125714</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+</section>
+</section>
+<section id="summary">
+<h2><span class="section-number">1.5. </span>Summary<a class="headerlink" href="#summary" title="Permalink to this headline">#</a></h2>
+<p>In sum, a typical complete, archived dataset in Pyrfume contains of at up to 7 of these “standard” files: <span style="font-family: courier new">manifest.toml</span>, <span style="font-family: courier new">main.py</span>, <span style="font-family: courier new">stimuli.csv</span>, <span style="font-family: courier new">molecules.csv</span>, <span style="font-family: courier new">behavior.csv</span>, <span style="font-family: courier new">subjects.csv</span>, and <span style="font-family: courier new">physics.csv</span>,  though the latter two are found only where applicable. The number of raw or parsed files will vary depending on the nuances of a particular dataset.</p>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            kernelName: "python3",
+            path: "./."
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+              </div>
+              
+            </main>
+            <footer class="footer-article noprint">
+                
+    <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+    <a class='left-prev' id="prev-link" href="README.html" title="previous page">
+        <i class="fas fa-angle-left"></i>
+        <div class="prev-next-info">
+            <p class="prev-next-subtitle">previous</p>
+            <p class="prev-next-title">Welcome to Pyrfume’s documentation!</p>
+        </div>
+    </a>
+    <a class='right-next' id="next-link" href="your-data.html" title="next page">
+    <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title"><span class="section-number">2. </span>Standardizing Your Own Molecules</p>
+    </div>
+    <i class="fas fa-angle-right"></i>
+    </a>
+</div>
+            </footer>
+        </div>
+    </div>
+    <div class="footer-content row">
+        <footer class="col footer"><p>
+  
+    By The Jupyter Book community<br/>
+  
+      &copy; Copyright 2022.<br/>
+</p>
+        </footer>
+    </div>
+    
+</div>
+
+
+      </div>
+    </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+
+
+  </body>
+</html>

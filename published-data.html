@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>4. Published Data: Working with the Pyrfume datasets &#8212; Pyrfume: a python library for odorant-linked research</title>
+    <title>5. Published Data: Working with the Pyrfume Datasets &#8212; Pyrfume: a python library for odorant-linked research</title>
     
   <!-- Loaded before other Sphinx assets -->
   <link href="_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
@@ -52,7 +52,8 @@ const thebe_selector_output = ".output, .cell_output"
     <script async="async" src="_static/sphinx-thebe.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="prev" title="3. Visualization" href="visualization.html" />
+    <link rel="next" title="6. Data Analysis with Pyrfume: A Case Study" href="case-study.html" />
+    <link rel="prev" title="4. Visualization" href="visualization.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="None">
     
@@ -119,23 +120,33 @@ const thebe_selector_output = ".output, .cell_output"
 </p>
 <ul class="current nav bd-sidenav">
  <li class="toctree-l1">
+  <a class="reference internal" href="design-scheme.html">
+   1. The Pyrfume-Data Design Scheme
+  </a>
+ </li>
+ <li class="toctree-l1">
   <a class="reference internal" href="your-data.html">
-   1. Standardizing your own data
+   2. Standardizing Your Own Molecules
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="featurization.html">
-   2. Featurization for machine learning
+   3. Featurization for Machine Learning
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="visualization.html">
-   3. Visualization
+   4. Visualization
   </a>
  </li>
  <li class="toctree-l1 current active">
   <a class="current reference internal" href="#">
-   4. Published Data: Working with the Pyrfume datasets
+   5. Published Data: Working with the Pyrfume Datasets
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="case-study.html">
+   6. Data Analysis with Pyrfume: A Case Study
   </a>
  </li>
 </ul>
@@ -301,7 +312,7 @@ title="Print to PDF"
         <div class="col pl-md-3 pl-lg-5 content-container">
             <!-- Table of contents that is only displayed when printing the page -->
             <div id="jb-print-docs-body" class="onlyprint">
-                <h1>Published Data: Working with the Pyrfume datasets</h1>
+                <h1>Published Data: Working with the Pyrfume Datasets</h1>
                 <!-- Table of contents -->
                 <div id="print-main-content">
                     <div id="jb-print-toc">
@@ -314,10 +325,10 @@ title="Print to PDF"
               <div>
                 
   <section class="tex2jax_ignore mathjax_ignore" id="published-data-working-with-the-pyrfume-datasets">
-<h1><span class="section-number">4. </span>Published Data: Working with the Pyrfume datasets<a class="headerlink" href="#published-data-working-with-the-pyrfume-datasets" title="Permalink to this headline">#</a></h1>
+<h1><span class="section-number">5. </span>Published Data: Working with the Pyrfume Datasets<a class="headerlink" href="#published-data-working-with-the-pyrfume-datasets" title="Permalink to this headline">#</a></h1>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pyrfume</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pyrfume</span>
 </pre></div>
 </div>
 </div>
@@ -325,7 +336,7 @@ title="Print to PDF"
 <p>Whether you want to build predictive models or simply organize data, it is essential to begin integrating across datasets and wherever possible bringing the largest datasets to bear on the problem.  Most breakthroughs <a class="reference external" href="https://academic.oup.com/chemse/article/doi/10.1093/chemse/bjab020/6226923?login=true">don’t come from new algorithms but from new, large datasets</a>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">bushdid_molecules</span> <span class="o">=</span> <span class="n">pyrfume</span><span class="o">.</span><span class="n">load_data</span><span class="p">(</span><span class="s1">&#39;bushdid_2014/molecules.csv&#39;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">bushdid_molecules</span> <span class="o">=</span> <span class="n">pyrfume</span><span class="o">.</span><span class="n">load_data</span><span class="p">(</span><span class="s2">&quot;bushdid_2014/molecules.csv&quot;</span><span class="p">)</span>
 <span class="n">bushdid_molecules</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -430,36 +441,35 @@ title="Print to PDF"
 </table>
 </div></div></div>
 </div>
-<p>The above shows the first 5 molecules (all 128 are in the full dataframe) from <a class="reference external" href="https://science.sciencemag.org/content/343/6177/1370.long">Bushdid et al, 2014</a> which looked at the perceptual discriminability of random mixtures in humans.  Even though this data was not on your disk, Pyrfume fell back to loading it remotely; future loads of the same data will come from your disk for speed.  The first thing to note is that the index and the first 5 columns are structured identically to what we generated in Part 1 from our own data.  ALL <em>pyrfume</em> datasets have this structure, whether there were obtained from supplemental figures and tables, excel files or pdfs, industrial databases, books, or papyrus scrolls.  Additional columns (such as the final 4 shown above) may also be present, on case-by-case basis, depending on what the authors chose to include in their source materials.</p>
+<p>The above shows the first 5 molecules (all 128 are in the full dataframe) from <a class="reference external" href="https://science.sciencemag.org/content/343/6177/1370.long">Bushdid et al, 2014</a> which looked at the perceptual discriminability of random mixtures in humans.  Even though this data was not on your disk, <code class="docutils literal notranslate"><span class="pre">Pyrfume</span></code> fell back to loading it remotely; future loads of the same data will come from your disk for speed.  The first thing to note is that the index and the first 5 columns are structured identically to what we generated in <a class="reference internal" href="your-data.html"><span class="doc std std-doc">Part 2</span></a> from our own data.  ALL <code class="docutils literal notranslate"><span class="pre">Pyrfume</span></code> datasets have this structure, whether there were obtained from supplemental figures and tables, excel files or pdfs, industrial databases, books, or papyrus scrolls.  Additional columns (such as the final 4 shown above) may also be present, on case-by-case basis, depending on what the authors chose to include in their source materials.</p>
 <p>What else has the <code class="docutils literal notranslate"><span class="pre">Pyrfume</span></code> project extracted from this data source?</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pyrfume</span><span class="o">.</span><span class="n">show_files</span><span class="p">(</span><span class="s1">&#39;bushdid_2014&#39;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pyrfume</span><span class="o">.</span><span class="n">show_files</span><span class="p">(</span><span class="s2">&quot;bushdid_2014&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{&#39;behavior&#39;: {&#39;csv&#39;: &#39;Triangle test results&#39;},
- &#39;main&#39;: {&#39;ipynb&#39;: &#39;Processing workflow&#39;},
- &#39;mixtures&#39;: {&#39;csv&#39;: &#39;Mixtures used&#39;},
- &#39;molecules&#39;: {&#39;csv&#39;: &#39;Molecules used&#39;}}
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{&#39;behavior.csv&#39;: &#39;Triangle test results&#39;,
+ &#39;molecules.csv&#39;: &#39;Molecules used&#39;,
+ &#39;stimuli.csv&#39;: &#39;Maps stimulus (Test UID) to composition of mixtures used&#39;}
 </pre></div>
 </div>
 </div>
 </div>
-<p>The above shows a manifest of files available.  Curated file names are simple and memorable (typically, “molecules”, “behavior”, “imaging”, etc.) which means you will often not even need to examine the manifest before retrieving the files you care about.  Importantly, every data archive contains at least one notebook (<a class="reference external" href="https://github.com/pyrfume/pyrfume-data/blob/master/bushdid_2014/main.ipynb"><code class="docutils literal notranslate"><span class="pre">main.ipynb</span></code></a>) which provides the full processing workflow going from the raw data provided in the original data source to the cleaned, standardized, organized and mutually compatible datasets provided by <em>Pyrfume</em>.</p>
+<p>The above shows a manifest of (processed) files available.  Curated file names are simple and memorable (typically, “molecules”, “behavior”, “stimuli”, etc.) which means you will often not even need to examine the manifest before retrieving the files you care about.  Importantly, every data archive contains at least one Python script (<a class="reference external" href="https://github.com/pyrfume/pyrfume-data/blob/master/bushdid_2014/main.py"><code class="docutils literal notranslate"><span class="pre">main.py</span></code></a>) which provides the full processing workflow going from the raw data provided in the original data source to the cleaned, standardized, organized and mutually compatible datasets provided by <code class="docutils literal notranslate"><span class="pre">Pyrfume</span></code>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">bushdid_mixtures</span> <span class="o">=</span> <span class="n">pyrfume</span><span class="o">.</span><span class="n">load_data</span><span class="p">(</span><span class="s1">&#39;bushdid_2014/mixtures.csv&#39;</span><span class="p">)</span>
-<span class="n">bushdid_behavior</span> <span class="o">=</span> <span class="n">pyrfume</span><span class="o">.</span><span class="n">load_data</span><span class="p">(</span><span class="s1">&#39;bushdid_2014/behavior.csv&#39;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">bushdid_stimuli</span> <span class="o">=</span> <span class="n">pyrfume</span><span class="o">.</span><span class="n">load_data</span><span class="p">(</span><span class="s2">&quot;bushdid_2014/stimuli.csv&quot;</span><span class="p">)</span>
+<span class="n">bushdid_behavior</span> <span class="o">=</span> <span class="n">pyrfume</span><span class="o">.</span><span class="n">load_data</span><span class="p">(</span><span class="s2">&quot;bushdid_2014/behavior.csv&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 </div>
-<p>Information about each mixture, including the CID (not provided in the original source data) is given in the mixtures file.</p>
+<p>Information about each stimulus (in this case a mixture), including the CID (not provided in the original source data) is given in the stimuli file.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">bushdid_mixtures</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">bushdid_stimuli</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -505,7 +515,7 @@ title="Print to PDF"
       <th>Molecule 30</th>
     </tr>
     <tr>
-      <th>Test UID</th>
+      <th>Stimulus</th>
       <th></th>
       <th></th>
       <th></th>
@@ -658,7 +668,7 @@ title="Print to PDF"
 <p>Finally, the human behavioral results for each mixture are provided in the behavior file.  How one chooses to join these tables to produce prediction target or otherwise explore the data is up to individual taste, but with standards in place it is much less work than it would have been with the source data alone!</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">bushdid_behavior</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">bushdid_behavior</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -685,7 +695,7 @@ title="Print to PDF"
       <th>Correct</th>
     </tr>
     <tr>
-      <th>Test UID</th>
+      <th>Stimulus</th>
       <th></th>
       <th></th>
     </tr>
@@ -723,19 +733,63 @@ title="Print to PDF"
 <p>Many other datasets are available now, with several dozen additional datasets ready for release in the next 12 months.  Licensing issues stand in the way of some, but the <em>Pyrfume</em> maintainers are working this out.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pyrfume</span><span class="o">.</span><span class="n">list_archives</span><span class="p">()</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pyrfume</span><span class="o">.</span><span class="n">list_archives</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;abraham_2012&#39;,
+ &#39;arctander_1960&#39;,
+ &#39;aromadb&#39;,
+ &#39;arshamian_2022&#39;,
+ &#39;burton_2022&#39;,
  &#39;bushdid_2014&#39;,
+ &#39;chae_2019&#39;,
+ &#39;dravnieks_1985&#39;,
+ &#39;embedding&#39;,
+ &#39;flavordb&#39;,
+ &#39;flavornet&#39;,
+ &#39;foodb&#39;,
+ &#39;foodcomex&#39;,
+ &#39;fragrancedb&#39;,
+ &#39;freesolve&#39;,
+ &#39;goodscents&#39;,
+ &#39;gras&#39;,
  &#39;haddad_2008&#39;,
+ &#39;ifra_2019&#39;,
+ &#39;keller_2012&#39;,
  &#39;keller_2016&#39;,
+ &#39;knapsack&#39;,
+ &#39;leffingwell&#39;,
+ &#39;leon&#39;,
+ &#39;ma_2012&#39;,
+ &#39;ma_2021&#39;,
+ &#39;mainland_2015&#39;,
  &#39;manoel_2021&#39;,
+ &#39;mayhew_2022&#39;,
+ &#39;molecules&#39;,
+ &#39;mordred&#39;,
+ &#39;morgan&#39;,
+ &#39;nakayama_2022&#39;,
+ &#39;nat_geo_1986&#39;,
+ &#39;nhanes_2014&#39;,
+ &#39;optical_rotation&#39;,
+ &#39;prediction_targets&#39;,
+ &#39;prestwick&#39;,
+ &#39;qian_2022&#39;,
  &#39;ravia_2020&#39;,
+ &#39;scott_2014&#39;,
+ &#39;sharma_2021a&#39;,
+ &#39;sharma_2021b&#39;,
+ &#39;sigma_2014&#39;,
  &#39;snitz_2013&#39;,
- &#39;wakayama_2019&#39;]
+ &#39;snitz_2019&#39;,
+ &#39;soh_2013&#39;,
+ &#39;superscent&#39;,
+ &#39;t3db&#39;,
+ &#39;tools&#39;,
+ &#39;wakayama_2019&#39;,
+ &#39;weiss_2012&#39;]
 </pre></div>
 </div>
 </div>
@@ -773,8 +827,15 @@ title="Print to PDF"
         <i class="fas fa-angle-left"></i>
         <div class="prev-next-info">
             <p class="prev-next-subtitle">previous</p>
-            <p class="prev-next-title"><span class="section-number">3. </span>Visualization</p>
+            <p class="prev-next-title"><span class="section-number">4. </span>Visualization</p>
         </div>
+    </a>
+    <a class='right-next' id="next-link" href="case-study.html" title="next page">
+    <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title"><span class="section-number">6. </span>Data Analysis with Pyrfume: A Case Study</p>
+    </div>
+    <i class="fas fa-angle-right"></i>
     </a>
 </div>
             </footer>
