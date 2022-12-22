@@ -31,6 +31,8 @@ Just run `./develop.sh` to get started with developing `pyrfume`.
 
 ### [Data Repository](https://github.com/pyrfume/pyrfume-data)
 
+### [Paper](https://www.biorxiv.org/content/10.1101/2022.09.08.507170)
+
 ### [Data Curation Status](http://status.pyrfume.org)
 
 ### [Docs](http://docs.pyrfume.org)
