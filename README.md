@@ -20,7 +20,7 @@ molecules = pyrfume.load_data('snitz_2013/molecules.csv')
 import pyrfume
 behavior = pyrfume.load_data('bushdid_2014/behavior.csv')
 molecules = pyrfume.load_data('bushdid_2014/molecules.csv')
-mixtures = pyrfume.load_data('bushdid_2014/behavior.csv')
+stimuli = pyrfume.load_data('bushdid_2014/stimuli.csv')
 ```
 
 ### Contributing
