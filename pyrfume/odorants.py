@@ -787,6 +787,20 @@ def all_smiles():
     return list(df["IsomericSMILES"])
 
 
+def hash_smiles(smiles: str):
+    """Create negative integer hash for single molecules with a known structure
+    but no CID available on PubChem"""
+    from hashlib import md5
+    
+    # Canonicalize SMILES
+    smiles = canonical_smiles(smiles)
+    # MD5 hash of canonical SMILES
+    smiles_hash = md5(smiles.encode('utf-8')).hexdigest()
+    # Convert to a negative 0 - (10**12 - 1) integer hash
+    integer_hash = -(int(smiles_hash, 16) % 10**12)
+    return integer_hash
+
+
 if __name__ == "__main__":
     x = Molecule(325, fill=True)
     print(x.__dict__)
