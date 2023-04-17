@@ -791,7 +791,7 @@ def hash_smiles(smiles: str):
     """Create negative integer hash for single molecules with a known structure
     but no CID available on PubChem"""
     from hashlib import md5
-    
+
     # Canonicalize SMILES
     smiles = canonical_smiles(smiles)
     # MD5 hash of canonical SMILES
