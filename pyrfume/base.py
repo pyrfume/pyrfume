@@ -243,3 +243,14 @@ def save_data(data: pd.DataFrame, rel_path: str, create_archive: bool = True, **
         data.to_csv(full_path, **kwargs)
     else:
         raise Exception("Unsupported extension in file name %s" % full_path.name)
+
+
+def lfs_hash(rel_path: str, block_size=256 * 128):
+    """SHA256 hash of large files for lfs redirect."""
+    from hashlib import sha256
+
+    sha256 = sha256()
+    with open(rel_path, 'rb') as f:
+        for chunk in iter(lambda: f.read(block_size), b''):
+            sha256.update(chunk)
+    return sha256.hexdigest()
