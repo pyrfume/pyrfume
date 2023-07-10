@@ -669,9 +669,15 @@ def get_best_results(
     Returns:
         Dataframe of 'best' resutls from GridSearchCV.
     """
+    if list(results.index.names)[0] is not None:
+        index_cols = list(results.index.names)
+        results.reset_index(inplace=True)
+    else:
+        index_cols = ["pipeline_string"]
+
     df = pd.melt(
         results.drop(columns="pipeline_steps"),
-        id_vars=["pipeline_string", "param_string"],
+        id_vars=index_cols + ["param_string"],
         value_vars=[col for col in results.columns if col.startswith("mean_")],
         var_name="metric",
         value_name="score",
@@ -681,7 +687,7 @@ def get_best_results(
     df = df.pivot(index="pipeline_string", columns="metric", values=["score", "param_string"])
     df = df.astype({col: float for col in df.columns if col[0] == "score"})
     df.columns = [f"{tup[1]}_{tup[0]}".replace("_score", "") for tup in df.columns.to_flat_index()]
-    df = df.join(results.set_index("pipeline_string")["pipeline_steps"].drop_duplicates())
+    df = df.join(results.set_index(index_cols)["pipeline_steps"].drop_duplicates())
 
     if metric is not None:
         df = df[[metric, f"{metric}_param_string", "pipeline_steps"]]
@@ -742,10 +748,7 @@ def batch_gridsearchcv(
         for pipeline in pipelines:
             print(f"\n{pipeline.pipeline_string}")
             gs_list.append(evaluate_model(dataset=dataset, pipeline=pipeline, **kwargs))
-        results = gridsearch_results_to_dataframe(gs_list)
-        batch_results[(target, feature_set)] = get_best_results(
-            results, include_pipeline_steps=True
-        ).reset_index()
+        batch_results[(target, feature_set)] = gridsearch_results_to_dataframe(gs_list)
 
     df = pd.concat(batch_results, ignore_index=False).reset_index()
     df = df.rename(columns={"level_0": "target", "level_1": "features"}).drop(columns="level_2")
