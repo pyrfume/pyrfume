@@ -10,6 +10,7 @@ parts:
     - file: visualization.ipynb
     - file: published-data.ipynb
     - file: case-study.ipynb
+    - file: bechmarking_demo.ipynb
   - caption: API Docs
     chapters:
     - url: https://pyrfume.readthedocs.io/en/latest/py-modindex.html
