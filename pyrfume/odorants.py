@@ -333,7 +333,6 @@ class Compound:
         date_opened: datetime = None,
         is_solvent: bool = False,
     ):
-
         self.chemical_order = chemical_order
         self.stock = stock
         self.date_arrived = date_arrived if date_arrived else datetime.now
@@ -795,7 +794,7 @@ def hash_smiles(smiles: str):
     # Canonicalize SMILES
     smiles = canonical_smiles(smiles)
     # MD5 hash of canonical SMILES
-    smiles_hash = md5(smiles.encode('utf-8')).hexdigest()
+    smiles_hash = md5(smiles.encode("utf-8")).hexdigest()
     # Convert to a negative 0 - (10**12 - 1) integer hash
     integer_hash = -(int(smiles_hash, 16) % 10**12)
     return integer_hash

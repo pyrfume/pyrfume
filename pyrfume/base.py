@@ -250,7 +250,7 @@ def lfs_hash(rel_path: str, block_size=256 * 128):
     from hashlib import sha256
 
     sha256 = sha256()
-    with open(rel_path, 'rb') as f:
-        for chunk in iter(lambda: f.read(block_size), b''):
+    with open(rel_path, "rb") as f:
+        for chunk in iter(lambda: f.read(block_size), b""):
             sha256.update(chunk)
     return sha256.hexdigest()
