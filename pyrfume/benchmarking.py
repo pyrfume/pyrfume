@@ -54,7 +54,7 @@ ESTIMATOR_MAP = {
     'PLSRegression': PLSRegression(),
     'DecisionTreeRegressor': DecisionTreeRegressor(),
     'MLPRegressor': MLPRegressor()
- }
+}
 
 DEFAULT_PARAMETERS_CLASSIFIERS = {
     'LogisticRegression': {
@@ -93,7 +93,7 @@ DEFAULT_PARAMETERS_CLASSIFIERS = {
         'n_estimators': [10, 50, 100, 500],
         'min_impurity_decrease': np.arange(0., 0.005, 0.00025),
         'max_features': [0.1, 0.25, 0.5, 0.75, 'sqrt', 'log2', None],
-        'criterion':  ['gini', 'entropy', 'log_loss'],
+        'criterion': ['gini', 'entropy', 'log_loss'],
         'random_state': [RANDOM_STATE]
     },
     'GradientBoostingClassifier': {
@@ -289,10 +289,10 @@ class PyrfumeDataset:
         if self.task == 'classification':
             # Plot frequency of label use
             counts = self.df[self.target_name].value_counts()
-            counts.plot.bar(figsize=(12,4), fontsize=8, logy=True)
+            counts.plot.bar(figsize=(12, 4), fontsize=8, logy=True)
         if self.task == 'regression':
-            n_bins = int(np.round(1 + 3.322 * np.log10(self.df.shape[0]))) # Sturge's Rule
-            self.df.hist(column=self.target_name, bins=n_bins, figsize=(12,4))
+            n_bins = int(np.round(1 + 3.322 * np.log10(self.df.shape[0])))  # Sturge's Rule
+            self.df.hist(column=self.target_name, bins=n_bins, figsize=(12, 4))
         plt.ylabel('Frequency')
         plt.show()
 
@@ -308,8 +308,8 @@ class PyrfumeDataset:
 
     def plot_feature_correlations(self, method: str = 'spearman'):
         '''Plot correlations between molecule features.'''
-        sns.set(font_scale = 0.8)
-        plt.figure(figsize=(8,8))
+        sns.set(font_scale=0.8)
+        plt.figure(figsize=(8, 8))
         sns.heatmap(
             self.df.drop(columns=self.target_name).corr(method=method),
             cmap='bwr',
@@ -346,7 +346,7 @@ class Model:
             # These require MinMax scaling
             if estimator in ['BernoulliNB', 'MultinomialNB']:
                 self.steps.insert(0, MinMaxScaler())
-            if param_grid is None: # Use default values above
+            if param_grid is None:  # Use default values above
                 self.param_grid = {estimator_name: get_default_parameters(estimator)}
             else:
                 self.param_grid = {estimator_name: param_grid}
@@ -375,8 +375,7 @@ class Model:
             f'Parameter grid: {self.param_grid}',
             f'Scoring: {self.scoring}',
             f'Task: {self.task}\n'
-            ])
-        )
+        ]))
 
     def add_step(self, step: Callable, position: int = 0, param_grid: dict = None):
         '''Add step to pipeline.'''
@@ -401,7 +400,7 @@ class Model:
 
     def set_parameter_grid(self, param_grid):
         '''Option to set custom parameter grid.
-        
+
         Args:
             param_grid: When using this method, param_grid must be provided as a nested dict
                 of the following format: {pipeline_step_name: {param_name: param_value}}.
@@ -495,12 +494,12 @@ def get_molecule_features(index: pd.Index, feature_set: str = 'mordred') -> pd.D
 
     Args:
         index: molecule CIDs for which to fetch features.
-        feature_set: Use 'mordred' for Mordred features, 'morgan' for Morgan similarity, or 
+        feature_set: Use 'mordred' for Mordred features, 'morgan' for Morgan similarity, or
             'mordred_morgan' to merge these two feature sets.
 
     Returns:
         DataFrame of the specified feature set, indexed on CID.
-    
+
     Raises:
         ValueError: if feature_set is not 'morgan', 'mordred', or 'mordred_morgan'.
     '''
@@ -597,7 +596,7 @@ def evaluate_dummy_model(
         scoring: Union[str, List[str]] = None
 ) -> pd.DataFrame:
     '''Provides baseline results on dummy models for regression and classification.
-    
+
     Args:
         dataset: PyrfumeDataset instance containing prediction target and molecule features.
         scoring: Scoring metric(s) to use. If None, will use ML task to get defaults.
@@ -653,8 +652,8 @@ def gridsearch_results_to_dataframe(
 
         # Only keep mean and std of each scoring metric
         df = df[
-            ['pipeline_string', 'pipeline_steps', 'param_string'] +
-            [col for col in df.columns if any(
+            ['pipeline_string', 'pipeline_steps', 'param_string']
+            + [col for col in df.columns if any(
                 map(col.__contains__, ['mean_test_', 'std_test_']))]
         ]
         df.columns = [col.replace('test_', '') for col in df.columns]
@@ -702,7 +701,7 @@ def get_best_results(
     df = df.astype({col: float for col in df.columns if col[0] == 'score'})
     df.columns = [
         f'{tup[1]}_{tup[0]}'.replace('_score', '') for tup in df.columns.to_flat_index()
-        ]
+    ]
     df = df.join(results.set_index('pipeline_string')['pipeline_steps'].drop_duplicates())
 
     if metric is not None:
@@ -720,9 +719,9 @@ def verify_batch_settings(
         targets: List,
         feature_sets: List,
         prepare_dataset: Callable
-    ):
+):
     '''Verify that prediction target/feature set cobminations return valid datasets.
-    
+
     Args:
         archive: Pyrfume-Data archive.
         targets: List of prediction targets.
@@ -746,7 +745,7 @@ def batch_gridsearchcv(
         **kwargs
 ) -> pd.DataFrame:
     '''Performs GridSearchCV over target, feature, and estimator pipeline permutations.
-    
+
     Args:
         archive: Pyrfume-Data archive.
         targets: List of prediction targets.
@@ -784,7 +783,7 @@ def batch_gridsearchcv(
 
 def reconstruct_pipeline(pipeline_steps: List, param_string: str) -> Pipeline:
     '''Reconstruct Pipeline from list of steps and parameter string.
-    
+
     Args:
         pipeline_steps: List of preprossing steps (optional) and estimator (must be last element
             in list).
@@ -818,7 +817,7 @@ def reconstruct_model(
 
     Must provide either pipeline steps and parameter string to reconstruct a specific model,
     or a results dataframe and scoring metric to reconstruct top-scoring model.
-    
+
     Args:
         dataset: PyfumeDataset class instance.
         pipeline_steps: List of steps for pipeline. Last step must be an estimator.
@@ -826,7 +825,7 @@ def reconstruct_model(
         resutls: Results for best GridSearchCV scoring metrics from either get_best_results()
             or batch_gridsearchcv().
         metric: Scoring metric which determines 'best' estimator.
-    
+
     Returns:
         Prediction-ready Pipeline instance.
     '''
@@ -864,9 +863,9 @@ def apply_model(
         dataset: PyrfumeDataset,
         model: Pipeline,
         label_encoder: LabelEncoder = None
-    ) -> pd.DataFrame:
+) -> pd.DataFrame:
     '''Test prediction from estimator pipeline.
-     
+
      Args:
         dataset: PyfumeDataset class instance.
         model: Pre-fitted Pipeline instance.
@@ -884,7 +883,7 @@ def apply_model(
     if label_encoder is None:
         label_encoder = dataset.label_encoder
     if label_encoder is not None:
-        if  df[target_name].dtype == int:
+        if df[target_name].dtype == int:
             df[target_name] = label_encoder.inverse_transform(df[target_name])
         df['prediction'] = label_encoder.inverse_transform(df['prediction'])
 
@@ -911,7 +910,7 @@ def plot_heatmap(
         save_fig: bool = False,
         maxima: str = None,
         show_rect: bool = False
-        ):
+):
     '''Generate heatmap of top metric scores.
 
     Args:
@@ -933,14 +932,14 @@ def plot_heatmap(
     # Coordinates of maxima, looking row-wise, column-wise, or for single largest value
     if maxima == 'column':
         coords = list(zip(
-            [summary.index.get_loc(row) for row in summary.idxmax(axis=0)], # Row maxima indices
-            list(range(summary.shape[1])) # All column indices
+            [summary.index.get_loc(row) for row in summary.idxmax(axis=0)],  # Row maxima indices
+            list(range(summary.shape[1]))  # All column indices
         ))
     elif maxima == 'row':
         coords = list(zip(
-            list(range(summary.shape[0])), # All row indices
-            [summary.columns.get_loc(col) for col in summary.idxmax(axis=1)])) # Col maxima indices
-    elif maxima is None: # Presume the single highest score is desired
+            list(range(summary.shape[0])),  # All row indices
+            [summary.columns.get_loc(col) for col in summary.idxmax(axis=1)]))  # Col maxima indices
+    elif maxima is None:  # Presume the single highest score is desired
         coords = [np.unravel_index(np.argmax(summary), summary.shape)]
 
     sns.heatmap(
@@ -961,7 +960,7 @@ def plot_heatmap(
     if show_rect:
         for x, y in coords:
             plt.gca().add_patch(
-                patches.Rectangle((y, x), width=1, height=1,  lw=2, ec='blue', fc='None')
+                patches.Rectangle((y, x), width=1, height=1, lw=2, ec='blue', fc='None')
             )
 
     if save_fig:
@@ -1002,10 +1001,11 @@ def plot_score_report(results: pd.DataFrame, scoring_metrics: Union[str, List]):
 
     pair_grid = sns.PairGrid(
         scores,
-        x_vars=scoring_metrics, y_vars='index',
-        hue = 'estimator',
+        x_vars=scoring_metrics,
+        y_vars='index',
+        hue='estimator',
         height=6, aspect=0.3
-        )
+    )
     pair_grid.map(sns.stripplot, size=4, orient='h', jitter=0.01)
 
     for ax, title, xmin, xmax in zip(
@@ -1030,7 +1030,7 @@ def show_confusion_matrix(
         dataset: PyrfumeDataset,
         model: Pipeline,
         normalize: str = None
-        ):
+):
     '''Show confusion matrix given a model and Pyrfume dataset.'''
     X, y = dataset.get_features_targets()
 
@@ -1047,7 +1047,7 @@ def show_confusion_matrix(
 
 
 def show_roc_curve(dataset: PyrfumeDataset, model: Pipeline):
-    '''Show ROC curve(s) given model and Pyrfume dataset'''    
+    '''Show ROC curve(s) given model and Pyrfume dataset'''
     X, y = dataset.get_features_targets()
     model.fit(X, y)
 
@@ -1062,7 +1062,7 @@ def show_roc_curve(dataset: PyrfumeDataset, model: Pipeline):
     common_thresholds = np.linspace(0, 1, 100)
 
     # Compute the macro-averaged ROC curve and auc
-    for i in range(y_test_bin.shape[1]): # iterate over the unique classes
+    for i in range(y_test_bin.shape[1]):  # iterate over the unique classes
         fpr, tpr, _ = roc_curve(y_test_bin[:, i], y_pred_prob[:, i])
         interpolated_fpr = np.interp(common_thresholds, tpr, fpr)
         auc_val.append(auc(fpr, tpr))
@@ -1082,7 +1082,7 @@ def show_regressor_performance(
     dataset: PyrfumeDataset,
     model: Pipeline,
     plot_type: str = 'both'
-    ):
+):
     '''Plot residuals and actual v. predicted for a regression model'''
     X, y = dataset.get_features_targets()
     model.fit(X, y)
