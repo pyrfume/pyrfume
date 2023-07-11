@@ -259,9 +259,12 @@ class PyrfumeDataset:
         else:
             self.feature_set += f"_{feature_set}"
 
-    def get_features_targets(self):
+    def get_features_targets(self, as_dataframe: bool = False):
         """Return features, prediction targets."""
-        return self.df.drop(self.target_name, axis=1).values, self.df[self.target_name].values
+        if as_dataframe:
+            return self.df.drop(self.target_name, axis=1), self.df[self.target_name]
+        else:
+            return self.df.drop(self.target_name, axis=1).values, self.df[self.target_name].values
 
     def get_feature_names(self):
         """Return feature names."""
@@ -311,6 +314,9 @@ class PyrfumeDataset:
 
     def select_features(self, score_function: str, mode: str, param: Union[int, float, str]):
         """Option to use Feature Selection transformation."""
+        # First remove any features with zero variance
+        X, y = self.get_features_targets(as_dataframe=True)
+        self.df = y.to_frame().join(X.loc[:, X.var() > 0])
         selector = resolve_feature_selection(
             task=self.task, score_function=score_function, mode=mode
         )
@@ -510,7 +516,7 @@ def get_molecule_features(index: pd.Index, feature_set: str = "mordred") -> pd.D
     features = features.loc[common_index]
 
     # Only keep features with non-zero variance
-    features = features[features.columns[features.nunique() > 1]]
+    features = features.loc[:, features.var() > 0]
 
     print(f"Returned {features.shape[1]} features for {features.shape[0]} molecules")
 
@@ -942,18 +948,19 @@ def plot_heatmap(
     plt.show()
 
 
-def save_benchmarks(results: pd.DataFrame):
+def save_benchmarks(results: pd.DataFrame, csv_name: str):
     """Save best metric scores for each pipeline to CSV file.
 
     Args:
         results: Results for best GridSearchCV scoring metrics from either get_best_results()
             or batch_gridsearchcv().
+        csv_name: Name for CSV file being saved.
     """
     if "pipeline_steps" in results:
         results.drop(columns="pipeline_steps", inplace=True)
 
-    results.to_csv("benchmarks.csv")
-    print("benchmarks.csv saved")
+    results.to_csv(csv_name)
+    print(f"{csv_name} saved")
 
 
 def plot_score_report(results: pd.DataFrame, scoring_metrics: Union[str, List]):
