@@ -438,7 +438,9 @@ def get_default_parameters(estimator: str = None) -> dict:
     raise ValueError(f"No defaults for {estimator}")
 
 
-def resolve_scoring(scoring: Union[str, List[str]], task: str = None) -> Union[str, List[str]]:
+def resolve_scoring(
+    scoring: Union[str, List[str]] = None, task: str = None
+) -> Union[str, List[str]]:
     """Return scoring metrics for GridSearchCV.
 
     Args:
@@ -530,6 +532,21 @@ def resolve_cv(task: str = None, n_splits: int = 5) -> Union[KFold, StratifiedKF
     if task == "regression":
         return KFold(n_splits=n_splits, shuffle=True, random_state=RANDOM_STATE)
     raise ValueError(f"Invalid task: {task}")
+
+
+def get_train_test_splits(dataset: PyrfumeDataset) -> List:
+    """Returns indices for train/test splits created by cross-validation generator.
+
+    Args:
+        dataset: PyrfumeDataset instance containing prediction target and molecule features.
+
+    Returns:
+        List of train/test indices for each fold created by cross-validation generator. Format is a
+            list of length = n_splits, each list elment is a tuple = (train indices, test indices).
+    """
+    cv = resolve_cv(task=dataset.task, n_splits=dataset.n_splits)
+    X, y = dataset.get_features_targets()
+    return [next(cv.split(X, y)) for i in range(cv.n_splits)]
 
 
 def reformat_param_grid(parameters: dict) -> dict:
@@ -675,12 +692,14 @@ def get_best_results(
     Returns:
         Dataframe of 'best' resutls from GridSearchCV.
     """
+    if (metric is None) & (single_best):
+        raise ValueError("'single_best' only valid when metric provided.")
+    results = results.copy()
     if list(results.index.names)[0] is not None:
         index_cols = list(results.index.names)
         results.reset_index(inplace=True)
     else:
         index_cols = ["pipeline_string"]
-
     df = pd.melt(
         results.drop(columns="pipeline_steps"),
         id_vars=index_cols + ["param_string"],
@@ -689,11 +708,12 @@ def get_best_results(
         value_name="score",
     )
     df["metric"] = df["metric"].apply(lambda x: remove_prefix(str(x), "mean_"))
-    df = df.loc[df.groupby(["pipeline_string", "metric"])["score"].idxmax()]
-    df = df.pivot(index="pipeline_string", columns="metric", values=["score", "param_string"])
+    df = df.loc[df.groupby(index_cols + ["metric"])["score"].idxmax()]
+    df = df.pivot(index=index_cols, columns="metric", values=["score", "param_string"])
     df = df.astype({col: float for col in df.columns if col[0] == "score"})
     df.columns = [f"{tup[1]}_{tup[0]}".replace("_score", "") for tup in df.columns.to_flat_index()]
-    df = df.join(results.set_index(index_cols)["pipeline_steps"].drop_duplicates())
+    results.set_index(index_cols, inplace=True)
+    df = df.join(results[~results.index.duplicated()]["pipeline_steps"])
 
     if metric is not None:
         df = df[[metric, f"{metric}_param_string", "pipeline_steps"]]
@@ -722,6 +742,54 @@ def verify_batch_settings(
             dataset.describe()
         except DatasetError:
             print(f"Could not create PyrfumeDataset for {target} and {feature_set}")
+
+
+def simualate_batch_results(targets: List[str], feature_sets: List[str], task: str) -> pd.DataFrame:
+    """Simulates results from a batch GridSearchCV for testing purposes."""
+    if task not in ["classification", "regression"]:
+        raise ValueError("'task' must be one of 'classification', 'regression'")
+
+    pipelines = [Model(estimator) for estimator in list_default_estimators(task)]
+    scorers = resolve_scoring(task=task)
+
+    df = pd.DataFrame(
+        itertools.product(targets, feature_sets, pipelines), columns=["target", "features", "pipe"]
+    )
+    df["pipeline_steps"] = df["pipe"].apply(lambda x: x.steps)
+    df["pipeline_string"] = df["pipe"].apply(lambda x: x.pipeline_string)
+    df["param_grid"] = df["pipe"].apply(lambda x: reformat_param_grid(x.param_grid))
+    df["param_string"] = df["param_grid"].apply(
+        lambda x: [dict(zip(x.keys(), values)) for values in itertools.product(*x.values())]
+    )
+    df.drop(columns=["pipe", "param_grid"], inplace=True)
+    df = df.explode("param_string")
+    df["param_string"] = df["param_string"].apply(
+        lambda p: ";".join([f"{k}={v}" for k, v in p.items()])
+    )
+
+    if task == "classification":
+        df[[f"mean_{col}" for col in scorers]] = np.random.uniform(
+            0, 1, (df.shape[0], len(scorers))
+        )
+        df[[f"std_{col}" for col in scorers]] = np.random.uniform(
+            0.01, 0.5, (df.shape[0], len(scorers))
+        )
+    elif task == "regression":
+        df[[f"mean_{col}" for col in scorers]] = np.random.uniform(
+            -10000, 10, (df.shape[0], len(scorers))
+        )
+        df[[f"std_{col}" for col in scorers]] = np.random.uniform(
+            0, 100, (df.shape[0], len(scorers))
+        )
+
+    df = df.set_index(["target", "features", "pipeline_string"]).sort_index()
+
+    col_order = ["pipeline_steps", "param_string"]
+    for score in scorers:
+        col_order += [f"mean_{score}", f"std_{score}"]
+    df = df[col_order]
+
+    return df
 
 
 def batch_gridsearchcv(
@@ -956,51 +1024,88 @@ def save_benchmarks(results: pd.DataFrame, csv_name: str):
             or batch_gridsearchcv().
         csv_name: Name for CSV file being saved.
     """
-    if "pipeline_steps" in results:
-        results.drop(columns="pipeline_steps", inplace=True)
+    df = results.copy()
+    if "pipeline_steps" in df:
+        df.drop(columns="pipeline_steps", inplace=True)
 
-    results.to_csv(csv_name)
+    df.to_csv(csv_name)
     print(f"{csv_name} saved")
 
 
-def plot_score_report(results: pd.DataFrame, scoring_metrics: Union[str, List]):
+def plot_score_report(
+    df: pd.DataFrame,
+    features: Union[str, List],
+    scoring_metrics: Union[str, List],
+    n_estimators: int,
+):
     """Make a strip plot of models x scores."""
     if not isinstance(scoring_metrics, list):
         scoring_metrics = [scoring_metrics]
+    if not isinstance(features, list):
+        features = [features]
 
-    scores = results.reset_index()[["pipeline_string"] + scoring_metrics].rename(
-        columns={"pipeline_string": "estimator"}
-    )
-    scores["estimator"] = scores["estimator"].str.split(";").str[-1]
-    scores = (
-        scores.sort_values(by=scoring_metrics[0], ascending=False)
-        .reset_index(drop=True)
-        .reset_index()
-    )
+    markers = ["o", "D"]
+    alphas = [0.9, 0.35]
 
-    sns.set_theme(style="whitegrid")
+    for i, feature in enumerate(features):
+        df_feat = df.loc[(slice(None), feature), :]
+        df_g = df_feat.groupby(by="pipeline_string").apply(
+            lambda x: x.nlargest(n_estimators, scoring_metrics[0])
+        )
+        df_g = df_g.reset_index(level=[1, 2, 3]).reset_index(drop=True)
+        df_g["idx"] = df_g.index
 
-    pair_grid = sns.PairGrid(
-        scores, x_vars=scoring_metrics, y_vars="index", hue="estimator", height=6, aspect=0.3
-    )
-    pair_grid.map(sns.stripplot, size=4, orient="h", jitter=0.01)
+        if i == 0:
+            pair_grid = sns.PairGrid(
+                data=df_g,
+                x_vars=scoring_metrics,
+                hue="pipeline_string",
+                y_vars="idx",
+                height=7,
+                aspect=0.25,
+                palette="tab10",
+            )
+        pair_grid.data = df_g
+        pair_grid.map(
+            sns.stripplot,
+            size=7,
+            orient="h",
+            jitter=0.01,
+            marker=markers[i],
+            alpha=alphas[i],
+            linewidth=1,
+        )
 
-    for ax, title, xmin, xmax in zip(
-        pair_grid.axes.flat,
-        scoring_metrics,
-        scores[scoring_metrics].min().values,
-        scores[scoring_metrics].max().values,
-    ):
+    for ax, title in zip(pair_grid.axes.flat, scoring_metrics):
         ax.set_title(title, fontdict={"fontsize": 10})
         ax.set_yticklabels("")
         ax.tick_params(labelsize=8)
         ax.set_xlabel("score", fontdict={"fontsize": 10})
         ax.set_ylabel("")
-        ax.set(xlim=(0.85 * xmin, 1.15 * xmax))
         ax.xaxis.grid(False)
         ax.yaxis.grid(True)
-
     sns.despine(left=True, bottom=True)
+
+    # Legend handles and labels for the estimators
+    handles, labels = plt.gca().get_legend_handles_labels()
+    handles = handles[: len(df_g["pipeline_string"].unique())]
+    labels = labels[: len(df_g["pipeline_string"].unique())]
+
+    # Blank space to separate features from estimators in the legend
+    markers.insert(0, "")
+    f = features[:]
+    f.insert(0, "")
+
+    # Add the features to the legend
+    feature_handles = [
+        plt.Line2D([], [], marker=marker, color="black", linestyle="None", markersize=8)
+        for marker in markers
+    ]
+    handles.extend(feature_handles)
+    labels.extend(f)
+
+    # Add the legend
+    ax.legend(handles, labels, bbox_to_anchor=(1.05, 1))
 
 
 def show_confusion_matrix(dataset: PyrfumeDataset, model: Pipeline, normalize: str = None):
