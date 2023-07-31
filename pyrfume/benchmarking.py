@@ -2,11 +2,13 @@
 
 import warnings
 import itertools
+import dill
 from typing import List, Union, Callable
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
+import papermill as pm
 from matplotlib import patches
 from sklearn.model_selection import KFold, StratifiedKFold, GridSearchCV, cross_val_score
 from sklearn.feature_selection import GenericUnivariateSelect, chi2, f_classif, mutual_info_classif
@@ -25,6 +27,7 @@ from sklearn.svm import SVC, SVR
 from sklearn.neural_network import MLPClassifier, MLPRegressor
 from sklearn.gaussian_process import GaussianProcessRegressor
 from sklearn.cross_decomposition import PLSRegression
+from sklearn import clone
 from xgboost import XGBClassifier
 import pyrfume
 
@@ -32,6 +35,8 @@ import pyrfume
 RANDOM_STATE = 1984
 
 ESTIMATOR_MAP = {
+    "MinMaxScaler": MinMaxScaler(),
+    "GenericUnivariateSelect": GenericUnivariateSelect(),
     "LogisticRegression": LogisticRegression(),
     "DecisionTreeClassifier": DecisionTreeClassifier(),
     "RandomForestClassifier": RandomForestClassifier(),
@@ -146,19 +151,16 @@ DEFAULT_PARAMETERS_REGRESSORS = {
     "Ridge": {
         "alpha": [0.01, 0.1, 1, 10, 100],
         "solver": ["auto"],
-        "normalize": [True, False],
         "random_state": [RANDOM_STATE],
     },
     "Lasso": {
         "alpha": [0.01, 0.1, 1, 10, 100],
-        "normalize": [True, False],
         "max_iter": [1000, 3000, 5000, 7000],
         "random_state": [RANDOM_STATE],
     },
     "ElasticNet": {
         "alpha": [0.01, 0.1, 1, 10, 100],
         "l1_ratio": [0.1, 0.3, 0.5, 0.8],
-        "normalize": [True, False],
         "max_iter": [1000, 3000, 5000, 7000],
         "random_state": [RANDOM_STATE],
     },
@@ -483,7 +485,9 @@ def list_default_estimators(task: str = None) -> List:
     raise ValueError(f"Invalid task: {task}")
 
 
-def get_molecule_features(index: pd.Index, feature_set: str = "mordred") -> pd.DataFrame:
+def get_molecule_features(
+    index: pd.Index, feature_set: str = "mordred", verbose: bool = True
+) -> pd.DataFrame:
     """Fetches specified features for molecule CIDs in 'index'.
 
     Mordred and Morgan features have already been scaled (StandardScaler) and imputed
@@ -501,7 +505,8 @@ def get_molecule_features(index: pd.Index, feature_set: str = "mordred") -> pd.D
     Raises:
         ValueError: if feature_set is not 'morgan', 'mordred', or 'mordred_morgan'.
     """
-    print("Loading features...")
+    if verbose:
+        print("Loading features...")
 
     if feature_set == "mordred":
         features = pyrfume.load_data("mordred/features.csv")
@@ -520,7 +525,8 @@ def get_molecule_features(index: pd.Index, feature_set: str = "mordred") -> pd.D
     # Only keep features with non-zero variance
     features = features.loc[:, features.var() > 0]
 
-    print(f"Returned {features.shape[1]} features for {features.shape[0]} molecules")
+    if verbose:
+        print(f"Returned {features.shape[1]} features for {features.shape[0]} molecules")
 
     return features
 
@@ -598,6 +604,28 @@ def evaluate_model(dataset: PyrfumeDataset, pipeline: Model, verbose: int = 0) -
         gs.fit(features, targets)
 
     return gs
+
+
+def pipeline_from_string_list(pipeline_string):
+    """Reconstructs a pipeline from a string."""
+    steps = pipeline_string.split(";")
+    pipeline = make_pipeline(*steps)
+    return pipeline
+
+
+def gridsearch_csv_to_frame(csv_file_name: str = None) -> pd.DataFrame:
+    """Converts gridsearch results .csv file into DataFrame with Pipelines in
+    df['pipeline_steps'].
+    """
+    if not csv_file_name.endswith(".csv"):
+        raise ValueError("File must be .csv")
+    else:
+        df = pd.read_csv(csv_file_name)
+        df["pipeline_steps"] = df["pipeline_string"].apply(
+            lambda row: pipeline_from_string_list(row)
+        )
+        df.set_index(["target", "features", "pipeline_string"], inplace=True)
+        return df
 
 
 def evaluate_dummy_model(
@@ -845,11 +873,17 @@ def reconstruct_pipeline(pipeline_steps: List, param_string: str) -> Pipeline:
     params = {}
     for pair in param_string.split(";"):
         name, value = pair.split("=")
-        if value.replace(".", "").isnumeric():
+        if value.replace(".", "").replace("e-", "").isnumeric():
             if value.isdigit():
                 value = int(value)
             else:
                 value = float(value)
+        elif value == "False":
+            value = False
+        elif value == "True":
+            value = True
+        elif value == "None":
+            value = None
         params[name] = value
     pipeline = make_pipeline(*pipeline_steps)
     pipeline.set_params(**params)
@@ -1032,6 +1066,136 @@ def save_benchmarks(results: pd.DataFrame, csv_name: str):
     print(f"{csv_name} saved")
 
 
+def execute_viz_notebook(archive):
+    """Execute a remote visualization notebook via papermill."""
+    viz_template_path = f"{pyrfume.REMOTE_DATA_PATH}/tools/benchmarks_viz_template.ipynb"
+    pm.execute_notebook(
+        viz_template_path,
+        "benchmarks_viz.ipynb",
+        parameters={"archive": archive},
+        report_mode=False,
+    )
+
+
+def fit_model_for_pickle(archive, prepare_dataset, row):
+    """Function to add fitted model to dataframe."""
+    dataset = prepare_dataset(archive=archive, target=row["target"], feature_set=row["features"])
+    steps = [clone(step) for step in row["pipeline_steps"]]
+    model = reconstruct_model(
+        dataset=dataset, pipeline_steps=steps, param_string=row["param_string"]
+    )
+    return model
+
+
+def pickle_best_models(results, archive, prepare_dataset):
+    """Fit model for each model/metric pair and pickle."""
+    # Filter for top scores
+    best_results = get_best_results(results, include_pipeline_steps=True)
+
+    # Get top score for each target/metric pair
+    param_cols = [col for col in best_results.columns if "_param_string" in col]
+    score_cols = [col.replace("_param_string", "") for col in param_cols]
+
+    df1 = (
+        pd.melt(
+            best_results.copy(),
+            id_vars=["pipeline_steps"],
+            value_vars=score_cols,
+            value_name="score",
+            var_name="metric",
+            ignore_index=False,
+        )
+        .reset_index()
+        .set_index(["target", "features", "pipeline_string", "metric"])
+    )
+
+    df2 = pd.melt(
+        best_results.copy(),
+        id_vars=None,
+        value_vars=param_cols,
+        value_name="param_string",
+        var_name="metric",
+        ignore_index=False,
+    )
+    df2["metric"] = df2["metric"].str.replace("_param_string", "")
+    df2 = df2.reset_index().set_index(["target", "features", "pipeline_string", "metric"])
+
+    df3 = df1.join(df2).reset_index()
+    df3 = df3.loc[df3.groupby(["target", "metric"])["score"].idxmax()]
+    df3 = df3[["target", "metric", "features", "score", "pipeline_steps", "param_string"]]
+
+    # Append the prepare_dataset function
+    df3.loc[len(df3)] = ["prepare_dataset"] + [np.nan] * 4 + [prepare_dataset]
+
+    with open("benchmarks.pkl", "wb") as file:
+        dill.dump(df3, file)
+
+
+def load_pickle():
+    with open("benchmarks.pkl", "rb") as file:
+        df = dill.load(file)
+    prepare_dataset = df.iloc[-1, -1]
+    df = df.iloc[:-1]
+    return prepare_dataset, df
+
+
+def iterate_and_plot_models(df: pd.DataFrame, prepare_dataset: Callable, archive: str):
+    """Iterates through a dataframe of fitted models and plots performance summaries.
+
+    Args:
+        df: dataframe indexed on targets, features, metrics, with a column of pre-fit pipelines
+    """
+    targets = df.index.get_level_values(level="target").unique()
+    features = df.index.get_level_values(level="features").unique()
+    metrics = df.index.get_level_values(level="metric").unique()
+
+    # Enumerate all target, feature tuples:
+    for target, feature in itertools.product(targets, features):
+        models = df.xs((target, feature), level=["target", "features"])
+
+        # Confirm that there are models for the given (target, feature) pair
+        if models.shape[0] > 0:
+            available_metrics = models.index.get_level_values("metric").unique()
+
+            # Iterate through the metrics
+            fig, axes = plt.subplots(2, len(metrics), figsize=(10, 4))
+            for i, metric in enumerate(metrics):
+                if metric in available_metrics:
+                    pipeline = models.loc[metric, "fitted_model"]
+                    model_name = models.loc[metric, "estimator"]
+                    dataset = prepare_dataset(archive, target, feature)
+
+                    if dataset.task == "classification":
+                        print(dataset.task)
+                        show_roc_curve(dataset, pipeline, ax=axes[0, i])
+                        show_confusion_matrix(dataset, pipeline, ax=axes[1, i])
+
+                    elif dataset.task == "regression":
+                        plot_residuals(dataset, pipeline, ax=axes[0, i])
+                        plot_actual_predicted(dataset, pipeline, ax=axes[1, i])
+
+                    axes[0, i].set_title(model_name, fontsize=5)
+
+                else:
+                    model_name = "No model"
+                    axes[0, i].set_xticks([])
+                    axes[0, i].set_yticks([])
+
+                title_string = model_name + f"\n metric={metric}"
+                axes[0, i].set_title(title_string, fontsize=6)
+                axes[0, i].set_aspect("equal")
+                axes[1, i].set_aspect("equal")
+                axes[0, i].tick_params(axis="x", pad=0.1)
+                axes[0, i].tick_params(axis="y", pad=0.1)
+
+            fig.suptitle(f"Best models for target={target}; features={feature}\n\n", fontsize=16)
+            plt.subplots_adjust(hspace=0.2, wspace=0.2, left=0.05, right=0.95, bottom=0.05)
+            print("\n")
+            plt.tight_layout(pad=0.1)
+        else:
+            continue
+
+
 def plot_score_report(
     df: pd.DataFrame,
     features: Union[str, List],
@@ -1106,9 +1270,12 @@ def plot_score_report(
 
     # Add the legend
     ax.legend(handles, labels, bbox_to_anchor=(1.05, 1))
+    target = df.index.get_level_values(level="target").unique()[0]
+    plt.suptitle(f"Score report for target = {target}")
+    plt.subplots_adjust(top=0.9, bottom=0.05)
 
 
-def show_confusion_matrix(dataset: PyrfumeDataset, model: Pipeline, normalize: str = None):
+def show_confusion_matrix(dataset: PyrfumeDataset, model: Pipeline, normalize: str = None, ax=None):
     """Show confusion matrix given a model and Pyrfume dataset."""
     X, y = dataset.get_features_targets()
 
@@ -1116,16 +1283,19 @@ def show_confusion_matrix(dataset: PyrfumeDataset, model: Pipeline, normalize: s
     y_predict = model.predict(X)
     c_mat = confusion_matrix(y, y_predict, normalize=normalize)
 
-    plt.subplots(figsize=(6, 4))
-    plt.imshow(c_mat, cmap="Blues")
-    plt.colorbar(shrink=0.6)
-    plt.grid(False)
-    plt.xlabel("Predicted class")
-    plt.ylabel("True class")
+    if ax is not None:
+        ax.imshow(c_mat, cmap="Blues")
+    else:
+        plt.subplots(figsize=(6, 4))
+        plt.imshow(c_mat, cmap="Blues")
+        plt.colorbar(shrink=0.6)
+        plt.grid(False)
+        plt.xlabel("Predicted class")
+        plt.ylabel("True class")
 
 
-def show_roc_curve(dataset: PyrfumeDataset, model: Pipeline):
-    """Show ROC curve(s) given model and Pyrfume dataset"""
+def show_roc_curve(dataset: PyrfumeDataset, model: Pipeline, ax=None):
+    """Show ROC curve(s) given model and Pyrfume dataset."""
     X, y = dataset.get_features_targets()
     model.fit(X, y)
 
@@ -1153,11 +1323,56 @@ def show_roc_curve(dataset: PyrfumeDataset, model: Pipeline):
     data = pd.melt(data, id_vars="tpr", var_name="class", value_name="fpr")
 
     sns.set_style("white")
-    sns.relplot(data=data, x="fpr", y="tpr", hue="class", kind="line", height=4, aspect=1.0)
+    if ax is None:
+        sns.lineplot(data=data, x="fpr", y="tpr", hue="class")
+    else:
+        sns.lineplot(data=data, x="fpr", y="tpr", hue="class", legend=False, ax=ax)
+
+
+def plot_residuals(dataset: PyrfumeDataset, model: Pipeline, ax=None):
+    """Plots model residuals."""
+    X, y = dataset.get_features_targets()
+    model.fit(X, y)
+
+    # Fit the given estimator on the given params
+    y_predict = model.predict(X)
+    #
+    # Simple DataFrames of residuals to facilitate plotting.
+    residuals = pd.DataFrame({"residuals": y_predict - y})
+
+    sns.set_style("white")
+    color = sns.color_palette("tab10")[4]
+    sns.set_color_codes("muted")
+
+    if ax is None:
+        sns.histplot(data=residuals, x="residuals", kde=True, color=color)
+    else:
+        sns.histplot(data=residuals, x="residuals", kde=True, ax=ax, color=color)
+
+
+def plot_actual_predicted(dataset: PyrfumeDataset, model: Pipeline, ax=None):
+    X, y = dataset.get_features_targets()
+    model.fit(X, y)
+
+    # Fit the given estimator on the given params
+    y_predict = model.predict(X)
+
+    # Simple DataFrames of residuals to facilitate plotting.
+    act_pred = pd.DataFrame({"actual": y, "predicted": y_predict})
+
+    sns.set_style("white")
+    color = sns.color_palette("tab10")[4]
+
+    if ax is None:
+        sns.scatterplot(x="actual", y="predicted", data=act_pred, color=color)
+    else:
+        sns.scatterplot(x="actual", y="predicted", data=act_pred, ax=ax, color=color)
+        ax.plot(y, y, ls="--", dashes=(5, 5), color="k")
+    pass
 
 
 def show_regressor_performance(dataset: PyrfumeDataset, model: Pipeline, plot_type: str = "both"):
-    """Plot residuals and actual v. predicted for a regression model"""
+    """Plot residuals and actual v. predicted for a regression model."""
     X, y = dataset.get_features_targets()
     model.fit(X, y)
 
