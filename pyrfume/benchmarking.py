@@ -1068,9 +1068,8 @@ def save_benchmarks(results: pd.DataFrame, csv_name: str):
 
 def execute_viz_notebook(archive):
     """Execute a remote visualization notebook via papermill."""
-    viz_template_path = f"{pyrfume.REMOTE_DATA_PATH}/tools/benchmarks_viz_template.ipynb"
     pm.execute_notebook(
-        viz_template_path,
+        "https://github.com/pyrfume/pyrfume-data/blob/main/tools/benchmarks_viz_template.ipynb",
         "benchmarks_viz.ipynb",
         parameters={"archive": archive},
         report_mode=False,
