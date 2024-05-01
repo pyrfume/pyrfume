@@ -1625,8 +1625,8 @@ mistune = [
     {file = "mistune-0.8.4-py2.py3-none-any.whl", hash = "sha256:88a1051873018da288eee8538d476dffe1262495144b33ecb586c4ab266bb8d4"},
     {file = "mistune-0.8.4.tar.gz", hash = "sha256:59a3429db53c50b5c6bcc8a07f8848cb00d7dc8bdb431a4ab41920d201d4756e"},
 ]
-mordred = [
-    {file = "mordred-1.2.0.tar.gz", hash = "sha256:1115f9f3a3dde290dd68d51a5070fce43a62aab96b980cffc9d72b74a59e1c5a"},
+mordredcommunity = [
+    {file = "mordredcommunity-2.0.5.tar.gz"},
 ]
 mpmath = []
 mypy-extensions = [
