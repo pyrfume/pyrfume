@@ -403,7 +403,7 @@ def get_kind(identifier: str):
 def deisomerize_smiles(smiles: str) -> str:
     mol = Chem.MolFromSmiles(smiles)
     if mol:  # If a mol object was successfully create (i.e. not `None`)
-        smiles = Chem.MolToSmiles(mol, isomericSMILES=False)
+        smiles = Chem.MolToSmiles(mol, isomericSmiles=False)
     else:
         smiles = smiles.replace("@", "").replace("@@", "").replace("/", "").replace("\\", "")
     return smiles
@@ -415,7 +415,7 @@ def canonical_smiles(smiles: str, kekulize: bool = False) -> str:
     if mol:  # If a mol object was successfully create (i.e. not `None`)
         if kekulize:
             Chem.Kekulize(mol)
-        smiles = Chem.MolToSmiles(mol, isomericSMILES=True)
+        smiles = Chem.MolToSmiles(mol, isomericSmiles=True)
     else:  # No mol object means the `smiles` string was invalid
         smiles = ""
     return smiles
