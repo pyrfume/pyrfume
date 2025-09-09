@@ -4208,4 +4208,4 @@ optimize = ["dask", "deap"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.9,<4.0"
-content-hash = "1db0390777cf878d13a5afcc0e3c8e5d092cec582e4011b99730264b96460aca"
+content-hash = "9a80e95cb7e961b48d67a984902ffaa121f468efc9df35efb58e308ff3547899"
