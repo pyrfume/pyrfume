@@ -219,7 +219,7 @@ class Molecule:
         url_template = (
             "https://pubchem.ncbi.nlm.nih.gov/" "rest/pug/compound/cid/%d/property/" "%s/JSON"
         )
-        property_list = ["MolecularWeight", "IsomericSMILES"]
+        property_list = ["MolecularWeight", "SMILES"]
         url = url_template % (self.cid, ",".join(property_list))
         json_data = url_to_json(url, delay=delay)
         details = json_data["PropertyTable"]["Properties"][0]
@@ -499,7 +499,7 @@ def get_cid(  # noqa: C901 (too complex -- TODO)
 
 def from_cids(cids: list, property_list: bool = None) -> list:
     if property_list is None:
-        property_list = ["MolecularWeight", "IsomericSMILES", "IUPACName"]
+        property_list = ["MolecularWeight", "SMILES", "IUPACName"]
     result = []
     chunk_size = 100
     for start in trange(0, len(cids), chunk_size):
@@ -541,8 +541,8 @@ def from_cids(cids: list, property_list: bool = None) -> list:
 
 def cids_to_smiles(cids: list) -> dict:
     """Returns an ordered dictionary of SMILES strings with CIDs as keys"""
-    info = from_cids(cids, property_list=["IsomericSMILES"])
-    smiles = {item["CID"]: item["IsomericSMILES"] for item in info}
+    info = from_cids(cids, property_list=["SMILES"])
+    smiles = {item["CID"]: item["SMILES"] for item in info}
     return smiles
 
 
@@ -675,7 +675,7 @@ def display_molecules(molecules: pd.DataFrame, no_of_columns=5, figsize=(15, 15)
             fig = plt.figure(figsize=figsize)
             column = 1
         fig.add_subplot(1, no_of_columns, column)
-        image = smiles_to_image(info["IsomericSMILES"], png=False)
+        image = smiles_to_image(info["SMILES"], png=False)
         plt.imshow(image)
         plt.axis("off")
         plt.title("%d: %s" % (cid, info["name"]))
@@ -688,7 +688,7 @@ def embed_molecules(molecules: pd.DataFrame):
     ax = plt.gca()
     embedding = load_data("embedding/pf_umap.pkl")
     ax = embedding.plot.scatter(x=0, y=1, alpha=0.05, c="k", ax=ax)
-    smiles = molecules["IsomericSMILES"]
+    smiles = molecules["SMILES"]
     embedding_ = embedding.loc[smiles]
     embedding_.plot.scatter(x=0, y=1, alpha=1, c="r", s=100, ax=ax)
     ax.set_xlabel("Dimension 1")
@@ -783,7 +783,7 @@ def all_smiles():
     """All SMILES found in the file at ODORANTS_BASIC_INFO_PATH.
     May contain duplicates (if two CIDs give the same SMILES)"""
     df = all_odorants()
-    return list(df["IsomericSMILES"])
+    return list(df["SMILES"])
 
 
 def hash_smiles(smiles: str):
