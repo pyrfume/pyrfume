@@ -1,8 +1,6 @@
 name: Python package
 
-on: 
-  push:
-  workflow_dispatch
+on: [push]
 
 jobs:
   lint-test:
